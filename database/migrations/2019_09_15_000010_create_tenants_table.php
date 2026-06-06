@@ -16,10 +16,18 @@ class CreateTenantsTable extends Migration
     public function up(): void
     {
         Schema::create('tenants', function (Blueprint $table) {
-            $table->string('id')->primary();
-
-            // your custom columns may go here
-
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->string('owner_email');
+            $table->string('country');
+            $table->string('timezone')->default('Africa/Lagos');
+            $table->enum('plan', ['starter', 'pro', 'agency'])->default('starter');
+            $table->timestamp('trial_ends_at')->nullable();
+            $table->enum('subscription_status', ['trialing', 'active', 'past_due', 'cancelled'])->default('trialing');
+            $table->string('paystack_customer_id')->nullable();
+            $table->string('flutterwave_customer_id')->nullable();
+            $table->enum('language', ['en', 'fr'])->default('en');
             $table->timestamps();
             $table->json('data')->nullable();
         });
