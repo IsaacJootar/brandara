@@ -14,7 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'tenant.active' => \App\Http\Middleware\EnsureTenantActive::class,
+            'brand'            => \App\Http\Middleware\ResolveBrand::class,
+            'workspace.active' => \App\Http\Middleware\EnsureWorkspaceActive::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

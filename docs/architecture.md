@@ -1,38 +1,78 @@
 # Brandara — Architecture
 
-## Multi-tenancy — the most important architectural decision
+## Multi-tenancy approach — single database, brand_id scoped
 
-Brandara uses **stancl/tenancy** for full database-per-tenant multi-tenancy.
+Brandara uses **single-database multi-tenancy**. All workspaces share one database.
+Data isolation is enforced entirely through `brand_id` scoping — every query on
+brand-owned data MUST filter by `brand_id`. There are no separate databases per tenant.
 
-### Why this matters
-Every workspace is completely isolated. No tenant can see, access, or affect
-another tenant's data. This is non-negotiable for a B2B SaaS handling brand
-content, lead data, and OAuth tokens.
+### Why this approach
 
-### Two database layers
+- One database = simpler hosting, cheaper, easier migrations
+- How real social media SaaS products work (Buffer, Hootsuite, Sprout Social)
+- Agencies managing 10+ client brands log in once and switch brands — no subdomain juggling
+- Cross-workspace analytics and platform health checks work without multi-database gymnastics
+- Scales to millions of records in one Postgres instance before sharding is needed
 
-**Central database** — stores only:
-- `workspaces` (tenants) table
-- Tenant routing records
+### Three levels of data ownership
 
-**Tenant database** — one per workspace, stores everything else:
-- users, brands, posts, campaigns, platform_connections
-- leads, media_files, content_pillars, notifications
-- All business data
+```
+Workspace (subscription/account)
+  └── Users (people who can log in — belong to a workspace)
+  └── Brands (the actual brand being managed — one workspace, many brands)
+        └── Everything else: posts, campaigns, leads, connections, media...
+              └── All scoped by brand_id — no exceptions
+```
 
-### How it works in practice
+### URL structure
 
-1. Request arrives at `acme.brandara.co`
-2. Tenancy middleware identifies tenant from subdomain
-3. Database connection switches to Acme's tenant database
-4. All Eloquent queries automatically hit the right database
-5. No manual tenant filtering needed on most queries
+```
+brandara.com/login                     ← single login for everyone
+brandara.com/get-started              ← workspace registration
+brandara.com/{brand-slug}/dashboard   ← brand dashboard
+brandara.com/{brand-slug}/create      ← content creation
+brandara.com/{brand-slug}/plan        ← campaigns
+brandara.com/{brand-slug}/schedule    ← calendar
+brandara.com/{brand-slug}/grow        ← engagement
+brandara.com/{brand-slug}/results     ← analytics
+brandara.com/{brand-slug}/my-brand    ← brand kit + voice DNA
+brandara.com/{brand-slug}/connections ← platform OAuth
+brandara.com/{brand-slug}/ai-presence ← AI visibility
+```
 
-### Critical rule
+### The non-negotiable scoping rule
 
-**Never write a raw global query on tenant data.**
-Always verify the tenancy middleware is active on every route.
-Tenant routes live in `routes/tenant.php` — not `routes/web.php`.
+**Every query on brand data must be scoped to brand_id. No exceptions.**
+
+```php
+// CORRECT
+Post::where('brand_id', $brand->id)->where('status', 'published')->get();
+
+// WRONG — leaks data across brands
+Post::where('status', 'published')->get();
+```
+
+The `ResolveBrand` middleware loads the brand from the URL slug, verifies it belongs
+to the authenticated user's workspace, and binds it to `app('current.brand')`.
+Controllers receive it via dependency injection or `currentBrand()` helper.
+
+---
+
+## Request lifecycle
+
+```
+1. User visits brandara.com/acme-ng/dashboard
+2. Laravel Router matches /{brand}/dashboard
+3. auth middleware — verifies user is logged in
+4. ResolveBrand middleware:
+   a. Reads {brand} slug from route
+   b. Queries: Brand::where('slug', 'acme-ng')->where('workspace_id', user->workspace_id)
+   c. If not found → 403 (user does not own this brand)
+   d. Binds brand to app('current.brand')
+5. DashboardController@index receives brand via currentBrand() helper
+6. All queries: Post::where('brand_id', $brand->id)->...
+7. Blade view rendered with brand-scoped data
+```
 
 ---
 
@@ -40,70 +80,67 @@ Tenant routes live in `routes/tenant.php` — not `routes/web.php`.
 
 ```
 brandara/
-├── CLAUDE.md                          ← Master instructions (root)
-├── docs/                              ← All documentation for Claude Code
-│   ├── architecture.md                ← This file
-│   ├── database.md                    ← Complete schema
-│   ├── stack.md                       ← Tech stack details
-│   ├── ui-rules.md                    ← Naming and UX rules
-│   ├── colors.md                      ← Complete colour system
-│   ├── phases.md                      ← 22 build phases
-│   ├── api-integrations.md            ← All external APIs
-│   ├── brand-os-context.md            ← Product context
-│   ├── karpathy-guidelines.md         ← Behavioral coding rules
-│   ├── modules/                       ← One file per feature module
-│   │   ├── 01-create.md
-│   │   ├── 02-brand-intelligence.md
-│   │   ├── 03-plan.md
-│   │   ├── 04-visual-media.md
-│   │   ├── 05-publishing.md
-│   │   ├── 06-grow.md
-│   │   ├── 07-results.md
-│   │   └── 08-ai-visibility.md
-│   └── prompts/                       ← AI prompt templates
-│       ├── voice-dna.md
-│       ├── content-generation.md
-│       ├── campaign-pack.md
-│       ├── smart-comment.md
-│       ├── whatsapp-copy.md
-│       ├── tiktok-toolkit.md
-│       ├── weekly-report.md
-│       └── ai-visibility-query.md
+├── CLAUDE.md
+├── docs/
+│   ├── architecture.md            ← This file
+│   ├── database.md                ← Complete schema
+│   ├── stack.md
+│   ├── ui-rules.md
+│   ├── colors.md
+│   ├── phases.md
+│   ├── api-integrations.md
+│   ├── brand-os-context.md
+│   ├── karpathy-guidelines.md
+│   ├── modules/
+│   └── prompts/
 │
 ├── app/
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── Auth/                  ← Login, register, workspace creation
-│   │   │   ├── PostController.php     ← Create, edit, schedule posts
-│   │   │   ├── CampaignController.php ← Campaign packs + custom builder
-│   │   │   ├── BrandController.php    ← Brand kit, profile, voice DNA
-│   │   │   ├── PlatformController.php ← OAuth connect/disconnect
-│   │   │   ├── MediaController.php    ← Media library
-│   │   │   ├── LeadController.php     ← Lead engagement tracker
-│   │   │   ├── AnalyticsController.php← Results dashboard
-│   │   │   ├── AiVisibilityController.php ← Module 08
-│   │   │   └── BillingController.php  ← Paystack + Flutterwave webhooks
+│   │   │   ├── DashboardController.php
+│   │   │   ├── PostController.php
+│   │   │   ├── CampaignController.php
+│   │   │   ├── BrandController.php
+│   │   │   ├── PlatformController.php
+│   │   │   ├── MediaController.php
+│   │   │   ├── LeadController.php
+│   │   │   ├── AnalyticsController.php
+│   │   │   ├── AiVisibilityController.php
+│   │   │   ├── WorkspaceController.php
+│   │   │   └── BillingController.php
 │   │   ├── Livewire/
-│   │   │   ├── PostComposer.php       ← Real-time composer with preview
-│   │   │   ├── ContentCalendar.php    ← Drag-drop calendar
-│   │   │   ├── PlatformPreview.php    ← Live per-platform preview
-│   │   │   ├── MediaLibrary.php       ← Media picker
-│   │   │   ├── NotificationBell.php   ← Live notification counter
-│   │   │   └── VariationPicker.php    ← 3-variation card selector
+│   │   │   ├── PostComposer.php
+│   │   │   ├── ContentCalendar.php
+│   │   │   ├── PlatformPreview.php
+│   │   │   ├── MediaLibrary.php
+│   │   │   ├── NotificationBell.php
+│   │   │   └── VariationPicker.php
 │   │   └── Middleware/
-│   │       ├── EnsureTenantActive.php ← Block expired workspaces
-│   │       └── EnsureTrialValid.php   ← Block post-trial unpaid
+│   │       ├── ResolveBrand.php       ← Loads brand from URL slug, verifies ownership
+│   │       └── EnsureWorkspaceActive.php ← Blocks expired subscriptions
 │   │
-│   ├── Models/                        ← Eloquent models (see database.md)
+│   ├── Models/
+│   │   ├── Workspace.php
+│   │   ├── User.php
+│   │   ├── Brand.php
+│   │   ├── Post.php
+│   │   ├── Campaign.php
+│   │   ├── ContentPillar.php
+│   │   ├── PlatformConnection.php
+│   │   ├── MediaFile.php
+│   │   ├── Lead.php
+│   │   ├── AiVisibilityReport.php
+│   │   └── Notification.php
 │   │
 │   ├── Services/
 │   │   ├── AI/
-│   │   │   ├── ClaudeService.php      ← Core Anthropic API client
-│   │   │   ├── VoiceDnaService.php    ← Voice profile training
-│   │   │   ├── ContentGeneratorService.php ← 3-variation generation
-│   │   │   ├── CampaignPackService.php     ← Campaign generation
-│   │   │   ├── AiVisibilityService.php     ← Module 08 queries
-│   │   │   └── Prompts/               ← PHP prompt template strings
+│   │   │   ├── ClaudeService.php
+│   │   │   ├── VoiceDnaService.php
+│   │   │   ├── ContentGeneratorService.php
+│   │   │   ├── CampaignPackService.php
+│   │   │   ├── AiVisibilityService.php
+│   │   │   └── Prompts/
 │   │   ├── Platforms/
 │   │   │   ├── LinkedInService.php
 │   │   │   ├── TwitterService.php
@@ -112,103 +149,74 @@ brandara/
 │   │   │   ├── ThreadsService.php
 │   │   │   └── PlatformServiceFactory.php
 │   │   ├── Publishing/
-│   │   │   ├── PublisherService.php   ← Orchestrates publish
-│   │   │   └── RetryService.php       ← 5-layer retry logic
+│   │   │   ├── PublisherService.php
+│   │   │   └── RetryService.php
 │   │   └── Notifications/
-│   │       ├── EmailService.php       ← Resend integration
-│   │       ├── SmsService.php         ← Africa's Talking
-│   │       └── PushService.php        ← Web push notifications
+│   │       ├── EmailService.php
+│   │       ├── SmsService.php
+│   │       └── PushService.php
 │   │
 │   └── Jobs/
-│       ├── PublishPostJob.php          ← Fires at scheduled time
-│       ├── RetryFailedPostJob.php      ← Retry handler
-│       ├── RefreshPlatformTokenJob.php ← Daily token health
-│       └── SendWeeklyReportJob.php     ← Monday digest
+│       ├── PublishPostJob.php
+│       ├── RetryFailedPostJob.php
+│       ├── RefreshPlatformTokenJob.php
+│       └── SendWeeklyReportJob.php
 │
 ├── resources/views/
 │   ├── layouts/
-│   │   ├── app.blade.php              ← Main dashboard shell
-│   │   └── auth.blade.php             ← Login/signup shell
-│   ├── create/                        ← Post composer screens
-│   ├── plan/                          ← Campaigns + pillars
-│   ├── schedule/                      ← Calendar + queue
-│   ├── grow/                          ← Engagement + leads
-│   ├── results/                       ← Analytics
-│   ├── my-brand/                      ← Brand kit + voice DNA
-│   ├── connections/                   ← Platform OAuth
-│   ├── ai-presence/                   ← Module 08 screens
-│   └── billing/                       ← Plans + payments
+│   │   └── app.blade.php              ← Single dashboard shell with sidebar
+│   ├── components/
+│   │   └── layouts/
+│   │       ├── app.blade.php          ← Blade component alias
+│   │       └── auth.blade.php         ← Login/register shell
+│   ├── workspace/                     ← Registration
+│   ├── auth/                          ← Login
+│   ├── dashboard/
+│   ├── create/
+│   ├── plan/
+│   ├── schedule/
+│   ├── grow/
+│   ├── results/
+│   ├── my-brand/
+│   ├── connections/
+│   ├── ai-presence/
+│   └── billing/
 │
-├── database/
-│   ├── migrations/central/            ← Central DB migrations
-│   └── migrations/tenant/             ← Tenant DB migrations
+├── database/migrations/
+│   ├── central migrations (workspaces, users, brands, all app tables)
 │
 ├── routes/
-│   ├── web.php                        ← Public + auth routes
-│   ├── tenant.php                     ← All tenant-scoped routes
+│   ├── web.php                        ← All routes (auth + brand-scoped)
 │   └── api.php                        ← Webhook endpoints
 │
-├── config/
-│   ├── tenancy.php                    ← Tenancy config
-│   └── services.php                   ← Third-party credentials
-│
-└── storage/app/tenants/{id}/media/    ← Per-tenant media files
+└── storage/app/brands/{brand_id}/media/  ← Per-brand media storage
 ```
 
 ---
 
-## Request lifecycle
-
-```
-1. Request → {workspace}.brandara.co/schedule
-2. DNS → Render server
-3. Laravel Router → InitializeTenancyByDomain middleware
-4. Tenancy switches DB connection to workspace's tenant database
-5. EnsureTenantActive middleware checks subscription status
-6. Route hits ScheduleController@index
-7. All Eloquent queries auto-scoped to tenant database
-8. Blade view rendered with tenant data
-9. Livewire components mount with tenant context preserved
-10. Response returned
-```
-
----
-
-## Real-time with Laravel Reverb
-
-Reverb is the self-hosted WebSocket server. It replishes Pusher at zero cost.
-
-```bash
-# Start in development
-php artisan reverb:start
-
-# Laravel Echo in Blade (connects to Reverb)
-# resources/js/echo.js already configured by `php artisan reverb:install`
-```
-
-Livewire uses Reverb automatically for real-time features.
-No additional configuration needed after `php artisan reverb:install`.
-
----
-
-## Queue architecture with Laravel Horizon
+## Queue architecture
 
 ```
 Redis → Horizon dashboard → Queue workers → Jobs
 ```
 
-**Queue names in Brandara:**
+Queue names:
 - `publish` — high priority, post publishing
 - `notifications` — medium priority, email/SMS/push
-- `analytics` — low priority, data sync jobs
+- `analytics` — low priority, data sync
 - `default` — catch-all
 
-```php
-// PublishPostJob dispatched to high-priority queue
-PublishPostJob::dispatch($post)->onQueue('publish');
+---
 
-// Weekly report to low-priority
-SendWeeklyReportJob::dispatch()->onQueue('analytics');
+## Real-time with Laravel Reverb
+
+Reverb is the self-hosted WebSocket server.
+
+```bash
+php artisan reverb:start
 ```
 
-Horizon dashboard at `/horizon` — only accessible to workspace owners.
+Livewire uses Reverb for:
+- Real-time platform preview (updates as user types)
+- Live notification counter badge
+- Real-time publish status on the calendar

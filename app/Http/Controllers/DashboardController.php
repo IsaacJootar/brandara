@@ -6,13 +6,16 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $workspace = tenant();
-        $user      = auth()->user();
+        // Brand is resolved by ResolveBrand middleware and bound to container
+        /** @var \App\Models\Brand $brand */
+        $brand     = app('current.brand');
+        $workspace = auth()->user()->workspace;
 
-        $trialDaysLeft = $workspace->trial_ends_at
-            ? max(0, (int) now()->diffInDays($workspace->trial_ends_at, false))
-            : null;
+        // All queries scoped to brand_id — data cannot leak to other brands
+        $postsThisMonth    = $brand->posts()->whereMonth('published_at', now()->month)->where('status', 'published')->count();
+        $activeConnections = $brand->platformConnections()->where('status', 'connected')->count();
+        $warmLeads         = $brand->leads()->where('tag', 'warm_lead')->count();
 
-        return view('dashboard', compact('workspace', 'user', 'trialDaysLeft'));
+        return view('dashboard', compact('brand', 'workspace', 'postsThisMonth', 'activeConnections', 'warmLeads'));
     }
 }

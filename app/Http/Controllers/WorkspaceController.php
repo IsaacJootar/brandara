@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -18,52 +20,65 @@ class WorkspaceController extends Controller
     {
         $data = $request->validate([
             'workspace_name' => ['required', 'string', 'max:100'],
+            'brand_name'     => ['required', 'string', 'max:100'],
             'name'           => ['required', 'string', 'max:100'],
-            'email'          => ['required', 'email', 'max:255'],
+            'email'          => ['required', 'email', 'max:255', 'unique:users,email'],
             'password'       => ['required', 'string', 'min:8', 'confirmed'],
-            'country'        => ['required', 'string', 'size:2'],
+            'country'        => ['required', 'string', 'max:5'],
         ]);
 
-        $slug = Str::slug($data['workspace_name']);
-        $baseSlug = $slug;
-        $i = 2;
-        while (Workspace::where('slug', $slug)->exists()) {
-            $slug = $baseSlug . '-' . $i++;
+        // Unique workspace slug
+        $wsSlug = Str::slug($data['workspace_name']);
+        $base = $wsSlug; $i = 2;
+        while (Workspace::where('slug', $wsSlug)->exists()) {
+            $wsSlug = $base . '-' . $i++;
         }
 
         $workspace = Workspace::create([
-            'name'                  => $data['workspace_name'],
-            'slug'                  => $slug,
-            'owner_email'           => $data['email'],
-            'country'               => strtoupper($data['country']),
-            'timezone'              => $this->timezoneForCountry(strtoupper($data['country'])),
-            'plan'                  => 'starter',
-            'subscription_status'   => 'trialing',
-            'trial_ends_at'         => now()->addDays(7),
+            'name'                => $data['workspace_name'],
+            'slug'                => $wsSlug,
+            'owner_email'         => $data['email'],
+            'country'             => strtoupper($data['country']),
+            'timezone'            => $this->timezoneFor(strtoupper($data['country'])),
+            'plan'                => 'starter',
+            'subscription_status' => 'trialing',
+            'trial_ends_at'       => now()->addDays(7),
         ]);
 
-        // Register the full domain for tenant routing
-        $centralHost = parse_url(config('app.url'), PHP_URL_HOST) ?? 'localhost';
-        $workspace->domains()->create(['domain' => $slug . '.' . $centralHost]);
-
-        // Create the owner user inside the tenant database
-        tenancy()->initialize($workspace);
-
-        $user = \App\Models\User::create([
+        $user = $workspace->users()->create([
             'name'     => $data['name'],
             'email'    => $data['email'],
             'password' => Hash::make($data['password']),
             'role'     => 'owner',
         ]);
 
-        tenancy()->end();
+        // Create the first brand (same name as workspace by default)
+        $brandSlug = Str::slug($data['brand_name']);
+        $brand = $workspace->brands()->create([
+            'name'     => $data['brand_name'],
+            'slug'     => $brandSlug,
+            'language' => $workspace->language,
+        ]);
 
-        // Redirect to tenant login
-        $tenantHost = $slug . '.localhost:8000';
-        return redirect("http://{$tenantHost}/login")->with('workspace_created', true);
+        Auth::login($user);
+
+        return redirect()->route('dashboard', ['brand' => $brand->slug])
+            ->with('success', 'Welcome to Brandara! Your workspace is ready.');
     }
 
-    private function timezoneForCountry(string $country): string
+    // Redirect logged-in user to their first brand's dashboard
+    public function home()
+    {
+        $brand = auth()->user()->workspace->brands()->first();
+
+        if (! $brand) {
+            return redirect()->route('workspace.create');
+        }
+
+        return redirect()->route('dashboard', ['brand' => $brand->slug]);
+    }
+
+    private function timezoneFor(string $country): string
     {
         return match($country) {
             'GH' => 'Africa/Accra',

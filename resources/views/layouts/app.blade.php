@@ -97,7 +97,7 @@
                         <div class="text-white text-sm font-medium truncate">{{ auth()->user()?->name }}</div>
                         <div class="text-white/40 text-xs truncate">{{ auth()->user()?->email }}</div>
                     </div>
-                    <form method="POST" action="{{ route('tenant.logout') }}">
+                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" title="Log out" class="text-white/30 hover:text-white transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

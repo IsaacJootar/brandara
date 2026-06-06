@@ -4,7 +4,7 @@
     <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body p-8">
             <h1 class="text-2xl font-bold text-neutral mb-1">Start building your brand</h1>
-            <p class="text-base-content/60 mb-6 text-sm">7-day free trial. No credit card needed.</p>
+            <p class="text-base-content/60 mb-6 text-sm">7-day free trial · No credit card needed</p>
 
             @if ($errors->any())
                 <div class="alert alert-error mb-4">
@@ -19,52 +19,48 @@
             <form method="POST" action="{{ route('workspace.store') }}" class="space-y-4">
                 @csrf
 
-                {{-- Workspace name --}}
                 <div class="form-control">
                     <label class="label pb-1">
-                        <span class="label-text font-medium text-neutral">Your business or brand name</span>
+                        <span class="label-text font-medium text-neutral">Your business or agency name</span>
                     </label>
-                    <input
-                        type="text"
-                        name="workspace_name"
-                        value="{{ old('workspace_name') }}"
-                        placeholder="e.g. Acme Consulting"
+                    <input type="text" name="workspace_name" value="{{ old('workspace_name') }}"
+                        placeholder="e.g. Acme Agency"
                         class="input input-bordered w-full focus:input-primary @error('workspace_name') input-error @enderror"
-                        required
-                    >
+                        required>
+                    <span class="label-text-alt text-base-content/40 mt-1 ml-1">This is your account name</span>
                 </div>
 
-                {{-- Full name --}}
+                <div class="form-control">
+                    <label class="label pb-1">
+                        <span class="label-text font-medium text-neutral">Your first brand name</span>
+                    </label>
+                    <input type="text" name="brand_name" value="{{ old('brand_name') }}"
+                        placeholder="e.g. Acme Consulting"
+                        class="input input-bordered w-full focus:input-primary @error('brand_name') input-error @enderror"
+                        required>
+                    <span class="label-text-alt text-base-content/40 mt-1 ml-1">You can add more brands later</span>
+                </div>
+
                 <div class="form-control">
                     <label class="label pb-1">
                         <span class="label-text font-medium text-neutral">Your full name</span>
                     </label>
-                    <input
-                        type="text"
-                        name="name"
-                        value="{{ old('name') }}"
+                    <input type="text" name="name" value="{{ old('name') }}"
                         placeholder="e.g. Amara Okafor"
                         class="input input-bordered w-full focus:input-primary @error('name') input-error @enderror"
-                        required
-                    >
+                        required>
                 </div>
 
-                {{-- Email --}}
                 <div class="form-control">
                     <label class="label pb-1">
                         <span class="label-text font-medium text-neutral">Work email address</span>
                     </label>
-                    <input
-                        type="email"
-                        name="email"
-                        value="{{ old('email') }}"
+                    <input type="email" name="email" value="{{ old('email') }}"
                         placeholder="you@company.com"
                         class="input input-bordered w-full focus:input-primary @error('email') input-error @enderror"
-                        required
-                    >
+                        required>
                 </div>
 
-                {{-- Country --}}
                 <div class="form-control">
                     <label class="label pb-1">
                         <span class="label-text font-medium text-neutral">Your country</span>
@@ -86,31 +82,21 @@
                     </select>
                 </div>
 
-                {{-- Password --}}
                 <div class="form-control">
                     <label class="label pb-1">
                         <span class="label-text font-medium text-neutral">Create a password</span>
                     </label>
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="At least 8 characters"
+                    <input type="password" name="password" placeholder="At least 8 characters"
                         class="input input-bordered w-full focus:input-primary @error('password') input-error @enderror"
-                        required
-                    >
+                        required>
                 </div>
 
                 <div class="form-control">
                     <label class="label pb-1">
                         <span class="label-text font-medium text-neutral">Confirm your password</span>
                     </label>
-                    <input
-                        type="password"
-                        name="password_confirmation"
-                        placeholder="Repeat your password"
-                        class="input input-bordered w-full focus:input-primary"
-                        required
-                    >
+                    <input type="password" name="password_confirmation" placeholder="Repeat your password"
+                        class="input input-bordered w-full focus:input-primary" required>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-full mt-2">
@@ -119,13 +105,13 @@
 
                 <p class="text-center text-sm text-base-content/50 mt-2">
                     Already have a workspace?
-                    <a href="#" class="text-primary hover:underline">Log in</a>
+                    <a href="{{ route('login') }}" class="text-primary hover:underline">Log in</a>
                 </p>
             </form>
         </div>
     </div>
 
     <p class="text-center text-xs text-base-content/40 mt-4">
-        By signing up you agree to our Terms of Service and Privacy Policy.
+        By signing up you agree to our Terms of Service.
     </p>
 </x-layouts.auth>

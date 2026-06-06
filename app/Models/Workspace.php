@@ -2,49 +2,55 @@
 
 namespace App\Models;
 
-use Stancl\Tenancy\Database\Models\Tenant;
-use Stancl\Tenancy\Contracts\TenantWithDatabase;
-use Stancl\Tenancy\Database\Concerns\HasDatabase;
-use Stancl\Tenancy\Database\Concerns\HasDomains;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Workspace extends Tenant implements TenantWithDatabase
+class Workspace extends Model
 {
-    use HasDatabase, HasDomains;
+    use HasUuids;
 
     protected $fillable = [
-        'id',
-        'name',
-        'slug',
-        'owner_email',
-        'country',
-        'timezone',
-        'plan',
-        'trial_ends_at',
-        'subscription_status',
-        'paystack_customer_id',
-        'flutterwave_customer_id',
-        'language',
+        'name', 'slug', 'owner_email', 'country', 'timezone',
+        'plan', 'trial_ends_at', 'subscription_status',
+        'paystack_customer_id', 'flutterwave_customer_id', 'language',
     ];
 
     protected $casts = [
         'trial_ends_at' => 'datetime',
     ];
 
-    public static function getCustomColumns(): array
+    public function users(): HasMany
     {
-        return [
-            'id',
-            'name',
-            'slug',
-            'owner_email',
-            'country',
-            'timezone',
-            'plan',
-            'trial_ends_at',
-            'subscription_status',
-            'paystack_customer_id',
-            'flutterwave_customer_id',
-            'language',
-        ];
+        return $this->hasMany(User::class);
+    }
+
+    public function brands(): HasMany
+    {
+        return $this->hasMany(Brand::class);
+    }
+
+    public function isTrialing(): bool
+    {
+        return $this->subscription_status === 'trialing';
+    }
+
+    public function trialDaysLeft(): int
+    {
+        if (! $this->trial_ends_at) {
+            return 0;
+        }
+        return max(0, (int) now()->diffInDays($this->trial_ends_at, false));
+    }
+
+    public function isActive(): bool
+    {
+        if ($this->subscription_status === 'active') {
+            return true;
+        }
+        if ($this->subscription_status === 'trialing' && $this->trial_ends_at?->isFuture()) {
+            return true;
+        }
+        return false;
     }
 }

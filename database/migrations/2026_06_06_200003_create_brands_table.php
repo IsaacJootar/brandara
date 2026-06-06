@@ -10,7 +10,9 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignUuid('workspace_id')->constrained()->cascadeOnDelete();
             $table->string('name');
+            $table->string('slug');
             $table->string('tagline')->nullable();
             $table->text('description')->nullable();
             $table->text('vision')->nullable();
@@ -28,6 +30,9 @@ return new class extends Migration
             $table->enum('default_tone', ['corporate', 'professional', 'founder', 'african', 'friendly', 'educational', 'bold', 'luxury'])->default('professional');
             $table->enum('language', ['en', 'fr'])->default('en');
             $table->timestamps();
+
+            // Same slug can exist in different workspaces — unique per workspace
+            $table->unique(['workspace_id', 'slug']);
         });
     }
 
