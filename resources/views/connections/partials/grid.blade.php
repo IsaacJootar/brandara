@@ -6,6 +6,16 @@
             $connected = $conn && $conn->status === 'connected';
             $expired   = $conn && $conn->status === 'expired';
             $expiring  = $connected && $conn->token_expires_at && $conn->token_expires_at->lessThan(now()->addDays(7));
+
+            // Platform-specific button styles
+            $btnStyle = match($key) {
+                'linkedin'  => 'background:#0077B5;',
+                'twitter'   => 'background:#000000;',
+                'facebook'  => 'background:#1877F2;',
+                'instagram' => 'background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF);',
+                'threads'   => 'background:linear-gradient(135deg,#1a1a1a,#434343);',
+                default     => 'background:#7C3AED;',
+            };
         @endphp
 
         <div style="background:#fff; border:1px solid {{ $connected ? '#BBF7D0' : '#E2E8F0' }}; border-radius:16px; padding:1.5rem; position:relative;">
@@ -73,7 +83,7 @@
             @if ($connected || $expired)
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
                     <a href="{{ route('platform.connect', ['brand' => $brand->slug, 'platform' => $key]) }}"
-                       style="display:flex; align-items:center; justify-content:center; gap:0.375rem; padding:0.625rem; font-size:0.8rem; font-weight:600; color:#475569; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; text-decoration:none;">
+                       style="display:flex; align-items:center; justify-content:center; gap:0.375rem; padding:0.625rem; font-size:0.8rem; font-weight:600; color:#fff; border-radius:8px; text-decoration:none; {{ $btnStyle }}">
                         ↻ Reconnect
                     </a>
                     <form method="POST" action="{{ route('platform.disconnect', ['brand' => $brand->slug, 'platform' => $key]) }}">
@@ -87,7 +97,7 @@
                 </div>
             @else
                 <a href="{{ route('platform.connect', ['brand' => $brand->slug, 'platform' => $key]) }}"
-                   style="display:flex; align-items:center; justify-content:center; gap:0.5rem; padding:0.7rem; font-size:0.875rem; font-weight:600; color:#fff; background:linear-gradient(135deg,#7C3AED,#4338CA); border-radius:8px; text-decoration:none;">
+                   style="display:flex; align-items:center; justify-content:center; gap:0.5rem; padding:0.7rem; font-size:0.875rem; font-weight:600; color:#fff; border-radius:8px; text-decoration:none; {{ $btnStyle }}">
                     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
                     Connect {{ $platform['name'] }}
                 </a>
