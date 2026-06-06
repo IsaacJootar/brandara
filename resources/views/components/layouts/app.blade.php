@@ -42,64 +42,26 @@
                 </button>
             </div>
 
-            {{-- ── Navigation ── --}}
+            {{-- ── Navigation — driven by config/navigation.php, NOT hard-coded ── --}}
             <nav style="flex:1; padding:0.625rem 0.625rem; overflow-y:auto; position:relative; z-index:1;">
                 @php
                     $slug      = $currentBrand->slug;
                     $workspace = auth()->user()->workspace;
-                    $plan      = $workspace->plan; // starter | pro | agency
-
-                    /*
-                     * Tier access map — controls which nav items show per plan.
-                     * When billing is built (Phase 21), this drives what each plan unlocks.
-                     * For now all items are visible on all plans during development.
-                     *
-                     * 'plans' => ['starter','pro','agency']  means all tiers see it
-                     * 'plans' => ['pro','agency']            means starter cannot see it
-                     */
-                    $navItems = [
-                        [
-                            'section' => null,  // no section label for top items
-                            'items' => [
-                                ['route'=>'dashboard',   'label'=>'Dashboard',            'plans'=>['starter','pro','agency'], 'icon'=>'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>'],
-                            ],
-                        ],
-                        [
-                            'section' => 'Content',
-                            'items' => [
-                                ['route'=>'create',      'label'=>'Create',               'plans'=>['starter','pro','agency'], 'icon'=>'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>'],
-                                ['route'=>'plan',        'label'=>'Plan',                 'plans'=>['starter','pro','agency'], 'icon'=>'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>'],
-                                ['route'=>'schedule',    'label'=>'Schedule',             'plans'=>['starter','pro','agency'], 'icon'=>'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>'],
-                            ],
-                        ],
-                        [
-                            'section' => 'Growth',
-                            'items' => [
-                                ['route'=>'grow',        'label'=>'Grow',                 'plans'=>['starter','pro','agency'], 'icon'=>'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>'],
-                                ['route'=>'results',     'label'=>'Results',              'plans'=>['starter','pro','agency'], 'icon'=>'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>'],
-                                ['route'=>'ai-presence', 'label'=>'AI Presence',          'plans'=>['pro','agency'],           'icon'=>'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2"/>'],
-                            ],
-                        ],
-                        [
-                            'section' => 'Brand',
-                            'items' => [
-                                ['route'=>'my-brand',    'label'=>'My Brand',             'plans'=>['starter','pro','agency'], 'icon'=>'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>'],
-                                ['route'=>'connections', 'label'=>'Connections',          'plans'=>['starter','pro','agency'], 'icon'=>'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>'],
-                            ],
-                        ],
-                    ];
+                    $plan      = $workspace->plan;
+                    // Load sections from config — single source of truth
+                    $navSections = config('navigation.sections', []);
                 @endphp
 
-                @foreach ($navItems as $section)
+                @foreach ($navSections as $section)
                     {{-- Section label --}}
-                    @if ($section['section'])
-                        <div style="font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.28); padding:0.75rem 0.75rem 0.35rem; margin-top:0.25rem;">{{ $section['section'] }}</div>
+                    @if ($section['label'])
+                        <div style="font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.28); padding:0.75rem 0.75rem 0.35rem; margin-top:0.25rem;">{{ $section['label'] }}</div>
                     @endif
 
                     @foreach ($section['items'] as $item)
                         @php
                             $active  = request()->routeIs($item['route']);
-                            $allowed = in_array($plan, $item['plans']);
+                            $allowed = in_array($plan, $item['tiers']);
                         @endphp
 
                         @if ($allowed)
@@ -111,7 +73,7 @@
                             </a>
                         @else
                             {{-- Locked item — shown with lock icon, not clickable --}}
-                            <div style="display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; border-radius:8px; font-size:0.835rem; color:rgba(255,255,255,0.22); cursor:default; margin-bottom:1px;" title="Upgrade to {{ $item['plans'][0] }} plan to unlock">
+                            <div style="display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; border-radius:8px; font-size:0.835rem; color:rgba(255,255,255,0.22); cursor:default; margin-bottom:1px;" title="Upgrade to {{ $item['tiers'][0] }} plan to unlock">
                                 <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">{!! $item['icon'] !!}</svg>
                                 {{ $item['label'] }}
                                 <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:auto; flex-shrink:0; opacity:0.5;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
