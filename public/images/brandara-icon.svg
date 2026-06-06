@@ -1,0 +1,14 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="brandaraIconGradient" x1="19" y1="14" x2="82" y2="86" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9B5CFF"/>
+      <stop offset="0.36" stop-color="#8B5CF6"/>
+      <stop offset="0.68" stop-color="#6D6CFF"/>
+      <stop offset="1" stop-color="#38A8FF"/>
+    </linearGradient>
+  </defs>
+  <path d="M25 13H56.5C61.4 13 66.1 15 69.5 18.5L82 31.2C85.2 34.4 87 38.8 87 43.4V68C87 78.5 78.5 87 68 87H28C17.5 87 10 78.5 10 68V28C10 17.5 17.5 13 25 13Z" stroke="url(#brandaraIconGradient)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M29 34H51" stroke="url(#brandaraIconGradient)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M29 49H67" stroke="url(#brandaraIconGradient)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M29 64H56" stroke="url(#brandaraIconGradient)" stroke-width="8" stroke-linecap="round"/>
+</svg>

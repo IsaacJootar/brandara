@@ -1,59 +1,59 @@
 <x-layouts.auth>
     <x-slot:title>Log in</x-slot>
 
-    <div class="card bg-base-100 shadow-sm border border-base-300">
-        <div class="card-body p-8">
+    <div style="background:#fff; border-radius:18px; box-shadow:0 4px 24px rgba(15,23,42,0.08); overflow:hidden;">
+
+        <div style="padding:2rem 2rem 1.5rem; border-bottom:1px solid #F1F5F9;">
+            <h1 style="font-size:1.25rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">Welcome back</h1>
+            <p style="font-size:0.83rem; color:#94A3B8; margin:0;">Log in to your Brandara workspace</p>
+        </div>
+
+        <div style="padding:1.5rem 2rem 2rem;">
+
             @if (session('success'))
-                <div class="alert alert-success mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    <span>{{ session('success') }}</span>
+                <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:0.75rem 1rem; margin-bottom:1.25rem; font-size:0.83rem; color:#16A34A;">
+                    {{ session('success') }}
                 </div>
             @endif
-
-            <h1 class="text-2xl font-bold text-neutral mb-1">Welcome back</h1>
-            <p class="text-base-content/60 mb-6 text-sm">Log in to your Brandara workspace</p>
 
             @if ($errors->any())
-                <div class="alert alert-error mb-4">
-                    <span class="text-sm">{{ $errors->first() }}</span>
+                <div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:10px; padding:0.75rem 1rem; margin-bottom:1.25rem; font-size:0.83rem; color:#DC2626;">
+                    {{ $errors->first() }}
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-4">
+            <form method="POST" action="{{ route('login') }}">
                 @csrf
 
-                <div class="form-control">
-                    <label class="label pb-1">
-                        <span class="label-text font-medium text-neutral">Email address</span>
-                    </label>
+                <div style="display:flex; flex-direction:column; gap:0.625rem; margin-bottom:1rem;">
                     <input type="email" name="email" value="{{ old('email') }}"
-                        class="input input-bordered w-full focus:input-primary"
-                        required autofocus>
-                </div>
-
-                <div class="form-control">
-                    <label class="label pb-1">
-                        <span class="label-text font-medium text-neutral">Password</span>
-                    </label>
+                        placeholder="Email address"
+                        class="auth-input" required autofocus>
                     <input type="password" name="password"
-                        class="input input-bordered w-full focus:input-primary"
-                        required>
+                        placeholder="Password"
+                        class="auth-input" required>
                 </div>
 
-                <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" name="remember" class="checkbox checkbox-primary checkbox-sm">
-                    <span class="text-sm text-base-content/70">Keep me logged in</span>
-                </label>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.82rem; color:#64748B;">
+                        <input type="checkbox" name="remember" style="accent-color:#7C3AED; width:14px; height:14px;">
+                        Keep me logged in
+                    </label>
+                </div>
 
-                <button type="submit" class="btn btn-primary w-full">Log in</button>
+                <button type="submit"
+                    style="width:100%; padding:0.875rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.9rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; transition:opacity 0.15s;"
+                    onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                    Log in
+                </button>
 
-                <p class="text-center text-sm text-base-content/50 mt-2">
-                    Don't have a workspace yet?
-                    <a href="{{ route('workspace.create') }}" class="text-primary hover:underline">Create one free</a>
+                <p style="text-align:center; font-size:0.8rem; color:#94A3B8; margin:1rem 0 0;">
+                    Don't have a workspace?
+                    <a href="{{ route('workspace.create') }}" style="color:#7C3AED; text-decoration:none; font-weight:500;">Create one free</a>
                 </p>
+
             </form>
         </div>
     </div>
+
 </x-layouts.auth>

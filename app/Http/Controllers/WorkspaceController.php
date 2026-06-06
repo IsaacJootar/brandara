@@ -57,7 +57,7 @@ class WorkspaceController extends Controller
         $brand = $workspace->brands()->create([
             'name'     => $data['brand_name'],
             'slug'     => $brandSlug,
-            'language' => $workspace->language,
+            'language' => 'en',
         ]);
 
         Auth::login($user);

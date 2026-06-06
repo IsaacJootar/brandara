@@ -2,15 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Brandara sidebar — same gradient in both light and dark mode */
-.sidebar {
-  background: linear-gradient(165deg, #1B0D35 0%, #0E0720 100%);
-  position: relative;
+/* ═══════════════════════════════════════════════════
+   BRANDARA APP SHELL — Responsive layout (gona-style)
+═══════════════════════════════════════════════════ */
+
+.brandara-shell {
+  display: flex;
+  height: 100vh;
   overflow: hidden;
+  background: #F8FAFC;
 }
 
-/* Ambient glow top */
-.sidebar::before {
+/* ── Sidebar ── */
+.brandara-sidebar {
+  width: 256px;
+  min-width: 256px;
+  background: linear-gradient(165deg, #1B0D35 0%, #0E0720 100%);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 30;
+}
+
+/* Ambient glow effects */
+.brandara-sidebar::before {
   content: '';
   position: absolute;
   top: -40px; left: -40px;
@@ -18,9 +35,7 @@
   background: radial-gradient(circle, rgba(124,58,237,0.35) 0%, transparent 70%);
   pointer-events: none;
 }
-
-/* Ambient glow bottom */
-.sidebar::after {
+.brandara-sidebar::after {
   content: '';
   position: absolute;
   bottom: -20px; right: -30px;
@@ -29,12 +44,224 @@
   pointer-events: none;
 }
 
+/* Active nav item */
 .nav-item-active {
   background: linear-gradient(90deg, rgba(124,58,237,0.5), rgba(124,58,237,0.2));
   border-radius: 8px;
+  color: #ffffff !important;
 }
 
-.logo-mark {
-  background: linear-gradient(135deg, #7C3AED, #A78BFA);
-  border-radius: 8px;
+/* ── Main content area ── */
+.brandara-main {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ── Sticky topbar ── */
+.brandara-topbar {
+  height: 64px;
+  padding: 0 1.5rem;
+  border-bottom: 1px solid #E2E8F0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+/* ── Page content ── */
+.brandara-page {
+  padding: 1.75rem 2rem;
+  flex: 1;
+}
+
+/* ── Mobile scrim ── */
+.brandara-scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.52);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 45;
+}
+
+/* ── Mobile sidebar close button ── */
+.sidebar-close-btn {
+  display: none;
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.08);
+  color: #f8fafc;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+}
+
+/* ── Mobile hamburger button ── */
+.brandara-hamburger {
+  display: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #E2E8F0;
+  background: #ffffff;
+  color: #0F172A;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE — ≤1024px: sidebar slides in as drawer
+═══════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .brandara-shell {
+    min-height: 100vh;
+    height: auto;
+  }
+
+  .brandara-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(84vw, 18rem);
+    min-width: 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    box-shadow: 0 24px 48px rgba(15,23,42,0.22);
+  }
+
+  .brandara-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .brandara-scrim.is-open {
+    display: block;
+  }
+
+  .sidebar-close-btn {
+    display: inline-flex;
+  }
+
+  .brandara-hamburger {
+    display: inline-flex;
+  }
+
+  .brandara-topbar {
+    /* Always show topbar on mobile */
+    display: flex;
+  }
+
+  .brandara-page {
+    padding: 1.25rem 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .brandara-page {
+    padding: 1rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   METRIC CARDS — Bold gradient style
+═══════════════════════════════════════════════════ */
+.metric-card {
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.12), 0 2px 4px -2px rgba(0,0,0,0.08);
+  color: #ffffff;
+}
+
+.metric-card .metric-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.72);
+  margin-bottom: 0.5rem;
+}
+
+.metric-card .metric-value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #ffffff;
+  margin-bottom: 0.35rem;
+}
+
+.metric-card .metric-sub {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.6);
+}
+
+/* Brandara gradient variants */
+.metric-violet  { background: linear-gradient(135deg, #7C3AED 0%, #4338CA 100%); }
+.metric-blue    { background: linear-gradient(135deg, #0369A1 0%, #0891B2 100%); }
+.metric-amber   { background: linear-gradient(135deg, #D97706 0%, #EA580C 100%); }
+.metric-rose    { background: linear-gradient(135deg, #BE123C 0%, #E11D48 100%); }
+.metric-teal    { background: linear-gradient(135deg, #0F766E 0%, #059669 100%); }
+.metric-indigo  { background: linear-gradient(135deg, #4338CA 0%, #7C3AED 100%); }
+.metric-navy    { background: linear-gradient(135deg, #0F172A 0%, #334155 100%); }
+
+/* ═══════════════════════════════════════════════════
+   METRIC GRID — responsive
+═══════════════════════════════════════════════════ */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+/* ═══════════════════════════════════════════════════
+   LOGO
+═══════════════════════════════════════════════════ */
+.brandara-logo-img {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════
+   AUTH FORM — clean, minimal
+═══════════════════════════════════════════════════ */
+.auth-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background: #FAFBFF;
+  color: #0F172A;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+
+.auth-input:focus {
+  border-color: #7C3AED;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+  background: #ffffff;
+}
+
+.auth-input::placeholder {
+  color: #94A3B8;
 }
