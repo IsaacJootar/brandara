@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
+
 class DashboardController extends Controller
 {
     public function index()
     {
         // Brand is resolved by ResolveBrand middleware and bound to container
-        /** @var \App\Models\Brand $brand */
-        $brand     = app('current.brand');
+        /** @var Brand $brand */
+        // Metrics now load lazily via App\Livewire\Dashboard\Metrics — no eager DB hits here.
+        $brand = app('current.brand');
         $workspace = auth()->user()->workspace;
 
-        // All queries scoped to brand_id — data cannot leak to other brands
-        $postsThisMonth    = $brand->posts()->whereMonth('published_at', now()->month)->where('status', 'published')->count();
-        $activeConnections = $brand->platformConnections()->where('status', 'connected')->count();
-        $warmLeads         = $brand->leads()->where('tag', 'warm_lead')->count();
-
-        return view('dashboard', compact('brand', 'workspace', 'postsThisMonth', 'activeConnections', 'warmLeads'));
+        return view('dashboard', compact('brand', 'workspace'));
     }
 }

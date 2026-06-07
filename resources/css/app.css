@@ -265,3 +265,72 @@
 .auth-input::placeholder {
   color: #94A3B8;
 }
+
+/* ═══════════════════════════════════════════════════
+   SKELETON LOADING (gona-style)
+═══════════════════════════════════════════════════ */
+.skeleton {
+  background: linear-gradient(90deg, #F1F5F9 0%, #E2E8F0 50%, #F1F5F9 100%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+@keyframes skeleton-pulse {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-text  { height: 0.875rem; margin-bottom: 0.5rem; }
+.skeleton-title { height: 1.5rem; width: 60%; margin-bottom: 0.75rem; }
+.skeleton-card  { height: 6rem; border-radius: 14px; }
+.skeleton-row   { height: 3.5rem; border-radius: 0; border-bottom: 1px solid #E2E8F0; }
+
+/* Keep metric values in a skeleton state until the full page has loaded. */
+html:not(.app-ready) .metric-card .metric-label,
+html:not(.app-ready) .metric-card .metric-value,
+html:not(.app-ready) .metric-card .metric-sub {
+  color: transparent !important;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.28) 50%, rgba(255,255,255,0.16) 100%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.25s ease-in-out infinite;
+}
+
+html:not(.app-ready) .metric-card .metric-label {
+  display: inline-block;
+  width: clamp(4rem, 50%, 8rem);
+}
+
+html:not(.app-ready) .metric-card .metric-value {
+  display: block;
+  width: clamp(5rem, 60%, 9rem);
+}
+
+html:not(.app-ready) .metric-card .metric-sub {
+  display: inline-block;
+  width: clamp(4.5rem, 55%, 10rem);
+}
+
+/* ═══════════════════════════════════════════════════
+   LOADING BUTTON STATES
+═══════════════════════════════════════════════════ */
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 0.7s linear infinite;
+}
+
+@keyframes btn-spin { to { transform: rotate(360deg); } }
+
+button[disabled], button.is-submitting {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+button.is-submitting .btn-label { display: none !important; }
+button.is-submitting .btn-loading { display: inline-flex !important; }

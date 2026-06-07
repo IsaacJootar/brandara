@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
+    @livewireStyles
 </head>
 <body class="font-sans antialiased" style="background:#F8FAFC;">
 
@@ -119,9 +121,12 @@
                         <div style="color:rgba(255,255,255,0.35); font-size:0.65rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ auth()->user()->email }}</div>
                     </div>
                 </div>
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST" action="{{ route('logout') }}" data-loading-form>
                     @csrf
-                    <button type="submit" style="font-size:0.72rem; color:rgba(255,255,255,0.35); background:none; border:none; cursor:pointer; padding:0;">Sign out →</button>
+                    <button type="submit" style="font-size:0.72rem; color:rgba(255,255,255,0.35); background:none; border:none; cursor:pointer; padding:0;">
+                        <span class="btn-label">Sign out →</span>
+                        <span class="btn-loading" style="display:none; align-items:center; gap:0.4rem;"><span class="btn-spinner"></span>Signing out…</span>
+                    </button>
                 </form>
             </div>
 
@@ -186,5 +191,6 @@
         handleResize();
     </script>
 
+    @livewireScripts
 </body>
 </html>
