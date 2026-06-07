@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PlatformController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,8 +41,9 @@ Route::middleware(['auth', 'workspace.active'])->group(function () {
         Route::get('/connections/{platform}/connect', [PlatformController::class, 'connect'])->name('platform.connect');
         Route::post('/connections/{platform}/disconnect', [PlatformController::class, 'disconnect'])->name('platform.disconnect');
 
-        // Module placeholders — replaced as each module is built
-        Route::get('/create', fn () => view('create.index'))->name('create');
+        // ── Create (Post Composer) ────────────────────────────────────────────
+        Route::get('/create', [PostController::class, 'create'])->name('create');
+        Route::delete('/create/{post}', [PostController::class, 'destroy'])->name('post.destroy');
         Route::get('/plan', fn () => view('plan.index'))->name('plan');
         Route::get('/schedule', fn () => view('schedule.index'))->name('schedule');
         Route::get('/grow', fn () => view('grow.index'))->name('grow');
