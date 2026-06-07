@@ -76,4 +76,10 @@ return [
         'client_secret' => env('CANVA_CLIENT_SECRET'),
     ],
 
+    'publishing' => [
+        // When true, PublisherFactory resolves real platform publishers.
+        // When false (default for dev), all platforms use FakePublisher.
+        'live' => env('PUBLISHING_LIVE', false),
+    ],
+
 ];
