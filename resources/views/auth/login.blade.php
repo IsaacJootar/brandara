@@ -22,7 +22,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('login') }}">
+            <form method="POST" action="{{ route('login') }}" data-loading-form>
                 @csrf
 
                 <div style="display:flex; flex-direction:column; gap:0.625rem; margin-bottom:1rem;">
@@ -42,9 +42,12 @@
                 </div>
 
                 <button type="submit"
-                    style="width:100%; padding:0.875rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.9rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; transition:opacity 0.15s;"
+                    style="width:100%; padding:0.875rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.9rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; transition:opacity 0.15s; display:flex; align-items:center; justify-content:center; gap:0.5rem;"
                     onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                    Log in
+                    <span class="btn-label">Log in</span>
+                    <span class="btn-loading" style="display:none; align-items:center; gap:0.5rem;">
+                        <span class="btn-spinner"></span> Logging in…
+                    </span>
                 </button>
 
                 <p style="text-align:center; font-size:0.8rem; color:#94A3B8; margin:1rem 0 0;">
