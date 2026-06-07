@@ -1,13 +1,38 @@
-<div style="display:grid; grid-template-columns:1fr 340px; gap:1.5rem; align-items:start;">
+<div style="display:grid; grid-template-columns:1fr 340px; gap:1.5rem; align-items:start;"
+     x-data="{ aiPanel: false }">
 
     {{-- ── LEFT — Main composer ──────────────────────────────────────────── --}}
     <div>
+
+        {{-- Input type tabs --}}
+        <div style="display:flex; gap:0.375rem; margin-bottom:1.25rem; background:#F8FAFC; padding:0.375rem; border-radius:10px; border:1px solid #E2E8F0;">
+            @foreach ([
+                'manual'     => ['✏️', 'Write manually'],
+                'topic'      => ['💡', 'From a topic'],
+                'transcript' => ['🎙', 'From transcript'],
+                'product'    => ['📦', 'Product post'],
+            ] as $type => [$emoji, $label])
+                <button wire:click="$set('inputType', '{{ $type }}')" type="button"
+                    style="flex:1; padding:0.5rem 0.625rem; border-radius:7px; border:none; font-size:0.78rem; font-weight:{{ $inputType === $type ? '600' : '400' }}; cursor:pointer; transition:all 0.15s;
+                    {{ $inputType === $type
+                        ? 'background:#fff; color:#0F172A; box-shadow:0 1px 3px rgba(15,23,42,0.08);'
+                        : 'background:transparent; color:#64748B;' }}">
+                    {{ $emoji }} {{ $label }}
+                </button>
+            @endforeach
+        </div>
 
         {{-- Input area --}}
         <div style="position:relative; margin-bottom:1rem;">
             <textarea
                 wire:model.blur="body"
-                placeholder="Write your post here..."
+                placeholder="{{ $inputType === 'manual'
+                    ? 'Write your post here...'
+                    : ($inputType === 'topic'
+                        ? 'What do you want to post about? e.g. \"Why most Nigerian founders undercharge\"'
+                        : ($inputType === 'transcript'
+                            ? 'Paste your transcript, voice note text, or meeting notes here...'
+                            : 'Describe your product, feature, or offer...')) }}"
                 style="width:100%; min-height:220px; padding:1rem; border:1.5px solid #E2E8F0; border-radius:12px; font-size:0.9rem; line-height:1.65; color:#0F172A; resize:vertical; font-family:inherit; outline:none; transition:border-color 0.15s; box-sizing:border-box;"
                 onfocus="this.style.borderColor='#7C3AED'"
                 onblur="this.style.borderColor='#E2E8F0'"
@@ -41,6 +66,15 @@
 
         {{-- Action row --}}
         <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+
+            {{-- AI Generate button (wired in Module 10) --}}
+            @if ($inputType !== 'manual')
+                <button type="button"
+                    x-on:click="aiPanel = true"
+                    style="display:flex; align-items:center; gap:0.5rem; padding:0.75rem 1.25rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer;">
+                    ✨ Generate posts
+                </button>
+            @endif
 
             {{-- Save as draft --}}
             <button wire:click="saveDraft" type="button"
