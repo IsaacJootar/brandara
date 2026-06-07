@@ -67,7 +67,7 @@
         {{-- Action row --}}
         <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
 
-            {{-- AI Generate button (wired in Module 10) --}}
+            {{-- AI Generate button --}}
             @if ($inputType !== 'manual')
                 <button type="button"
                     x-on:click="aiPanel = true"
@@ -89,7 +89,7 @@
                 @endif
             </button>
 
-            {{-- Schedule (placeholder — Module 07) --}}
+            {{-- Schedule (placeholder) --}}
             <button type="button" disabled
                 style="display:flex; align-items:center; gap:0.5rem; padding:0.75rem 1.25rem; background:#F8FAFC; color:#CBD5E1; font-size:0.875rem; font-weight:600; border:1px solid #E2E8F0; border-radius:10px; cursor:not-allowed;"
                 title="Complete brand setup first">

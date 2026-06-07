@@ -8,7 +8,7 @@
             </p>
         </div>
         <div style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.875rem; background:#F5F3FF; border:1px solid #EDE9FE; border-radius:8px; font-size:0.8rem; color:#7C3AED; font-weight:500;">
-            ✨ AI generation — Module 10
+            ✨ AI generation — coming soon
         </div>
     </div>
 
