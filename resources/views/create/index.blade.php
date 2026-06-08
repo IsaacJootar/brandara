@@ -25,6 +25,8 @@
         <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:0.875rem 1.125rem; margin-bottom:1.5rem; font-size:0.875rem; color:#16A34A;">{{ session('success') }}</div>
     @endif
 
+    @livewire('create.pillar-alert', ['brand' => $brand])
+
     <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:1.5rem; margin-bottom:1.75rem;">
         @livewire('post-composer', ['brand' => $brand])
     </div>

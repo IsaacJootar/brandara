@@ -98,6 +98,29 @@
             </div>
         @endif
 
+        {{-- Pillar selector --}}
+        @if($pillars->isNotEmpty())
+            <div style="margin-bottom:1rem;">
+                <label style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#94A3B8; display:block; margin-bottom:0.5rem;">Content pillar</label>
+                <div style="display:flex; flex-wrap:wrap; gap:0.375rem;">
+                    <button type="button" wire:click="$set('pillarId', null)"
+                        style="font-size:0.78rem; font-weight:500; padding:0.3rem 0.75rem; border-radius:99px; cursor:pointer; transition:all 0.15s;
+                               {{ is_null($pillarId) ? 'background:#0F172A; color:#fff; border:1px solid #0F172A;' : 'background:#F8FAFC; color:#64748B; border:1px solid #E2E8F0;' }}">
+                        None
+                    </button>
+                    @foreach($pillars as $pillar)
+                        <button type="button" wire:click="$set('pillarId', '{{ $pillar->id }}')"
+                            style="font-size:0.78rem; font-weight:500; padding:0.3rem 0.75rem; border-radius:99px; cursor:pointer; transition:all 0.15s;
+                                   {{ $pillarId === $pillar->id
+                                       ? 'background:' . $pillar->color . '; color:#fff; border:1px solid ' . $pillar->color . ';'
+                                       : 'background:#F8FAFC; color:#64748B; border:1px solid #E2E8F0;' }}">
+                            {{ $pillar->name }}
+                        </button>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         {{-- Action row --}}
         <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
 

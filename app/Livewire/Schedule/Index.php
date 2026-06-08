@@ -232,6 +232,7 @@ class Index extends Component
                 $q->whereBetween('scheduled_at', [$gridStart->copy()->utc(), $gridEnd->copy()->utc()])
                     ->orWhereBetween('published_at', [$gridStart->copy()->utc(), $gridEnd->copy()->utc()]);
             })
+            ->with('contentPillar')
             ->get()
             ->groupBy(function ($post) use ($tz) {
                 $when = $post->scheduled_at ?? $post->published_at;

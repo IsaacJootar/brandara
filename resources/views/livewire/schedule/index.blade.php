@@ -167,13 +167,11 @@
                         <div style="display:flex; flex-direction:column; gap:0.2rem; margin-top:0.3rem;">
                             @foreach ($day['posts'] as $post)
                                 @php
-                                    $color = match ($post->status) {
-                                        'published' => '#16A34A',
-                                        'failed'    => '#DC2626',
-                                        default     => '#7C3AED',
-                                    };
+                                    $color = $post->status === 'published' ? '#16A34A'
+                                           : ($post->status === 'failed'   ? '#DC2626'
+                                           : ($post->contentPillar?->color ?? '#7C3AED'));
                                 @endphp
-                                <div title="{{ \Illuminate\Support\Str::limit($post->raw_input ?? '', 80) }}"
+                                <div title="{{ ($post->contentPillar?->name ? '[' . $post->contentPillar->name . '] ' : '') . \Illuminate\Support\Str::limit($post->raw_input ?? '', 80) }}"
                                     style="font-size:0.68rem; padding:0.2rem 0.4rem; background:{{ $color }}1A; color:{{ $color }}; border-left:2px solid {{ $color }}; border-radius:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                                     @if ($post->scheduled_at) {{ $post->scheduled_at->setTimezone($brandTimezone)->format('g:i A') }} @endif
                                     {{ \Illuminate\Support\Str::limit($post->raw_input ?? '', 24) }}

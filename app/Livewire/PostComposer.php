@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Brand;
+use App\Models\ContentPillar;
 use App\Models\Post;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
@@ -26,6 +27,8 @@ class PostComposer extends Component
     public array $platforms = ['linkedin'];
 
     public ?string $savedDraftId = null;
+
+    public ?string $pillarId = null;
 
     public string $saveStatus = '';
 
@@ -150,6 +153,7 @@ class PostComposer extends Component
                 'ai_generated' => false,
                 'platform_contents' => $platformContents,
                 'tone' => $this->tone,
+                'content_pillar_id' => $this->pillarId ?: null,
                 'status' => 'draft',
             ]
         );
@@ -209,10 +213,16 @@ class PostComposer extends Component
 
     public function render()
     {
+        $pillars = ContentPillar::where('brand_id', $this->brandId)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+
         return view('livewire.post-composer', [
             'charCount' => $this->charCount(),
             'tightestLimit' => $this->tightestLimit(),
             'overLimitPlatforms' => $this->overLimitPlatforms(),
+            'pillars' => $pillars,
         ]);
     }
 }
