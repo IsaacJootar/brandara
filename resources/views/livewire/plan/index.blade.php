@@ -207,16 +207,8 @@
     {{-- ═══════════════════ CAMPAIGNS TAB ═══════════════════ --}}
     @elseif ($tab === 'campaigns')
 
-        <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-bottom:1rem;">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:1rem;">
             @if (! $showCampaignForm)
-                <button type="button"
-                    x-on:click="document.getElementById('pack-library').scrollIntoView({ behavior: 'smooth', block: 'start' })"
-                    style="padding:0.55rem 1rem; background:#F5F3FF; color:#7C3AED; font-size:0.83rem; font-weight:600; border:1px solid #DDD6FE; border-radius:9px; cursor:pointer; display:flex; align-items:center; gap:0.375rem;">
-                    <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                    Campaign Packs
-                </button>
                 <button wire:click="openCampaignForm()" type="button"
                     style="padding:0.55rem 1rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.83rem; font-weight:600; border:none; border-radius:9px; cursor:pointer;">
                     + New campaign
