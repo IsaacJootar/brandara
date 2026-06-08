@@ -4,11 +4,9 @@ namespace App\Livewire\MyBrand;
 
 use App\Models\Brand;
 use Illuminate\View\View;
-use Livewire\Attributes\Lazy;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-#[Lazy]
 class CompletionScore extends Component
 {
     public string $brandId = '';

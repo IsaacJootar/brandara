@@ -4,10 +4,8 @@ namespace App\Livewire\MyBrand;
 
 use App\Models\Brand;
 use Illuminate\View\View;
-use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
-#[Lazy]
 class BrandKit extends Component
 {
     public string $brandId = '';

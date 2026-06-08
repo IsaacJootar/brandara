@@ -6,10 +6,8 @@ use App\Models\Brand;
 use App\Services\Ai\AiProviderException;
 use App\Services\BrandVoice\BrandVoiceService;
 use Illuminate\View\View;
-use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
-#[Lazy]
 class BrandVoice extends Component
 {
     public string $brandId = '';

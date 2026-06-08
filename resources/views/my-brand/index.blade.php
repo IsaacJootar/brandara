@@ -9,29 +9,39 @@
     {{-- Completion score --}}
     @livewire('my-brand.completion-score', ['brand' => $currentBrand])
 
-    {{-- Tab nav --}}
+    {{-- Tabs --}}
     <div x-data="{ tab: 'kit' }">
 
-        <div class="tabs tabs-bordered overflow-x-auto">
-            <button class="tab font-semibold" :class="tab === 'kit' ? 'tab-active' : ''" x-on:click="tab = 'kit'">Brand Kit</button>
-            <button class="tab font-semibold" :class="tab === 'profile' ? 'tab-active' : ''" x-on:click="tab = 'profile'">Brand Profile</button>
-            <button class="tab font-semibold" :class="tab === 'voice' ? 'tab-active' : ''" x-on:click="tab = 'voice'">Brand Voice</button>
+        {{-- Tab buttons --}}
+        <div class="flex gap-0 border-b border-base-300 mb-6 overflow-x-auto">
+            <button
+                x-on:click="tab = 'kit'"
+                :class="tab === 'kit' ? 'border-b-2 border-primary text-primary font-semibold' : 'text-base-content/50 hover:text-neutral'"
+                class="px-5 py-3 text-sm font-medium whitespace-nowrap transition-colors"
+            >Brand Kit</button>
+            <button
+                x-on:click="tab = 'profile'"
+                :class="tab === 'profile' ? 'border-b-2 border-primary text-primary font-semibold' : 'text-base-content/50 hover:text-neutral'"
+                class="px-5 py-3 text-sm font-medium whitespace-nowrap transition-colors"
+            >Brand Profile</button>
+            <button
+                x-on:click="tab = 'voice'"
+                :class="tab === 'voice' ? 'border-b-2 border-primary text-primary font-semibold' : 'text-base-content/50 hover:text-neutral'"
+                class="px-5 py-3 text-sm font-medium whitespace-nowrap transition-colors"
+            >Brand Voice</button>
         </div>
 
-        <div class="mt-6">
+        {{-- Tab panels --}}
+        <div x-show="tab === 'kit'">
+            @livewire('my-brand.brand-kit', ['brand' => $currentBrand])
+        </div>
 
-            <div x-show="tab === 'kit'" x-cloak>
-                @livewire('my-brand.brand-kit', ['brand' => $currentBrand])
-            </div>
+        <div x-show="tab === 'profile'">
+            @livewire('my-brand.brand-profile', ['brand' => $currentBrand])
+        </div>
 
-            <div x-show="tab === 'profile'" x-cloak>
-                @livewire('my-brand.brand-profile', ['brand' => $currentBrand])
-            </div>
-
-            <div x-show="tab === 'voice'" x-cloak>
-                @livewire('my-brand.brand-voice', ['brand' => $currentBrand])
-            </div>
-
+        <div x-show="tab === 'voice'">
+            @livewire('my-brand.brand-voice', ['brand' => $currentBrand])
         </div>
 
     </div>
