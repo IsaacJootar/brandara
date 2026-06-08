@@ -20,7 +20,7 @@
         </div>
     @endif
 
-    <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:1.75rem; display:flex; flex-direction:column; gap:1.25rem;">
+    <div style="background:#F5F3FF; border:1px solid #EDE9FE; border-radius:16px; padding:1.75rem; display:flex; flex-direction:column; gap:1.25rem;">
 
         {{-- Vision --}}
         <div>
@@ -98,7 +98,7 @@
         </div>
 
         {{-- Save button --}}
-        <div style="display:flex; justify-content:flex-end; padding-top:0.5rem; border-top:1px solid #F1F5F9;">
+        <div style="display:flex; justify-content:flex-end; padding-top:0.5rem; border-top:1px solid #DDD6FE;">
             <button wire:click="save" wire:loading.attr="disabled" wire:target="save"
                 style="padding:0.75rem 1.75rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; transition:opacity 0.15s; display:flex; align-items:center; gap:0.5rem;"
                 onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">

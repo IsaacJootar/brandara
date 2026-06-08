@@ -1,92 +1,94 @@
-<div class="space-y-6">
+<div>
 
     {{-- Header --}}
-    <div>
-        <h2 class="text-lg font-bold text-neutral">Brand Voice</h2>
-        <p class="text-sm text-base-content/60 mt-0.5">
-            Paste 10–20 of your best posts. Your Brand Voice profile is used in every piece of AI-generated content to make it sound like <em>you</em>.
-        </p>
+    <div style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">Brand Voice</h2>
+        <p style="font-size:0.83rem; color:#94A3B8; margin:0;">Paste 10–20 of your best posts. The AI learns your exact writing style and uses it in every generated post.</p>
     </div>
 
-    {{-- ── TRAINED STATE ─────────────────────────────────────────────────── --}}
+    {{-- ── TRAINED STATE ──────────────────────────────────────────────────── --}}
     @if ($status === 'trained' && count($profile))
-        <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 space-y-4">
 
-            {{-- Status badge --}}
-            <div class="flex items-center justify-between flex-wrap gap-3">
-                <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-                    <span class="text-sm font-semibold text-emerald-800">Brand Voice active</span>
+        <div style="background:#ECFDF5; border:1px solid #A7F3D0; border-radius:16px; padding:1.25rem; display:flex; flex-direction:column; gap:1rem;">
+
+            {{-- Status row --}}
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span style="width:9px; height:9px; border-radius:50%; background:#10B981; display:inline-block; flex-shrink:0;"></span>
+                    <span style="font-size:0.875rem; font-weight:700; color:#065F46;">Brand Voice active</span>
                     @if($brand->voice_samples_count)
-                        <span class="text-xs text-emerald-600">&mdash; trained on {{ $brand->voice_samples_count }} post{{ $brand->voice_samples_count !== 1 ? 's' : '' }}</span>
+                        <span style="font-size:0.78rem; color:#059669;">&mdash; trained on {{ $brand->voice_samples_count }} post{{ $brand->voice_samples_count !== 1 ? 's' : '' }}</span>
                     @endif
                 </div>
-                <button wire:click="retrain" class="btn btn-sm btn-ghost text-emerald-700 border border-emerald-300 hover:bg-emerald-100">
+                <button wire:click="retrain"
+                    style="font-size:0.8rem; font-weight:500; color:#065F46; background:#fff; border:1px solid #A7F3D0; border-radius:8px; padding:0.375rem 0.875rem; cursor:pointer; transition:opacity 0.15s;"
+                    onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
                     Update voice
                 </button>
             </div>
 
             {{-- Writing summary --}}
             @if(!empty($profile['writing_summary']))
-                <div class="bg-white rounded-xl p-4 border border-emerald-100">
-                    <p class="text-xs font-semibold text-base-content/50 uppercase tracking-wide mb-1">Writing summary</p>
-                    <p class="text-sm text-neutral leading-relaxed">{{ $profile['writing_summary'] }}</p>
+                <div style="background:#fff; border:1px solid #D1FAE5; border-radius:12px; padding:1rem;">
+                    <p style="font-size:0.7rem; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:0.06em; margin:0 0 0.375rem;">Writing summary</p>
+                    <p style="font-size:0.875rem; color:#0F172A; line-height:1.6; margin:0;">{{ $profile['writing_summary'] }}</p>
                 </div>
             @endif
 
             {{-- Profile grid --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.625rem;">
 
                 @if(!empty($profile['sentence_length']))
-                <div class="bg-white rounded-xl p-3 border border-emerald-100">
-                    <p class="text-xs text-base-content/50 mb-0.5">Sentence style</p>
-                    <p class="text-sm font-medium text-neutral capitalize">{{ $profile['sentence_length'] }} sentences &mdash; {{ $profile['sentence_rhythm'] ?? '' }}</p>
+                <div style="background:#fff; border:1px solid #D1FAE5; border-radius:10px; padding:0.75rem;">
+                    <p style="font-size:0.7rem; color:#94A3B8; margin:0 0 0.25rem;">Sentence style</p>
+                    <p style="font-size:0.825rem; font-weight:600; color:#0F172A; margin:0; text-transform:capitalize;">{{ $profile['sentence_length'] }}{{ !empty($profile['sentence_rhythm']) ? ' — ' . $profile['sentence_rhythm'] : '' }}</p>
                 </div>
                 @endif
 
                 @if(!empty($profile['vocabulary_level']))
-                <div class="bg-white rounded-xl p-3 border border-emerald-100">
-                    <p class="text-xs text-base-content/50 mb-0.5">Vocabulary</p>
-                    <p class="text-sm font-medium text-neutral capitalize">{{ $profile['vocabulary_level'] }}</p>
+                <div style="background:#fff; border:1px solid #D1FAE5; border-radius:10px; padding:0.75rem;">
+                    <p style="font-size:0.7rem; color:#94A3B8; margin:0 0 0.25rem;">Vocabulary</p>
+                    <p style="font-size:0.825rem; font-weight:600; color:#0F172A; margin:0; text-transform:capitalize;">{{ $profile['vocabulary_level'] }}</p>
                 </div>
                 @endif
 
                 @if(!empty($profile['structure_preference']))
-                <div class="bg-white rounded-xl p-3 border border-emerald-100">
-                    <p class="text-xs text-base-content/50 mb-0.5">Structure</p>
-                    <p class="text-sm font-medium text-neutral capitalize">{{ $profile['structure_preference'] }}</p>
+                <div style="background:#fff; border:1px solid #D1FAE5; border-radius:10px; padding:0.75rem;">
+                    <p style="font-size:0.7rem; color:#94A3B8; margin:0 0 0.25rem;">Structure</p>
+                    <p style="font-size:0.825rem; font-weight:600; color:#0F172A; margin:0; text-transform:capitalize;">{{ $profile['structure_preference'] }}</p>
                 </div>
                 @endif
 
                 @if(!empty($profile['emoji_usage']))
-                <div class="bg-white rounded-xl p-3 border border-emerald-100">
-                    <p class="text-xs text-base-content/50 mb-0.5">Emoji usage</p>
-                    <p class="text-sm font-medium text-neutral capitalize">{{ $profile['emoji_usage'] }}</p>
-                </div>
-                @endif
-
-                @if(!empty($profile['tone_characteristics']))
-                <div class="bg-white rounded-xl p-3 border border-emerald-100 sm:col-span-2">
-                    <p class="text-xs text-base-content/50 mb-1.5">Tone</p>
-                    <div class="flex flex-wrap gap-2">
-                        @foreach($profile['tone_characteristics'] as $key => $value)
-                            <span class="badge badge-sm border border-emerald-200 bg-emerald-50 text-emerald-700 capitalize">
-                                {{ str_replace('_', ' ', $key) }}: {{ $value }}
-                            </span>
-                        @endforeach
-                    </div>
+                <div style="background:#fff; border:1px solid #D1FAE5; border-radius:10px; padding:0.75rem;">
+                    <p style="font-size:0.7rem; color:#94A3B8; margin:0 0 0.25rem;">Emoji usage</p>
+                    <p style="font-size:0.825rem; font-weight:600; color:#0F172A; margin:0; text-transform:capitalize;">{{ $profile['emoji_usage'] }}</p>
                 </div>
                 @endif
 
             </div>
 
+            {{-- Tone --}}
+            @if(!empty($profile['tone_characteristics']))
+                <div style="background:#fff; border:1px solid #D1FAE5; border-radius:10px; padding:0.75rem;">
+                    <p style="font-size:0.7rem; color:#94A3B8; margin:0 0 0.5rem;">Tone</p>
+                    <div style="display:flex; flex-wrap:wrap; gap:0.375rem;">
+                        @foreach($profile['tone_characteristics'] as $key => $value)
+                            <span style="font-size:0.72rem; font-weight:500; color:#065F46; background:#D1FAE5; border:1px solid #A7F3D0; padding:0.2rem 0.625rem; border-radius:99px; text-transform:capitalize;">
+                                {{ str_replace('_', ' ', $key) }}: {{ $value }}
+                            </span>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             {{-- Signature phrases --}}
             @if(!empty($profile['signature_phrases']) && count($profile['signature_phrases']))
-                <div class="bg-white rounded-xl p-3 border border-emerald-100">
-                    <p class="text-xs text-base-content/50 mb-1.5">Signature phrases</p>
-                    <div class="flex flex-wrap gap-2">
+                <div style="background:#fff; border:1px solid #D1FAE5; border-radius:10px; padding:0.75rem;">
+                    <p style="font-size:0.7rem; color:#94A3B8; margin:0 0 0.5rem;">Signature phrases</p>
+                    <div style="display:flex; flex-wrap:wrap; gap:0.375rem;">
                         @foreach($profile['signature_phrases'] as $phrase)
-                            <span class="badge badge-ghost text-xs">&ldquo;{{ $phrase }}&rdquo;</span>
+                            <span style="font-size:0.78rem; color:#374151; background:#F8FAFC; border:1px solid #E2E8F0; padding:0.2rem 0.625rem; border-radius:6px;">&ldquo;{{ $phrase }}&rdquo;</span>
                         @endforeach
                     </div>
                 </div>
@@ -94,11 +96,11 @@
 
             {{-- Preferred words --}}
             @if(!empty($profile['preferred_words']) && count($profile['preferred_words']))
-                <div class="bg-white rounded-xl p-3 border border-emerald-100">
-                    <p class="text-xs text-base-content/50 mb-1.5">Words you use</p>
-                    <div class="flex flex-wrap gap-1.5">
+                <div style="background:#fff; border:1px solid #D1FAE5; border-radius:10px; padding:0.75rem;">
+                    <p style="font-size:0.7rem; color:#94A3B8; margin:0 0 0.5rem;">Words you use</p>
+                    <div style="display:flex; flex-wrap:wrap; gap:0.375rem;">
                         @foreach($profile['preferred_words'] as $word)
-                            <span class="badge badge-sm bg-emerald-100 text-emerald-700 border-0">{{ $word }}</span>
+                            <span style="font-size:0.72rem; font-weight:500; color:#065F46; background:#D1FAE5; padding:0.2rem 0.5rem; border-radius:99px;">{{ $word }}</span>
                         @endforeach
                     </div>
                 </div>
@@ -106,75 +108,69 @@
 
         </div>
 
-    {{-- ── TRAINING STATE ────────────────────────────────────────────────── --}}
+    {{-- ── TRAINING STATE ─────────────────────────────────────────────────── --}}
     @elseif($status === 'training')
-        <div class="rounded-2xl border border-base-300 bg-base-100 p-8 text-center space-y-3">
-            <span class="loading loading-spinner loading-md text-primary"></span>
-            <p class="text-sm font-medium text-neutral">Analysing your writing style&hellip;</p>
-            <p class="text-xs text-base-content/50">This takes about 10–15 seconds.</p>
+        <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:3rem 1.5rem; text-align:center;">
+            <div style="width:32px; height:32px; border:3px solid #E2E8F0; border-top-color:#7C3AED; border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 1rem;"></div>
+            <p style="font-size:0.9rem; font-weight:600; color:#0F172A; margin:0 0 0.25rem;">Analysing your writing style…</p>
+            <p style="font-size:0.8rem; color:#94A3B8; margin:0;">This takes about 10–15 seconds.</p>
         </div>
 
-    {{-- ── ERROR STATE ───────────────────────────────────────────────────── --}}
+    {{-- ── ERROR STATE ────────────────────────────────────────────────────── --}}
     @elseif($status === 'error')
-        <div class="rounded-2xl border border-red-200 bg-red-50 p-4 flex gap-3">
-            <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:1rem; display:flex; gap:0.75rem;">
+            <svg style="width:18px; height:18px; color:#EF4444; flex-shrink:0; margin-top:1px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             <div>
-                <p class="text-sm font-medium text-red-800">{{ $errorMessage }}</p>
-                <button wire:click="retrain" class="text-xs text-red-600 underline mt-1">Try again</button>
+                <p style="font-size:0.875rem; font-weight:500; color:#991B1B; margin:0 0 0.25rem;">{{ $errorMessage }}</p>
+                <button wire:click="retrain" style="font-size:0.8rem; color:#DC2626; background:none; border:none; cursor:pointer; padding:0; text-decoration:underline;">Try again</button>
             </div>
         </div>
 
-    {{-- ── IDLE STATE (default) ──────────────────────────────────────────── --}}
+    {{-- ── IDLE STATE ──────────────────────────────────────────────────────── --}}
     @else
-        <div class="rounded-2xl border border-base-300 bg-base-100 p-5 space-y-4">
+        <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:1.5rem; display:flex; flex-direction:column; gap:1rem;">
 
-            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2">
-                <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:10px; padding:0.875rem; display:flex; gap:0.625rem;">
+                <svg style="width:16px; height:16px; color:#D97706; flex-shrink:0; margin-top:1px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                <p class="text-xs text-amber-800 leading-relaxed">
-                    Paste posts you have already written — LinkedIn posts, captions, newsletters, anything. Separate each post with a blank line. The more you add, the more accurate the profile.
+                <p style="font-size:0.8rem; color:#92400E; line-height:1.5; margin:0;">
+                    Paste posts you have already written — LinkedIn posts, captions, newsletters, anything. Separate each post with a blank line. The more you add, the more accurate your profile.
                 </p>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-neutral mb-1.5">
+                <label style="display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.375rem;">
                     Your writing samples
-                    <span class="text-base-content/40 font-normal">&nbsp;(10–20 posts recommended)</span>
+                    <span style="font-weight:400; color:#94A3B8;">&nbsp;(10–20 posts recommended)</span>
                 </label>
-                <textarea
-                    wire:model="samples"
-                    rows="10"
+                <textarea wire:model="samples" rows="10"
                     placeholder="Paste your posts here, one per paragraph. Separate each post with a blank line.
 
 Example:
 Running a business in Lagos is not for the faint-hearted. Three power cuts before 9am and I still closed two deals. Here is what actually keeps me going...
 
 The biggest mistake I see founders make is pricing for survival instead of pricing for value. When you charge what you need to survive, you attract clients who see you as a cost. Charge what you are worth and you attract clients who see you as an investment."
-                    class="textarea textarea-bordered w-full text-sm leading-relaxed resize-none focus:outline-none focus:border-primary"
-                ></textarea>
+                    class="auth-input" style="font-size:0.875rem; resize:vertical; min-height:220px; line-height:1.6;"></textarea>
             </div>
 
-            <button
-                wire:click="train"
-                wire:loading.attr="disabled"
-                wire:target="train"
-                class="btn btn-primary w-full sm:w-auto"
-                data-loading-form
-            >
-                <span wire:loading.remove wire:target="train" class="btn-label flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.347.347a3.5 3.5 0 01-4.95 0l-.347-.347z"/>
-                    </svg>
-                    Analyse my writing style
-                </span>
-                <span wire:loading wire:target="train" class="btn-loading flex items-center gap-2">
-                    <span class="loading loading-spinner loading-xs"></span>
-                    Analysing&hellip;
-                </span>
-            </button>
+            <div>
+                <button wire:click="train" wire:loading.attr="disabled" wire:target="train"
+                    style="padding:0.75rem 1.75rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:0.5rem; transition:opacity 0.15s;"
+                    onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                    <span wire:loading.remove wire:target="train" style="display:flex; align-items:center; gap:0.5rem;">
+                        <svg style="width:16px; height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.347.347a3.5 3.5 0 01-4.95 0l-.347-.347z"/>
+                        </svg>
+                        Analyse my writing style
+                    </span>
+                    <span wire:loading wire:target="train" style="display:flex; align-items:center; gap:0.5rem;">
+                        <span class="btn-spinner"></span> Analysing…
+                    </span>
+                </button>
+            </div>
 
         </div>
     @endif
