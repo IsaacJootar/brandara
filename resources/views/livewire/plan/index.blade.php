@@ -341,14 +341,33 @@
                         </div>
                     </div>
 
-                    <div style="display:flex; gap:0.4rem; flex-shrink:0;">
+                    <div style="display:flex; gap:0.375rem; flex-shrink:0; align-items:center;">
+                        @if($postCount > 0)
+                            <a href="{{ route('schedule', ['brand' => request()->route('brand')]) }}"
+                                style="font-size:0.75rem; font-weight:600; color:#7C3AED; background:rgba(255,255,255,0.85); border:1px solid {{ $c['border'] }}; padding:0.35rem 0.7rem; border-radius:7px; cursor:pointer; text-decoration:none; display:flex; align-items:center; gap:0.3rem;">
+                                <svg style="width:12px;height:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                                View posts
+                            </a>
+                        @else
+                            <button type="button" wire:click="openPackFormForCampaign('{{ $campaign->id }}')"
+                                style="font-size:0.75rem; font-weight:500; color:#7C3AED; background:rgba(255,255,255,0.85); border:1px solid {{ $c['border'] }}; padding:0.35rem 0.7rem; border-radius:7px; cursor:pointer; display:flex; align-items:center; gap:0.3rem;">
+                                <svg style="width:12px;height:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                Generate posts
+                            </button>
+                        @endif
                         <button wire:click="openCampaignForm('{{ $campaign->id }}')" type="button"
                             style="font-size:0.75rem; color:#475569; background:rgba(255,255,255,0.7); border:1px solid {{ $c['border'] }}; padding:0.35rem 0.7rem; border-radius:7px; cursor:pointer;">
                             Edit
                         </button>
                         <button wire:click="archiveCampaign('{{ $campaign->id }}')" wire:confirm="Archive this campaign?" type="button"
-                            style="font-size:0.75rem; color:#94A3B8; background:none; border:none; cursor:pointer; padding:0.35rem 0.5rem;">
-                            Archive
+                            style="font-size:0.75rem; color:#CBD5E1; background:none; border:none; cursor:pointer; padding:0.35rem 0.375rem;">
+                            <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -383,16 +402,46 @@
         {{-- ── Campaign Pack Library ────────────────────────────────────────── --}}
         @if(!$activatingPackKey)
             <div style="margin-top:2rem; padding-top:1.5rem; border-top:1px solid #E2E8F0;">
+
+                {{-- Explainer --}}
+                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:1rem 1.125rem; margin-bottom:1.25rem; display:flex; gap:0.75rem; align-items:flex-start;">
+                    <svg style="width:18px;height:18px;color:#7C3AED;flex-shrink:0;margin-top:1px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    <div>
+                        <p style="font-size:0.83rem; font-weight:600; color:#0F172A; margin:0 0 0.2rem;">What are campaign packs?</p>
+                        <p style="font-size:0.78rem; color:#64748B; margin:0; line-height:1.5;">Packs are ready-made campaign blueprints. Pick one, type your key message, and AI writes all the posts for you — one per day, adapted for every platform you choose. Your campaigns above are the ones you created manually.</p>
+                    </div>
+                </div>
+
                 <div style="margin-bottom:1rem;">
                     <h3 style="font-size:0.95rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">Campaign Packs</h3>
-                    <p style="font-size:0.8rem; color:#94A3B8; margin:0;">Ready-made campaign templates. Pick one, add your offer, and AI builds the full post sequence.</p>
+                    <p style="font-size:0.8rem; color:#94A3B8; margin:0;">Pick a template, add your message, and AI generates the full post sequence instantly.</p>
                 </div>
 
                 @php
                     $categories = [
-                        'african_holiday' => ['label' => '🌍 African Holidays', 'color' => '#D97706', 'bg' => '#FFFBEB', 'border' => '#FDE68A'],
-                        'seasonal' => ['label' => '📅 Seasonal', 'color' => '#0369A1', 'bg' => '#EFF6FF', 'border' => '#BFDBFE'],
-                        'business' => ['label' => '🚀 Business Events', 'color' => '#7C3AED', 'bg' => '#F5F3FF', 'border' => '#DDD6FE'],
+                        'cultural' => [
+                            'label' => 'Cultural & National',
+                            'color' => '#0D9488',
+                            'bg' => '#F0FDFA',
+                            'border' => '#99F6E4',
+                            'icon' => '<svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+                        ],
+                        'seasonal' => [
+                            'label' => 'Seasonal',
+                            'color' => '#0369A1',
+                            'bg' => '#EFF6FF',
+                            'border' => '#BFDBFE',
+                            'icon' => '<svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',
+                        ],
+                        'business' => [
+                            'label' => 'Business Events',
+                            'color' => '#7C3AED',
+                            'bg' => '#F5F3FF',
+                            'border' => '#DDD6FE',
+                            'icon' => '<svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>',
+                        ],
                     ];
                     $grouped = collect($allPacks)->groupBy('category');
                 @endphp
@@ -400,23 +449,29 @@
                 @foreach($categories as $catKey => $cat)
                     @if($grouped->has($catKey))
                         <div style="margin-bottom:1.5rem;">
-                            <div style="font-size:0.75rem; font-weight:700; color:{{ $cat['color'] }}; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.625rem;">{{ $cat['label'] }}</div>
+                            <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.625rem;">
+                                <span style="color:{{ $cat['color'] }};">{!! $cat['icon'] !!}</span>
+                                <span style="font-size:0.75rem; font-weight:700; color:{{ $cat['color'] }}; text-transform:uppercase; letter-spacing:0.06em;">{{ $cat['label'] }}</span>
+                            </div>
                             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:0.625rem;">
                                 @foreach($grouped[$catKey] as $packKey => $pack)
-                                    <div style="background:{{ $cat['bg'] }}; border:1px solid {{ $cat['border'] }}; border-radius:12px; padding:1rem; display:flex; flex-direction:column; gap:0.5rem;">
+                                    <div style="background:{{ $cat['bg'] }}; border:1px solid {{ $cat['border'] }}; border-radius:12px; padding:1rem; display:flex; flex-direction:column; gap:0.625rem;">
                                         <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:0.5rem;">
-                                            <div>
-                                                <div style="font-size:0.875rem; font-weight:600; color:#0F172A;">{{ $pack['emoji'] }} {{ $pack['name'] }}</div>
-                                                <div style="font-size:0.72rem; color:#64748B; margin-top:0.2rem; line-height:1.45;">{{ $pack['description'] }}</div>
+                                            <div style="flex:1;">
+                                                <div style="font-size:0.875rem; font-weight:600; color:#0F172A;">{{ $pack['name'] }}</div>
+                                                <div style="font-size:0.72rem; color:#64748B; margin-top:0.25rem; line-height:1.5;">{{ $pack['description'] }}</div>
                                             </div>
-                                            <span style="flex-shrink:0; font-size:0.68rem; font-weight:600; color:{{ $cat['color'] }}; background:{{ $cat['bg'] }}; border:1px solid {{ $cat['border'] }}; padding:0.15rem 0.5rem; border-radius:99px; white-space:nowrap;">
+                                            <span style="flex-shrink:0; font-size:0.68rem; font-weight:600; color:{{ $cat['color'] }}; background:#fff; border:1px solid {{ $cat['border'] }}; padding:0.15rem 0.5rem; border-radius:99px; white-space:nowrap;">
                                                 {{ $pack['duration_days'] }} days
                                             </span>
                                         </div>
                                         <button type="button" wire:click="openPackForm('{{ $packKey }}')"
-                                            style="width:100%; padding:0.5rem; background:#fff; border:1px solid {{ $cat['border'] }}; border-radius:8px; font-size:0.8rem; font-weight:600; color:{{ $cat['color'] }}; cursor:pointer; transition:opacity 0.15s; text-align:center;"
-                                            onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
-                                            Use this pack →
+                                            style="width:100%; padding:0.5rem; background:#fff; border:1px solid {{ $cat['border'] }}; border-radius:8px; font-size:0.8rem; font-weight:600; color:{{ $cat['color'] }}; cursor:pointer; transition:background 0.15s; text-align:center; display:flex; align-items:center; justify-content:center; gap:0.375rem;"
+                                            onmouseover="this.style.background='{{ $cat['bg'] }}'" onmouseout="this.style.background='#fff'">
+                                            <svg style="width:13px;height:13px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                            </svg>
+                                            Generate posts for this
                                         </button>
                                     </div>
                                 @endforeach
@@ -435,12 +490,16 @@
                     @if($packStatus === 'done')
                         {{-- Success state --}}
                         <div style="text-align:center; padding:1rem 0;">
-                            <div style="font-size:2rem; margin-bottom:0.75rem;">🎉</div>
-                            <div style="font-size:1.05rem; font-weight:700; color:#0F172A; margin-bottom:0.375rem;">Campaign created!</div>
-                            <p style="font-size:0.875rem; color:#64748B; margin:0 0 1.25rem;">
-                                <strong>{{ $generatedPostCount }} posts</strong> generated as drafts for the <strong>{{ $activePack['name'] }}</strong> campaign.
+                            <div style="width:56px;height:56px;background:#ECFDF5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                                <svg style="width:28px;height:28px;color:#059669;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                            <div style="font-size:1.05rem; font-weight:700; color:#0F172A; margin-bottom:0.375rem;">Posts generated!</div>
+                            <p style="font-size:0.875rem; color:#64748B; margin:0 0 0.75rem;">
+                                <strong>{{ $generatedPostCount }} post{{ $generatedPostCount !== 1 ? 's' : '' }}</strong> created as drafts for your <strong>{{ $activePack['name'] }}</strong> campaign.
                             </p>
-                            <p style="font-size:0.8rem; color:#94A3B8; margin:0 0 1.5rem;">Find them in <strong>Schedule → Not published yet</strong> to review and schedule each one.</p>
+                            <p style="font-size:0.8rem; color:#94A3B8; margin:0 0 1.5rem;">Go to <strong>Schedule</strong> to review, edit, and set the posting time for each one.</p>
                             <button type="button" wire:click="closePackForm"
                                 style="padding:0.75rem 2rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer;">
                                 Done

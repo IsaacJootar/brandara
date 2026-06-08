@@ -338,6 +338,28 @@ class Index extends Component
 
     // ── Pack actions ──────────────────────────────────────────────────────────
 
+    /**
+     * Open pack generation modal pre-filled from an existing campaign (no pack type).
+     * Uses the 'thought_leadership' pack as a generic template.
+     */
+    public function openPackFormForCampaign(string $campaignId): void
+    {
+        $campaign = Campaign::where('brand_id', $this->brandId)->find($campaignId);
+        abort_if(! $campaign, 403);
+
+        $packKey = $campaign->pack_key ?? 'thought_leadership';
+        $pack = config("campaign-packs.{$packKey}") ?? config('campaign-packs.thought_leadership');
+
+        $this->activatingPackKey = $packKey;
+        $this->packKeyMessage = $campaign->key_message ?? '';
+        $this->packStartDate = $campaign->start_date?->format('Y-m-d') ?? now()->format('Y-m-d');
+        $this->packPlatforms = $campaign->platforms ?? ['linkedin'];
+        $this->packStatus = 'idle';
+        $this->packError = '';
+        $this->generatedCampaignId = $campaignId;
+        $this->generatedPostCount = 0;
+    }
+
     public function openPackForm(string $packKey): void
     {
         $pack = config("campaign-packs.{$packKey}");

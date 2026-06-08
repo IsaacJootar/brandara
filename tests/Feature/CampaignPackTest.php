@@ -70,7 +70,7 @@ class CampaignPackTest extends TestCase
     public function test_pack_config_has_expected_keys(): void
     {
         $packs = config('campaign-packs');
-        $this->assertArrayHasKey('ng_independence', $packs);
+        $this->assertArrayHasKey('independence_day', $packs);
         $this->assertArrayHasKey('product_launch', $packs);
         $this->assertArrayHasKey('flash_sale', $packs);
     }
@@ -94,9 +94,9 @@ class CampaignPackTest extends TestCase
 
         $campaign = Campaign::create([
             'brand_id' => $brand->id,
-            'name' => 'Nigeria Independence Day',
+            'name' => 'Independence Day',
             'type' => 'pack',
-            'pack_key' => 'ng_independence',
+            'pack_key' => 'independence_day',
             'goal' => 'brand awareness',
             'key_message' => 'We are proud to be Nigerian-built.',
             'start_date' => '2025-09-27',
@@ -119,7 +119,7 @@ class CampaignPackTest extends TestCase
             ],
         ]);
 
-        $pack = config('campaign-packs.ng_independence');
+        $pack = config('campaign-packs.independence_day');
         $service = new CampaignPackService($this->mockProvider($responseJson));
         $result = $service->generate($campaign, $brand, $pack);
 
@@ -165,7 +165,7 @@ class CampaignPackTest extends TestCase
             ->test(Index::class, ['brand' => $brand])
             ->call('setTab', 'campaigns')
             ->assertSee('Campaign Packs')
-            ->assertSee('Nigeria Independence Day')
+            ->assertSee('Independence Day')
             ->assertSee('Product / Service Launch');
     }
 
