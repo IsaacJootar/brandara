@@ -1,41 +1,44 @@
 @php
-    $color = $percentage >= 80 ? 'bg-emerald-500' : ($percentage >= 40 ? 'bg-amber-400' : 'bg-red-400');
-    $textColor = $percentage >= 80 ? 'text-emerald-700' : ($percentage >= 40 ? 'text-amber-700' : 'text-red-600');
-    $bgColor = $percentage >= 80 ? 'bg-emerald-50 border-emerald-200' : ($percentage >= 40 ? 'bg-amber-50 border-amber-200' : 'bg-red-50 border-red-200');
-    $missing = array_filter($fields, fn($f) => !$f['done']);
+    $barColor   = $percentage >= 80 ? '#10B981' : ($percentage >= 40 ? '#F59E0B' : '#EF4444');
+    $textColor  = $percentage >= 80 ? '#065F46' : ($percentage >= 40 ? '#92400E' : '#991B1B');
+    $bgColor    = $percentage >= 80 ? '#ECFDF5' : ($percentage >= 40 ? '#FFFBEB' : '#FEF2F2');
+    $borderColor= $percentage >= 80 ? '#A7F3D0' : ($percentage >= 40 ? '#FDE68A' : '#FECACA');
+    $missing    = array_filter($fields, fn($f) => !$f['done']);
 @endphp
 
-<div class="rounded-2xl border {{ $bgColor }} p-4 mb-6">
-    <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+<div style="background:{{ $bgColor }}; border:1px solid {{ $borderColor }}; border-radius:14px; padding:1rem 1.25rem; margin-bottom:1.5rem;">
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.625rem; flex-wrap:wrap; gap:0.5rem;">
         <div>
-            <span class="text-sm font-semibold {{ $textColor }}">
+            <span style="font-size:0.85rem; font-weight:700; color:{{ $textColor }};">
                 Brand profile {{ $percentage }}% complete
             </span>
             @if($percentage < 100 && count($missing))
-                <span class="text-xs text-base-content/50 ml-2">— {{ count($missing) }} field{{ count($missing) !== 1 ? 's' : '' }} left</span>
+                <span style="font-size:0.78rem; color:#94A3B8; margin-left:0.5rem;">— {{ count($missing) }} field{{ count($missing) !== 1 ? 's' : '' }} left</span>
             @endif
         </div>
         @if($percentage === 100)
-            <span class="badge badge-success badge-sm">All done</span>
+            <span style="font-size:0.72rem; font-weight:600; color:#065F46; background:#D1FAE5; padding:0.2rem 0.625rem; border-radius:99px;">All done</span>
         @endif
     </div>
 
     {{-- Progress bar --}}
-    <div class="w-full bg-base-200 rounded-full h-2 mb-3">
-        <div class="{{ $color }} h-2 rounded-full transition-all duration-500" style="width: {{ $percentage }}%"></div>
+    <div style="width:100%; background:#E2E8F0; border-radius:99px; height:6px; margin-bottom:0.75rem;">
+        <div style="background:{{ $barColor }}; height:6px; border-radius:99px; transition:width 0.5s ease; width:{{ $percentage }}%;"></div>
     </div>
 
-    {{-- Missing fields --}}
+    {{-- Missing field chips --}}
     @if($percentage < 100 && count($missing))
-        <div class="flex flex-wrap gap-1.5">
-            @foreach($missing as $key => $field)
-                <span class="badge badge-sm badge-ghost text-base-content/50">
+        <div style="display:flex; flex-wrap:wrap; gap:0.375rem; margin-bottom:0.375rem;">
+            @foreach($missing as $field)
+                <span style="font-size:0.72rem; color:#64748B; background:#F1F5F9; border:1px solid #E2E8F0; padding:0.15rem 0.5rem; border-radius:99px;">
                     {{ $field['label'] }}
                 </span>
             @endforeach
         </div>
-        <p class="text-xs text-base-content/40 mt-2">Fill in these fields to improve your AI content quality.</p>
+        <p style="font-size:0.75rem; color:#94A3B8; margin:0;">Fill in these fields to improve your AI content quality.</p>
     @else
-        <p class="text-xs {{ $textColor }}">Your brand is fully set up. Every AI post now has full context.</p>
+        <p style="font-size:0.78rem; color:{{ $textColor }}; margin:0;">Your brand is fully set up. Every AI post now has full context.</p>
     @endif
+
 </div>
