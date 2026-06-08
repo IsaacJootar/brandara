@@ -333,7 +333,10 @@
                         <div style="font-size:0.75rem; color:#475569; margin-top:0.2rem; line-height:1.5;">{{ Str::limit($campaign->key_message, 100) }}</div>
                         <div style="font-size:0.7rem; color:#94A3B8; margin-top:0.35rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
                             @if ($campaign->start_date)
-                                <span>📅 {{ $campaign->start_date->format('M j') }} – {{ $campaign->end_date?->format('M j, Y') }}</span>
+                                <span style="display:inline-flex;align-items:center;gap:0.25rem;">
+                                    <svg style="width:11px;height:11px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    {{ $campaign->start_date->format('M j') }} – {{ $campaign->end_date?->format('M j, Y') }}
+                                </span>
                             @endif
                             @if ($campaign->platforms)
                                 <span>{{ implode(' · ', array_map('ucfirst', $campaign->platforms)) }}</span>
@@ -352,11 +355,11 @@
                             </a>
                         @else
                             <button type="button" wire:click="openPackFormForCampaign('{{ $campaign->id }}')"
-                                style="font-size:0.75rem; font-weight:500; color:#7C3AED; background:rgba(255,255,255,0.85); border:1px solid {{ $c['border'] }}; padding:0.35rem 0.7rem; border-radius:7px; cursor:pointer; display:flex; align-items:center; gap:0.3rem;">
+                                style="font-size:0.75rem; font-weight:600; color:#7C3AED; background:rgba(255,255,255,0.85); border:1px solid {{ $c['border'] }}; padding:0.35rem 0.7rem; border-radius:7px; cursor:pointer; display:flex; align-items:center; gap:0.3rem;">
                                 <svg style="width:12px;height:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                 </svg>
-                                Generate posts
+                                Generate campaign for this
                             </button>
                         @endif
                         <button wire:click="openCampaignForm('{{ $campaign->id }}')" type="button"
@@ -364,10 +367,8 @@
                             Edit
                         </button>
                         <button wire:click="archiveCampaign('{{ $campaign->id }}')" wire:confirm="Archive this campaign?" type="button"
-                            style="font-size:0.75rem; color:#CBD5E1; background:none; border:none; cursor:pointer; padding:0.35rem 0.375rem;">
-                            <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
-                            </svg>
+                            style="font-size:0.75rem; color:#94A3B8; background:none; border:none; cursor:pointer; padding:0.35rem 0.5rem;">
+                            Archive this
                         </button>
                     </div>
                 </div>
