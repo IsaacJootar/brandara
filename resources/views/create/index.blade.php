@@ -7,9 +7,18 @@
                 Write a post for <strong style="color:#0F172A;">{{ $brand->name }}</strong>
             </p>
         </div>
-        <div style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.875rem; background:#F5F3FF; border:1px solid #EDE9FE; border-radius:8px; font-size:0.8rem; color:#7C3AED; font-weight:500;">
-            ✨ AI generation — coming soon
-        </div>
+        @if($brand->brand_voice)
+            <a href="{{ route('my-brand', ['brand' => $brand->slug]) }}"
+               style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.875rem; background:#ECFDF5; border:1px solid #A7F3D0; border-radius:8px; font-size:0.8rem; color:#059669; font-weight:500; text-decoration:none;">
+                <span style="width:8px;height:8px;border-radius:50%;background:#10B981;display:inline-block;"></span>
+                Brand Voice active
+            </a>
+        @else
+            <a href="{{ route('my-brand', ['brand' => $brand->slug]) }}"
+               style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.875rem; background:#FFFBEB; border:1px solid #FDE68A; border-radius:8px; font-size:0.8rem; color:#D97706; font-weight:500; text-decoration:none;">
+                ✨ Set up Brand Voice for better AI content
+            </a>
+        @endif
     </div>
 
     @if (session('success'))
