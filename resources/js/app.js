@@ -1,7 +1,6 @@
-import Alpine from 'alpinejs';
-
-window.Alpine = Alpine;
-Alpine.start();
+// Alpine is bundled and started by Livewire 4 — do NOT import it here.
+// Importing it manually causes "multiple instances of Alpine" which breaks
+// wire:click, wire:model, and all Livewire-Alpine interactions.
 
 /* ═══════════════════════════════════════════════════
    APP-READY — drop skeleton after window.load
