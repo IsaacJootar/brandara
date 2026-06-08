@@ -42,6 +42,8 @@ class Index extends Component
 
     public string $packStartDate = '';
 
+    public int $packDurationDays = 5;
+
     public array $packPlatforms = ['linkedin'];
 
     /** idle | generating | done | error */
@@ -353,6 +355,9 @@ class Index extends Component
         $this->activatingPackKey = $packKey;
         $this->packKeyMessage = $campaign->key_message ?? '';
         $this->packStartDate = $campaign->start_date?->format('Y-m-d') ?? now()->format('Y-m-d');
+        $this->packDurationDays = $campaign->start_date && $campaign->end_date
+            ? max(1, (int) $campaign->start_date->diffInDays($campaign->end_date) + 1)
+            : (int) ($pack['duration_days'] ?? 5);
         $this->packPlatforms = $campaign->platforms ?? ['linkedin'];
         $this->packStatus = 'idle';
         $this->packError = '';
@@ -368,6 +373,7 @@ class Index extends Component
         $this->activatingPackKey = $packKey;
         $this->packKeyMessage = '';
         $this->packStartDate = now()->format('Y-m-d');
+        $this->packDurationDays = (int) ($pack['duration_days'] ?? 5);
         $this->packPlatforms = ['linkedin'];
         $this->packStatus = 'idle';
         $this->packError = '';
@@ -399,6 +405,7 @@ class Index extends Component
         $this->validate([
             'packKeyMessage' => ['required', 'string', 'min:10', 'max:500'],
             'packStartDate' => ['required', 'date'],
+            'packDurationDays' => ['required', 'integer', 'min:1', 'max:30'],
             'packPlatforms' => ['required', 'array', 'min:1'],
         ]);
 
@@ -406,7 +413,7 @@ class Index extends Component
         abort_if(! $pack, 404);
 
         $brand = $this->brand();
-        $durationDays = $pack['duration_days'] ?? 5;
+        $durationDays = $this->packDurationDays;
 
         $campaign = Campaign::create([
             'brand_id' => $brand->id,

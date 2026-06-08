@@ -512,7 +512,7 @@
                         <div style="text-align:center; padding:2rem 0;">
                             <div style="width:36px; height:36px; border:3px solid #E2E8F0; border-top-color:#7C3AED; border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 1rem;"></div>
                             <div style="font-size:0.95rem; font-weight:600; color:#0F172A; margin-bottom:0.25rem;">Building your campaign…</div>
-                            <p style="font-size:0.8rem; color:#94A3B8; margin:0;">AI is writing {{ $activePack['duration_days'] }} posts. This takes 15–30 seconds.</p>
+                            <p style="font-size:0.8rem; color:#94A3B8; margin:0;">AI is writing {{ $packDurationDays }} posts. This takes 15–30 seconds.</p>
                         </div>
 
                     @elseif($packStatus === 'error')
@@ -532,10 +532,14 @@
                     @else
                         {{-- Configure form --}}
                         <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.25rem;">
-                            <span style="font-size:1.5rem;">{{ $activePack['emoji'] }}</span>
+                            <div style="width:40px;height:40px;background:#F5F3FF;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <svg style="width:20px;height:20px;color:#7C3AED;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                            </div>
                             <div>
                                 <div style="font-size:1rem; font-weight:700; color:#0F172A;">{{ $activePack['name'] }}</div>
-                                <div style="font-size:0.78rem; color:#94A3B8;">{{ $activePack['duration_days'] }}-day campaign · {{ $activePack['default_goal'] }}</div>
+                                <div style="font-size:0.78rem; color:#94A3B8;">{{ $activePack['default_goal'] }} · up to 30 days</div>
                             </div>
                         </div>
 
@@ -550,11 +554,23 @@
                                 @error('packKeyMessage')<p style="color:#EF4444; font-size:0.75rem; margin-top:0.25rem;">{{ $message }}</p>@enderror
                             </div>
 
-                            <div>
-                                <label style="display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.375rem;">Campaign start date</label>
-                                <input wire:model="packStartDate" type="date"
-                                    class="auth-input" style="font-size:0.875rem; max-width:200px;">
-                                @error('packStartDate')<p style="color:#EF4444; font-size:0.75rem; margin-top:0.25rem;">{{ $message }}</p>@enderror
+                            {{-- Start date + Duration side by side --}}
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                                <div>
+                                    <label style="display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.375rem;">Start date</label>
+                                    <input wire:model="packStartDate" type="date"
+                                        class="auth-input" style="font-size:0.875rem; width:100%;">
+                                    @error('packStartDate')<p style="color:#EF4444; font-size:0.75rem; margin-top:0.25rem;">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label style="display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.375rem;">
+                                        Duration (days)
+                                        <span style="font-weight:400; color:#94A3B8; font-size:0.72rem;"> — default: {{ $activePack['duration_days'] }}</span>
+                                    </label>
+                                    <input wire:model="packDurationDays" type="number" min="1" max="30"
+                                        class="auth-input" style="font-size:0.875rem; width:100%;">
+                                    @error('packDurationDays')<p style="color:#EF4444; font-size:0.75rem; margin-top:0.25rem;">{{ $message }}</p>@enderror
+                                </div>
                             </div>
 
                             <div>
