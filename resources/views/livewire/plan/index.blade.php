@@ -90,7 +90,7 @@
                     View all →
                 </button>
             </div>
-            @forelse ($campaigns->where('status', '!=', 'archived')->take(3) as $campaign)
+            @forelse ($campaigns->take(3) as $campaign)
                 <div style="padding:0.875rem 1.25rem; {{ ! $loop->last ? 'border-bottom:1px solid #F8FAFC;' : '' }}">
                     <div style="font-size:0.85rem; font-weight:500; color:#0F172A;">{{ $campaign->name }}</div>
                     <div style="font-size:0.72rem; color:#94A3B8; margin-top:0.25rem;">
@@ -284,22 +284,43 @@
         @endif
 
         {{-- Campaign list --}}
-        <div style="display:flex; flex-direction:column; gap:0.5rem;">
-            @forelse ($campaigns->where('status', '!=', 'archived') as $campaign)
-                <div style="background:#fff; border:1px solid #E2E8F0; border-radius:12px; padding:1rem 1.25rem; display:flex; align-items:flex-start; gap:1rem;">
+        @php
+            $cardColors = [
+                0 => ['bg' => '#F5F3FF', 'border' => '#EDE9FE', 'dot' => '#7C3AED'],
+                1 => ['bg' => '#EFF6FF', 'border' => '#DBEAFE', 'dot' => '#2563EB'],
+                2 => ['bg' => '#FFF7ED', 'border' => '#FED7AA', 'dot' => '#EA580C'],
+                3 => ['bg' => '#F0FDF4', 'border' => '#BBF7D0', 'dot' => '#16A34A'],
+                4 => ['bg' => '#FFF1F2', 'border' => '#FFE4E6', 'dot' => '#E11D48'],
+                5 => ['bg' => '#ECFDF5', 'border' => '#A7F3D0', 'dot' => '#059669'],
+                6 => ['bg' => '#FFFBEB', 'border' => '#FDE68A', 'dot' => '#D97706'],
+                7 => ['bg' => '#F0F9FF', 'border' => '#BAE6FD', 'dot' => '#0284C7'],
+            ];
+        @endphp
+
+        <div style="display:flex; flex-direction:column; gap:0.625rem;">
+            @forelse ($campaigns as $index => $campaign)
+                @php $c = $cardColors[$index % count($cardColors)]; @endphp
+                <div style="background:{{ $c['bg'] }}; border:1px solid {{ $c['border'] }}; border-radius:12px; padding:1rem 1.25rem; display:flex; align-items:flex-start; gap:1rem;">
+
+                    {{-- Color dot --}}
+                    <div style="width:10px; height:10px; border-radius:50%; background:{{ $c['dot'] }}; flex-shrink:0; margin-top:5px;"></div>
+
                     <div style="flex:1; min-width:0;">
                         <div style="font-size:0.875rem; font-weight:600; color:#0F172A;">{{ $campaign->name }}</div>
-                        <div style="font-size:0.75rem; color:#64748B; margin-top:0.2rem; line-height:1.5;">{{ $campaign->key_message }}</div>
-                        <div style="font-size:0.72rem; color:#94A3B8; margin-top:0.35rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
+                        <div style="font-size:0.75rem; color:#475569; margin-top:0.2rem; line-height:1.5;">{{ $campaign->key_message }}</div>
+                        <div style="font-size:0.7rem; color:#94A3B8; margin-top:0.35rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
                             @if ($campaign->start_date)
-                                <span>{{ $campaign->start_date->format('M j') }} – {{ $campaign->end_date?->format('M j, Y') }}</span>
+                                <span>📅 {{ $campaign->start_date->format('M j') }} – {{ $campaign->end_date?->format('M j, Y') }}</span>
                             @endif
-                            <span>{{ implode(', ', array_map('ucfirst', $campaign->platforms ?? [])) }}</span>
+                            @if ($campaign->platforms)
+                                <span>{{ implode(' · ', array_map('ucfirst', $campaign->platforms)) }}</span>
+                            @endif
                         </div>
                     </div>
+
                     <div style="display:flex; gap:0.4rem; flex-shrink:0;">
                         <button wire:click="openCampaignForm('{{ $campaign->id }}')" type="button"
-                            style="font-size:0.75rem; color:#64748B; background:#F8FAFC; border:1px solid #E2E8F0; padding:0.35rem 0.7rem; border-radius:7px; cursor:pointer;">
+                            style="font-size:0.75rem; color:#475569; background:rgba(255,255,255,0.7); border:1px solid {{ $c['border'] }}; padding:0.35rem 0.7rem; border-radius:7px; cursor:pointer;">
                             Edit
                         </button>
                         <button wire:click="archiveCampaign('{{ $campaign->id }}')" wire:confirm="Archive this campaign?" type="button"
@@ -310,10 +331,31 @@
                 </div>
             @empty
                 <div style="background:#fff; border:1px dashed #E2E8F0; border-radius:12px; padding:2.5rem; text-align:center; color:#94A3B8; font-size:0.85rem;">
-                    No campaigns yet. Create one to plan and track multi-post campaigns.
+                    No campaigns yet. Create one to plan and track a series of posts.
                 </div>
             @endforelse
         </div>
+
+        {{-- Pagination --}}
+        @if ($campaignTotalPages > 1)
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:1rem; padding-top:0.875rem; border-top:1px solid #F1F5F9;">
+                <div style="font-size:0.75rem; color:#94A3B8;">
+                    Page {{ $campaignPage }} of {{ $campaignTotalPages }}
+                </div>
+                <div style="display:flex; gap:0.4rem;">
+                    <button wire:click="campaignPrevPage" type="button"
+                        @if($campaignPage <= 1) disabled @endif
+                        style="padding:0.4rem 0.8rem; font-size:0.78rem; font-weight:500; border:1px solid #E2E8F0; border-radius:7px; background:#fff; color:{{ $campaignPage <= 1 ? '#CBD5E1' : '#475569' }}; cursor:{{ $campaignPage <= 1 ? 'not-allowed' : 'pointer' }};">
+                        ← Previous
+                    </button>
+                    <button wire:click="campaignNextPage" type="button"
+                        @if($campaignPage >= $campaignTotalPages) disabled @endif
+                        style="padding:0.4rem 0.8rem; font-size:0.78rem; font-weight:500; border:1px solid #E2E8F0; border-radius:7px; background:#fff; color:{{ $campaignPage >= $campaignTotalPages ? '#CBD5E1' : '#475569' }}; cursor:{{ $campaignPage >= $campaignTotalPages ? 'not-allowed' : 'pointer' }};">
+                        Next →
+                    </button>
+                </div>
+            </div>
+        @endif
     @endif
 
 </div>

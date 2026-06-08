@@ -18,6 +18,10 @@ class Index extends Component
 
     public string $tab = 'overview'; // overview | pillars | campaigns
 
+    public int $campaignPage = 1;
+
+    public int $campaignPerPage = 8;
+
     // ── Pillar form ───────────────────────────────────────────────────────────
     public bool $showPillarForm = false;
 
@@ -118,8 +122,32 @@ class Index extends Component
     public function campaigns()
     {
         return Campaign::where('brand_id', $this->brandId)
+            ->where('status', '!=', 'archived')
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate($this->campaignPerPage, ['*'], 'campaign_page', $this->campaignPage);
+    }
+
+    #[Computed]
+    public function campaignTotal(): int
+    {
+        return Campaign::where('brand_id', $this->brandId)
+            ->where('status', '!=', 'archived')
+            ->count();
+    }
+
+    public function campaignNextPage(): void
+    {
+        $maxPage = (int) ceil($this->campaignTotal() / $this->campaignPerPage);
+        if ($this->campaignPage < $maxPage) {
+            $this->campaignPage++;
+        }
+    }
+
+    public function campaignPrevPage(): void
+    {
+        if ($this->campaignPage > 1) {
+            $this->campaignPage--;
+        }
     }
 
     // ── Actions ───────────────────────────────────────────────────────────────
@@ -129,6 +157,7 @@ class Index extends Component
         $this->tab = in_array($tab, ['overview', 'pillars', 'campaigns']) ? $tab : 'overview';
         $this->showPillarForm = false;
         $this->showCampaignForm = false;
+        $this->campaignPage = 1;
     }
 
     // ── Pillar actions ────────────────────────────────────────────────────────
@@ -248,6 +277,7 @@ class Index extends Component
         );
 
         $this->resetCampaignForm();
+        $this->campaignPage = 1;
         session()->flash('plan_message', 'Campaign saved.');
     }
 
@@ -289,10 +319,13 @@ class Index extends Component
 
     public function render()
     {
+        $campaigns = $this->campaigns();
+
         return view('livewire.plan.index', [
             'pillars' => $this->pillars(),
             'pillarBalance' => $this->pillarBalance(),
-            'campaigns' => $this->campaigns(),
+            'campaigns' => $campaigns,
+            'campaignTotalPages' => (int) ceil($this->campaignTotal() / $this->campaignPerPage),
         ]);
     }
 }
