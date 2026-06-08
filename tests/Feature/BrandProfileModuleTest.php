@@ -78,8 +78,7 @@ class BrandProfileModuleTest extends TestCase
             ->set('description', 'We help SMEs grow faster.')
             ->set('targetAudience', 'Nigerian founders aged 30–50')
             ->set('primaryColor', '#7C3AED')
-            ->call('save')
-            ->assertSet('saveStatus', 'saved');
+            ->call('save');
 
         $brand->refresh();
         $this->assertSame('Africa first, always', $brand->tagline);
@@ -112,8 +111,7 @@ class BrandProfileModuleTest extends TestCase
             ->set('mission', 'Give founders fair financial guidance')
             ->set('negativeBrief', 'Never use corporate jargon')
             ->set('positioning', 'Only firm focused on African SMEs')
-            ->call('save')
-            ->assertSet('saveStatus', 'saved');
+            ->call('save');
 
         $brand->refresh();
         $this->assertSame('Lead West Africa in advisory', $brand->vision);
@@ -131,8 +129,7 @@ class BrandProfileModuleTest extends TestCase
                 ['title' => 'Integrity', 'description' => 'We do what we say'],
                 ['title' => 'Clarity', 'description' => 'No jargon, ever'],
             ])
-            ->call('save')
-            ->assertSet('saveStatus', 'saved');
+            ->call('save');
 
         $brand->refresh();
         $this->assertCount(2, $brand->values);

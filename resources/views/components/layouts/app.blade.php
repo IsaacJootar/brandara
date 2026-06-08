@@ -191,6 +191,25 @@
 
     @livewireScripts
 
+    {{-- Global toast — triggered by Livewire dispatch('show-toast', message: '...') --}}
+    <div
+        x-data="{ show: false, message: '' }"
+        x-on:show-toast.window="message = $event.detail.message; show = true; setTimeout(() => show = false, 3500)"
+        x-show="show"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        style="position:fixed; top:1.25rem; right:1.25rem; z-index:9999; display:flex; align-items:center; gap:0.5rem; background:#059669; color:#fff; font-size:0.85rem; font-weight:500; padding:0.75rem 1.125rem; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.15); min-width:200px; pointer-events:none;"
+    >
+        <svg style="width:16px;height:16px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span x-text="message"></span>
+    </div>
+
     {{-- Web push subscription --}}
     @if (config('webpush.vapid.public_key'))
     <script>

@@ -60,7 +60,8 @@ class BrandKit extends Component
             'font_preference' => $this->fontPreference,
         ]);
 
-        $this->saveStatus = 'saved';
+        $this->saveStatus = '';
+        $this->dispatch('show-toast', message: 'Brand Kit saved');
         $this->dispatch('brand-kit-saved');
     }
 

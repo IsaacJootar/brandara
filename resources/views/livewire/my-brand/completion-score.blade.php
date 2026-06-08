@@ -3,7 +3,7 @@
     $missing   = array_filter($fields, fn($f) => !$f['done']);
 @endphp
 
-<div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:14px; padding:1rem 1.25rem; margin-bottom:1.5rem;">
+<div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:14px; padding:1rem 1.25rem; margin-bottom:1.5rem;">
 
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.625rem; flex-wrap:wrap; gap:0.5rem;">
         <div style="display:flex; align-items:center; gap:0.75rem;">

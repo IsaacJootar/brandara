@@ -1,24 +1,9 @@
 <div>
 
-    {{-- Header --}}
     <div style="margin-bottom:1.5rem;">
         <h2 style="font-size:1rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">Brand Kit</h2>
         <p style="font-size:0.83rem; color:#94A3B8; margin:0;">Your brand identity. Used in every AI-generated post to keep your content on-brand.</p>
     </div>
-
-    {{-- Saved toast --}}
-    @if($saveStatus === 'saved')
-        <div
-            x-data="{ show: true }"
-            x-init="setTimeout(() => show = false, 3000)"
-            x-show="show"
-            x-transition
-            style="position:fixed; top:1.25rem; right:1.25rem; z-index:50; display:flex; align-items:center; gap:0.5rem; background:#059669; color:#fff; font-size:0.85rem; font-weight:500; padding:0.75rem 1.125rem; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.12); min-width:200px;"
-        >
-            <svg style="width:16px;height:16px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-            Brand Kit saved
-        </div>
-    @endif
 
     <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:1.75rem; display:flex; flex-direction:column; gap:1.25rem;">
 
@@ -117,13 +102,14 @@
             </div>
         </div>
 
-        {{-- Save button --}}
+        {{-- Save --}}
         <div style="display:flex; justify-content:flex-end; padding-top:0.5rem; border-top:1px solid #F1F5F9;">
-            <button wire:click="save" wire:loading.attr="disabled" wire:target="save"
-                style="padding:0.75rem 1.75rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; transition:opacity 0.15s; display:flex; align-items:center; gap:0.5rem;"
+            <button type="button" wire:click="save"
+                wire:loading.attr="disabled" wire:loading.class="opacity-60 cursor-not-allowed" wire:target="save"
+                style="padding:0.75rem 1.75rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:0.5rem; transition:opacity 0.15s;"
                 onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
                 <span wire:loading.remove wire:target="save">Save Brand Kit</span>
-                <span wire:loading wire:target="save" style="display:flex; align-items:center; gap:0.5rem;">
+                <span wire:loading wire:target="save" style="display:none; align-items:center; gap:0.5rem;">
                     <span class="btn-spinner"></span> Saving…
                 </span>
             </button>

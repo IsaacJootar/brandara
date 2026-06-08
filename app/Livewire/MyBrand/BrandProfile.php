@@ -81,7 +81,8 @@ class BrandProfile extends Component
             'values' => $cleanValues ?: null,
         ]);
 
-        $this->saveStatus = 'saved';
+        $this->saveStatus = '';
+        $this->dispatch('show-toast', message: 'Brand Profile saved');
         $this->dispatch('brand-profile-saved');
     }
 
