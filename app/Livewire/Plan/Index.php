@@ -106,7 +106,9 @@ class Index extends Component
                     'count' => $count,
                     'pct' => $total > 0 ? round(($count / $total) * 100) : 0,
                     'days_since' => $lastPost ? now()->diffInDays($lastPost) : null,
-                    'stale' => $lastPost ? now()->diffInDays($lastPost) >= 14 : true,
+                    // Only mark stale if the brand has at least one post AND this pillar has gone 14+ days without one.
+                    // A brand-new pillar with zero posts ever is NOT overdue — it just hasn't been used yet.
+                    'stale' => $lastPost ? now()->diffInDays($lastPost) >= 14 : ($total > 0),
                 ];
             })
             ->toArray();

@@ -20,6 +20,15 @@
     {{-- ═══════════════════ OVERVIEW TAB ═══════════════════ --}}
     @if ($tab === 'overview')
 
+        {{-- How it works tip --}}
+        <div style="background:#F5F3FF; border:1px solid #EDE9FE; border-radius:10px; padding:0.75rem 1rem; margin-bottom:1rem; display:flex; gap:0.75rem; align-items:flex-start;">
+            <svg width="16" height="16" fill="none" stroke="#7C3AED" stroke-width="1.8" viewBox="0 0 24 24" style="flex-shrink:0; margin-top:1px;"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
+            <div style="font-size:0.78rem; color:#5B21B6; line-height:1.55;">
+                <strong>Pillars</strong> are your permanent content topics (e.g. Thought Leadership, Client Wins).
+                <strong>Campaigns</strong> are time-boxed pushes (e.g. Black Friday). Campaign posts are tagged to a pillar so your balance stays accurate even during a campaign.
+            </div>
+        </div>
+
         {{-- Pillar balance --}}
         <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem; margin-bottom:1rem;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
@@ -46,7 +55,9 @@
                                     <span style="width:10px; height:10px; border-radius:50%; background:{{ $item['pillar']['color'] }}; display:inline-block; flex-shrink:0;"></span>
                                     <span style="font-size:0.82rem; font-weight:500; color:#0F172A;">{{ $item['pillar']['name'] }}</span>
                                     @if ($item['stale'])
-                                        <span style="font-size:0.68rem; background:#FEF3C7; color:#D97706; padding:0.15rem 0.5rem; border-radius:99px; font-weight:600;">Overdue</span>
+                                        <span style="font-size:0.68rem; background:#FEF3C7; color:#D97706; padding:0.15rem 0.5rem; border-radius:99px; font-weight:600;">
+                                            {{ $item['days_since'] === null ? 'Not used yet' : 'Overdue' }}
+                                        </span>
                                     @endif
                                 </div>
                                 <span style="font-size:0.75rem; color:#64748B;">{{ $item['count'] }} post{{ $item['count'] !== 1 ? 's' : '' }} · {{ $item['pct'] }}%</span>
@@ -197,20 +208,29 @@
                 <div style="display:grid; gap:0.75rem; margin-bottom:0.75rem;">
                     <div>
                         <label style="font-size:0.72rem; font-weight:600; color:#475569; display:block; margin-bottom:0.3rem;">Campaign name</label>
-                        <input wire:model="campaignName" type="text" placeholder="e.g. Black Friday 2025"
+                        <input wire:model="campaignName" type="text" placeholder="e.g. Black Friday 2025, Accra Branch Launch"
                             style="width:100%; padding:0.6rem 0.75rem; border:1px solid #E2E8F0; border-radius:8px; font-size:0.85rem; box-sizing:border-box;">
                         @error('campaignName') <div style="font-size:0.72rem; color:#DC2626; margin-top:0.25rem;">{{ $message }}</div> @enderror
                     </div>
                     <div>
-                        <label style="font-size:0.72rem; font-weight:600; color:#475569; display:block; margin-bottom:0.3rem;">Goal</label>
-                        <input wire:model="campaignGoal" type="text" placeholder="e.g. Drive 50 leads in 2 weeks"
+                        <label style="font-size:0.72rem; font-weight:600; color:#475569; display:block; margin-bottom:0.3rem;">
+                            Goal
+                            <span style="font-weight:400; color:#94A3B8; font-size:0.68rem; margin-left:0.35rem;">What business result do you want from this campaign?</span>
+                        </label>
+                        <input wire:model="campaignGoal" type="text" placeholder="e.g. Get 20 new leads from Lagos SME owners this November"
                             style="width:100%; padding:0.6rem 0.75rem; border:1px solid #E2E8F0; border-radius:8px; font-size:0.85rem; box-sizing:border-box;">
+                        <div style="font-size:0.7rem; color:#94A3B8; margin-top:0.3rem;">Other examples: "Drive 50 sign-ups for our new payroll feature" · "Fill our December consulting slots"</div>
                         @error('campaignGoal') <div style="font-size:0.72rem; color:#DC2626; margin-top:0.25rem;">{{ $message }}</div> @enderror
                     </div>
                     <div>
-                        <label style="font-size:0.72rem; font-weight:600; color:#475569; display:block; margin-bottom:0.3rem;">Key message</label>
-                        <textarea wire:model="campaignKeyMessage" rows="2" placeholder="What's the core thing you want people to know or do?"
+                        <label style="font-size:0.72rem; font-weight:600; color:#475569; display:block; margin-bottom:0.3rem;">
+                            Key message
+                            <span style="font-weight:400; color:#94A3B8; font-size:0.68rem; margin-left:0.35rem;">The one thing your audience should hear.</span>
+                        </label>
+                        <textarea wire:model="campaignKeyMessage" rows="2"
+                            placeholder="e.g. We're offering 30% off our audit services only this November"
                             style="width:100%; padding:0.6rem 0.75rem; border:1px solid #E2E8F0; border-radius:8px; font-size:0.85rem; box-sizing:border-box; resize:vertical;"></textarea>
+                        <div style="font-size:0.7rem; color:#94A3B8; margin-top:0.3rem;">Other examples: "Our new Accra branch is open — book a free consultation" · "We now serve clients across 5 African countries"</div>
                         @error('campaignKeyMessage') <div style="font-size:0.72rem; color:#DC2626; margin-top:0.25rem;">{{ $message }}</div> @enderror
                     </div>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
