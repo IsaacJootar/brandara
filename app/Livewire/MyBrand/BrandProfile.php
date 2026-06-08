@@ -2,6 +2,7 @@
 
 namespace App\Livewire\MyBrand;
 
+use App\Models\Brand;
 use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
@@ -9,6 +10,8 @@ use Livewire\Component;
 #[Lazy]
 class BrandProfile extends Component
 {
+    public string $brandId = '';
+
     public string $vision = '';
 
     public string $mission = '';
@@ -24,8 +27,9 @@ class BrandProfile extends Component
 
     public function mount(): void
     {
-        $brand = currentBrand();
+        $brand = $this->brand();
 
+        $this->brandId = $brand->id;
         $this->vision = $brand->vision ?? '';
         $this->mission = $brand->mission ?? '';
         $this->negativeBrief = $brand->negative_brief ?? '';
@@ -34,7 +38,6 @@ class BrandProfile extends Component
             ['title' => '', 'description' => ''],
         ];
 
-        // Ensure at least one value row
         if (empty($this->values)) {
             $this->values = [['title' => '', 'description' => '']];
         }
@@ -71,15 +74,12 @@ class BrandProfile extends Component
             'values.*.description' => ['nullable', 'string', 'max:300'],
         ]);
 
-        // Strip empty value rows before saving
         $cleanValues = array_values(array_filter(
             $this->values,
             fn ($v) => ! empty(trim($v['title'] ?? ''))
         ));
 
-        $brand = currentBrand();
-
-        $brand->update([
+        $this->brand()->update([
             'vision' => $this->vision,
             'mission' => $this->mission,
             'negative_brief' => $this->negativeBrief,
@@ -89,6 +89,15 @@ class BrandProfile extends Component
 
         $this->saveStatus = 'saved';
         $this->dispatch('brand-profile-saved');
+    }
+
+    private function brand(): Brand
+    {
+        if ($this->brandId) {
+            return Brand::findOrFail($this->brandId);
+        }
+
+        return currentBrand();
     }
 
     public function placeholder(): View

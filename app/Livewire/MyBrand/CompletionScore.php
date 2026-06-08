@@ -2,6 +2,7 @@
 
 namespace App\Livewire\MyBrand;
 
+use App\Models\Brand;
 use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\On;
@@ -10,12 +11,19 @@ use Livewire\Component;
 #[Lazy]
 class CompletionScore extends Component
 {
+    public string $brandId = '';
+
+    public function mount(): void
+    {
+        $this->brandId = $this->brand()->id;
+    }
+
     /**
      * @return array<string, array{label: string, done: bool, tab: string}>
      */
     public function fields(): array
     {
-        $brand = currentBrand();
+        $brand = $this->brand();
 
         return [
             'name' => ['label' => 'Brand name', 'done' => ! empty($brand->name), 'tab' => 'kit'],
@@ -44,7 +52,16 @@ class CompletionScore extends Component
     #[On('brand-profile-saved')]
     public function refresh(): void
     {
-        // Re-renders with fresh brand data
+        // Re-renders with fresh brand data from DB
+    }
+
+    private function brand(): Brand
+    {
+        if ($this->brandId) {
+            return Brand::findOrFail($this->brandId);
+        }
+
+        return currentBrand();
     }
 
     public function placeholder(): View

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\MyBrand;
 
+use App\Models\Brand;
 use App\Services\Ai\AiProviderException;
 use App\Services\BrandVoice\BrandVoiceService;
 use Illuminate\View\View;
@@ -11,6 +12,8 @@ use Livewire\Component;
 #[Lazy]
 class BrandVoice extends Component
 {
+    public string $brandId = '';
+
     public string $samples = '';
 
     /** idle | training | trained | error */
@@ -23,7 +26,9 @@ class BrandVoice extends Component
 
     public function mount(): void
     {
-        $brand = currentBrand();
+        $brand = $this->brand();
+
+        $this->brandId = $brand->id;
 
         if ($brand->brand_voice) {
             $this->profile = $brand->brand_voice;
@@ -47,9 +52,8 @@ class BrandVoice extends Component
         $this->status = 'training';
 
         try {
-            $brand = currentBrand();
             $service = app(BrandVoiceService::class);
-            $this->profile = $service->train($brand, $trimmed);
+            $this->profile = $service->train($this->brand(), $trimmed);
             $this->status = 'trained';
             $this->samples = '';
         } catch (AiProviderException $e) {
@@ -70,6 +74,15 @@ class BrandVoice extends Component
         $this->errorMessage = '';
     }
 
+    private function brand(): Brand
+    {
+        if ($this->brandId) {
+            return Brand::findOrFail($this->brandId);
+        }
+
+        return currentBrand();
+    }
+
     public function placeholder(): View
     {
         return view('livewire.my-brand.brand-voice-skeleton');
@@ -78,7 +91,7 @@ class BrandVoice extends Component
     public function render(): View
     {
         return view('livewire.my-brand.brand-voice', [
-            'brand' => currentBrand(),
+            'brand' => $this->brand(),
         ]);
     }
 }

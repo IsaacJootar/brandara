@@ -2,6 +2,7 @@
 
 namespace App\Livewire\MyBrand;
 
+use App\Models\Brand;
 use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
@@ -9,6 +10,8 @@ use Livewire\Component;
 #[Lazy]
 class BrandKit extends Component
 {
+    public string $brandId = '';
+
     public string $name = '';
 
     public string $tagline = '';
@@ -27,8 +30,9 @@ class BrandKit extends Component
 
     public function mount(): void
     {
-        $brand = currentBrand();
+        $brand = $this->brand();
 
+        $this->brandId = $brand->id;
         $this->name = $brand->name ?? '';
         $this->tagline = $brand->tagline ?? '';
         $this->description = $brand->description ?? '';
@@ -50,9 +54,7 @@ class BrandKit extends Component
             'fontPreference' => ['nullable', 'string', 'max:80'],
         ]);
 
-        $brand = currentBrand();
-
-        $brand->update([
+        $this->brand()->update([
             'name' => $this->name,
             'tagline' => $this->tagline,
             'description' => $this->description,
@@ -64,6 +66,15 @@ class BrandKit extends Component
 
         $this->saveStatus = 'saved';
         $this->dispatch('brand-kit-saved');
+    }
+
+    private function brand(): Brand
+    {
+        if ($this->brandId) {
+            return Brand::findOrFail($this->brandId);
+        }
+
+        return currentBrand();
     }
 
     public function placeholder(): View
