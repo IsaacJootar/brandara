@@ -7,7 +7,7 @@
     </div>
 
     {{-- Completion score --}}
-    @livewire('my-brand.completion-score')
+    @livewire('my-brand.completion-score', ['brand' => $currentBrand])
 
     {{-- Tab nav --}}
     <div x-data="{ tab: 'kit' }">
@@ -21,15 +21,15 @@
         <div class="mt-6">
 
             <div x-show="tab === 'kit'" x-cloak>
-                @livewire('my-brand.brand-kit')
+                @livewire('my-brand.brand-kit', ['brand' => $currentBrand])
             </div>
 
             <div x-show="tab === 'profile'" x-cloak>
-                @livewire('my-brand.brand-profile')
+                @livewire('my-brand.brand-profile', ['brand' => $currentBrand])
             </div>
 
             <div x-show="tab === 'voice'" x-cloak>
-                @livewire('my-brand.brand-voice')
+                @livewire('my-brand.brand-voice', ['brand' => $currentBrand])
             </div>
 
         </div>

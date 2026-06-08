@@ -61,10 +61,8 @@ class BrandProfileModuleTest extends TestCase
         $brand->update(['tagline' => 'We help founders scale', 'primary_color' => '#FF0000']);
         $this->actingAs($user);
 
-        app()->instance('current.brand', $brand);
-
         Livewire::withoutLazyLoading()
-            ->test(BrandKit::class)
+            ->test(BrandKit::class, ['brand' => $brand])
             ->assertSet('tagline', 'We help founders scale')
             ->assertSet('primaryColor', '#FF0000');
     }
@@ -74,10 +72,8 @@ class BrandProfileModuleTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
         $this->actingAs($user);
 
-        app()->instance('current.brand', $brand);
-
         Livewire::withoutLazyLoading()
-            ->test(BrandKit::class)
+            ->test(BrandKit::class, ['brand' => $brand])
             ->set('tagline', 'Africa first, always')
             ->set('description', 'We help SMEs grow faster.')
             ->set('targetAudience', 'Nigerian founders aged 30–50')
@@ -96,10 +92,8 @@ class BrandProfileModuleTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
         $this->actingAs($user);
 
-        app()->instance('current.brand', $brand);
-
         Livewire::withoutLazyLoading()
-            ->test(BrandKit::class)
+            ->test(BrandKit::class, ['brand' => $brand])
             ->set('name', '')
             ->call('save')
             ->assertHasErrors(['name']);
@@ -112,10 +106,8 @@ class BrandProfileModuleTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
         $this->actingAs($user);
 
-        app()->instance('current.brand', $brand);
-
         Livewire::withoutLazyLoading()
-            ->test(BrandProfile::class)
+            ->test(BrandProfile::class, ['brand' => $brand])
             ->set('vision', 'Lead West Africa in advisory')
             ->set('mission', 'Give founders fair financial guidance')
             ->set('negativeBrief', 'Never use corporate jargon')
@@ -133,10 +125,8 @@ class BrandProfileModuleTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
         $this->actingAs($user);
 
-        app()->instance('current.brand', $brand);
-
         Livewire::withoutLazyLoading()
-            ->test(BrandProfile::class)
+            ->test(BrandProfile::class, ['brand' => $brand])
             ->set('values', [
                 ['title' => 'Integrity', 'description' => 'We do what we say'],
                 ['title' => 'Clarity', 'description' => 'No jargon, ever'],
@@ -154,10 +144,8 @@ class BrandProfileModuleTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
         $this->actingAs($user);
 
-        app()->instance('current.brand', $brand);
-
         Livewire::withoutLazyLoading()
-            ->test(BrandProfile::class)
+            ->test(BrandProfile::class, ['brand' => $brand])
             ->set('values', [
                 ['title' => 'Integrity', 'description' => 'We do what we say'],
                 ['title' => '', 'description' => ''],
@@ -173,15 +161,12 @@ class BrandProfileModuleTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
         $this->actingAs($user);
 
-        app()->instance('current.brand', $brand);
+        $component = Livewire::withoutLazyLoading()
+            ->test(BrandProfile::class, ['brand' => $brand]);
 
-        $component = Livewire::withoutLazyLoading()->test(BrandProfile::class);
-
-        // Add until 5
         $component->call('addValue')->call('addValue')->call('addValue')->call('addValue');
         $this->assertCount(5, $component->get('values'));
 
-        // Should not exceed 5
         $component->call('addValue');
         $this->assertCount(5, $component->get('values'));
     }
@@ -191,13 +176,10 @@ class BrandProfileModuleTest extends TestCase
     public function test_completion_score_low_for_mostly_empty_brand(): void
     {
         [$user, $brand] = $this->makeWorkspace();
-        // Only name is set (from makeWorkspace), everything else empty
         $this->actingAs($user);
 
-        app()->instance('current.brand', $brand);
-
         $score = Livewire::withoutLazyLoading()
-            ->test(CompletionScore::class)
+            ->test(CompletionScore::class, ['brand' => $brand])
             ->instance()
             ->percentage();
 
@@ -221,10 +203,8 @@ class BrandProfileModuleTest extends TestCase
         ]);
         $this->actingAs($user);
 
-        app()->instance('current.brand', $brand);
-
         $score = Livewire::withoutLazyLoading()
-            ->test(CompletionScore::class)
+            ->test(CompletionScore::class, ['brand' => $brand])
             ->instance()
             ->percentage();
 

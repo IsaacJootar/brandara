@@ -13,9 +13,9 @@ class CompletionScore extends Component
 {
     public string $brandId = '';
 
-    public function mount(): void
+    public function mount(Brand $brand): void
     {
-        $this->brandId = $this->brand()->id;
+        $this->brandId = $brand->id;
     }
 
     /**
@@ -23,7 +23,7 @@ class CompletionScore extends Component
      */
     public function fields(): array
     {
-        $brand = $this->brand();
+        $brand = Brand::findOrFail($this->brandId);
 
         return [
             'name' => ['label' => 'Brand name', 'done' => ! empty($brand->name), 'tab' => 'kit'],
@@ -53,15 +53,6 @@ class CompletionScore extends Component
     public function refresh(): void
     {
         // Re-renders with fresh brand data from DB
-    }
-
-    private function brand(): Brand
-    {
-        if ($this->brandId) {
-            return Brand::findOrFail($this->brandId);
-        }
-
-        return currentBrand();
     }
 
     public function placeholder(): View

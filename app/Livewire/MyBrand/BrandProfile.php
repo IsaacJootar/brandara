@@ -25,18 +25,14 @@ class BrandProfile extends Component
 
     public string $saveStatus = '';
 
-    public function mount(): void
+    public function mount(Brand $brand): void
     {
-        $brand = $this->brand();
-
         $this->brandId = $brand->id;
         $this->vision = $brand->vision ?? '';
         $this->mission = $brand->mission ?? '';
         $this->negativeBrief = $brand->negative_brief ?? '';
         $this->positioning = $brand->positioning ?? '';
-        $this->values = $brand->values ?? [
-            ['title' => '', 'description' => ''],
-        ];
+        $this->values = $brand->values ?? [['title' => '', 'description' => '']];
 
         if (empty($this->values)) {
             $this->values = [['title' => '', 'description' => '']];
@@ -79,7 +75,7 @@ class BrandProfile extends Component
             fn ($v) => ! empty(trim($v['title'] ?? ''))
         ));
 
-        $this->brand()->update([
+        Brand::findOrFail($this->brandId)->update([
             'vision' => $this->vision,
             'mission' => $this->mission,
             'negative_brief' => $this->negativeBrief,
@@ -89,15 +85,6 @@ class BrandProfile extends Component
 
         $this->saveStatus = 'saved';
         $this->dispatch('brand-profile-saved');
-    }
-
-    private function brand(): Brand
-    {
-        if ($this->brandId) {
-            return Brand::findOrFail($this->brandId);
-        }
-
-        return currentBrand();
     }
 
     public function placeholder(): View

@@ -135,10 +135,8 @@ class BrandVoiceTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
         $this->actingAs($user);
 
-        app()->instance('current.brand', $brand);
-
         Livewire::withoutLazyLoading()
-            ->test(BrandVoice::class)
+            ->test(BrandVoice::class, ['brand' => $brand])
             ->assertSet('status', 'idle');
     }
 
@@ -149,10 +147,9 @@ class BrandVoiceTest extends TestCase
         $brand->save();
 
         $this->actingAs($user);
-        app()->instance('current.brand', $brand);
 
         Livewire::withoutLazyLoading()
-            ->test(BrandVoice::class)
+            ->test(BrandVoice::class, ['brand' => $brand])
             ->assertSet('status', 'trained');
     }
 
@@ -161,10 +158,8 @@ class BrandVoiceTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
         $this->actingAs($user);
 
-        app()->instance('current.brand', $brand);
-
         Livewire::withoutLazyLoading()
-            ->test(BrandVoice::class)
+            ->test(BrandVoice::class, ['brand' => $brand])
             ->set('samples', 'too short')
             ->call('train')
             ->assertSet('status', 'error');
@@ -176,10 +171,8 @@ class BrandVoiceTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
         $this->actingAs($user);
 
-        app()->instance('current.brand', $brand);
-
         Livewire::withoutLazyLoading()
-            ->test(BrandVoice::class)
+            ->test(BrandVoice::class, ['brand' => $brand])
             ->set('samples', str_repeat('This is a sample post about running a business in Lagos. ', 5))
             ->call('train')
             ->assertSet('status', 'error')
@@ -193,10 +186,9 @@ class BrandVoiceTest extends TestCase
         $brand->save();
 
         $this->actingAs($user);
-        app()->instance('current.brand', $brand);
 
         Livewire::withoutLazyLoading()
-            ->test(BrandVoice::class)
+            ->test(BrandVoice::class, ['brand' => $brand])
             ->assertSet('status', 'trained')
             ->call('retrain')
             ->assertSet('status', 'idle')

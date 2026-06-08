@@ -24,10 +24,8 @@ class BrandVoice extends Component
     /** @var array<string, mixed> */
     public array $profile = [];
 
-    public function mount(): void
+    public function mount(Brand $brand): void
     {
-        $brand = $this->brand();
-
         $this->brandId = $brand->id;
 
         if ($brand->brand_voice) {
@@ -39,7 +37,6 @@ class BrandVoice extends Component
     public function train(): void
     {
         $this->errorMessage = '';
-
         $trimmed = trim($this->samples);
 
         if (strlen($trimmed) < 100) {
@@ -52,8 +49,8 @@ class BrandVoice extends Component
         $this->status = 'training';
 
         try {
-            $service = app(BrandVoiceService::class);
-            $this->profile = $service->train($this->brand(), $trimmed);
+            $brand = Brand::findOrFail($this->brandId);
+            $this->profile = app(BrandVoiceService::class)->train($brand, $trimmed);
             $this->status = 'trained';
             $this->samples = '';
         } catch (AiProviderException $e) {
@@ -74,15 +71,6 @@ class BrandVoice extends Component
         $this->errorMessage = '';
     }
 
-    private function brand(): Brand
-    {
-        if ($this->brandId) {
-            return Brand::findOrFail($this->brandId);
-        }
-
-        return currentBrand();
-    }
-
     public function placeholder(): View
     {
         return view('livewire.my-brand.brand-voice-skeleton');
@@ -91,7 +79,7 @@ class BrandVoice extends Component
     public function render(): View
     {
         return view('livewire.my-brand.brand-voice', [
-            'brand' => $this->brand(),
+            'brand' => Brand::findOrFail($this->brandId),
         ]);
     }
 }

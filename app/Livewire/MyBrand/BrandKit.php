@@ -28,10 +28,8 @@ class BrandKit extends Component
 
     public string $saveStatus = '';
 
-    public function mount(): void
+    public function mount(Brand $brand): void
     {
-        $brand = $this->brand();
-
         $this->brandId = $brand->id;
         $this->name = $brand->name ?? '';
         $this->tagline = $brand->tagline ?? '';
@@ -54,7 +52,7 @@ class BrandKit extends Component
             'fontPreference' => ['nullable', 'string', 'max:80'],
         ]);
 
-        $this->brand()->update([
+        Brand::findOrFail($this->brandId)->update([
             'name' => $this->name,
             'tagline' => $this->tagline,
             'description' => $this->description,
@@ -66,15 +64,6 @@ class BrandKit extends Component
 
         $this->saveStatus = 'saved';
         $this->dispatch('brand-kit-saved');
-    }
-
-    private function brand(): Brand
-    {
-        if ($this->brandId) {
-            return Brand::findOrFail($this->brandId);
-        }
-
-        return currentBrand();
     }
 
     public function placeholder(): View
