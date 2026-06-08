@@ -134,7 +134,10 @@
 
         {{-- Platform selector --}}
         <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem; margin-bottom:1rem;">
-            <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#94A3B8; margin-bottom:0.875rem;">Publish to</div>
+            <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:0.875rem;">
+                <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#94A3B8;">Publish to</div>
+                <div style="font-size:0.68rem; color:#CBD5E1;">Max characters</div>
+            </div>
 
             <div style="display:flex; flex-direction:column; gap:0.375rem;">
                 @foreach ($platformNames as $key => $name)
@@ -160,10 +163,10 @@
 
                         <span style="flex:1; font-size:0.84rem; font-weight:{{ $selected ? '600' : '400' }}; color:{{ $selected ? '#0F172A' : '#64748B' }};">{{ $name }}</span>
 
-                        {{-- Over-limit warning --}}
-                        @if ($over)
-                            <span style="font-size:0.7rem; color:#DC2626; font-weight:600;">Too long</span>
-                        @endif
+                        {{-- Char limit --}}
+                        <span style="font-size:0.72rem; color:{{ $over ? '#DC2626' : '#94A3B8' }}; font-weight:{{ $over ? '600' : '400' }};">
+                            {{ $over ? '⚠ ' : '' }}{{ number_format($limit) }}
+                        </span>
 
                         {{-- Checkmark --}}
                         @if ($selected)
