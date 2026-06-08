@@ -90,14 +90,25 @@
                     View all →
                 </button>
             </div>
-            @forelse ($campaigns->take(3) as $campaign)
-                <div style="padding:0.875rem 1.25rem; {{ ! $loop->last ? 'border-bottom:1px solid #F8FAFC;' : '' }}">
-                    <div style="font-size:0.85rem; font-weight:500; color:#0F172A;">{{ $campaign->name }}</div>
-                    <div style="font-size:0.72rem; color:#94A3B8; margin-top:0.25rem;">
-                        @if ($campaign->start_date && $campaign->end_date)
-                            {{ $campaign->start_date->format('M j') }} – {{ $campaign->end_date->format('M j, Y') }} ·
-                        @endif
-                        <span style="text-transform:capitalize; color:{{ match($campaign->status) { 'active' => '#16A34A', 'draft' => '#64748B', default => '#94A3B8' } }};">{{ $campaign->status }}</span>
+            @php
+                $overviewColors = [
+                    0 => ['bg' => '#F5F3FF', 'border' => '#EDE9FE', 'dot' => '#7C3AED'],
+                    1 => ['bg' => '#EFF6FF', 'border' => '#DBEAFE', 'dot' => '#2563EB'],
+                    2 => ['bg' => '#FFF7ED', 'border' => '#FED7AA', 'dot' => '#EA580C'],
+                ];
+            @endphp
+            @forelse ($campaigns->take(3) as $i => $campaign)
+                @php $c = $overviewColors[$i % 3]; @endphp
+                <div style="margin:0.5rem 0.875rem; background:{{ $c['bg'] }}; border:1px solid {{ $c['border'] }}; border-radius:10px; padding:0.75rem 1rem; display:flex; align-items:center; gap:0.75rem;">
+                    <div style="width:8px; height:8px; border-radius:50%; background:{{ $c['dot'] }}; flex-shrink:0;"></div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:0.84rem; font-weight:600; color:#0F172A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $campaign->name }}</div>
+                        <div style="font-size:0.71rem; color:#64748B; margin-top:0.15rem;">
+                            @if ($campaign->start_date && $campaign->end_date)
+                                {{ $campaign->start_date->format('M j') }} – {{ $campaign->end_date->format('M j, Y') }} ·
+                            @endif
+                            <span style="text-transform:capitalize; color:{{ match($campaign->status) { 'active' => '#16A34A', 'draft' => '#64748B', default => '#94A3B8' } }};">{{ $campaign->status }}</span>
+                        </div>
                     </div>
                 </div>
             @empty
