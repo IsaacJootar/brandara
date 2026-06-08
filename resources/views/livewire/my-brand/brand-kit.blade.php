@@ -109,7 +109,7 @@
                 style="padding:0.75rem 1.75rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:0.5rem; transition:opacity 0.15s;"
                 onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
                 <span wire:loading.remove wire:target="save">Save Brand Kit</span>
-                <span wire:loading wire:target="save" style="display:none; align-items:center; gap:0.5rem;">
+                <span wire:loading.flex wire:target="save" style="display:none; align-items:center; gap:0.5rem;">
                     <span class="btn-spinner"></span> Saving…
                 </span>
             </button>
