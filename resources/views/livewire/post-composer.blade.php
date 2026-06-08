@@ -4,7 +4,7 @@
     {{-- ── LEFT — Main composer ──────────────────────────────────────────── --}}
     <div>
 
-        {{-- Input type tabs --}}
+        {{-- Input type tabs — Alpine for instant visual, Livewire persists --}}
         @php
             $tabs = [
                 'manual'     => [
@@ -25,13 +25,14 @@
                 ],
             ];
         @endphp
-        <div style="display:flex; gap:0.375rem; margin-bottom:1.25rem; background:#F8FAFC; padding:0.375rem; border-radius:10px; border:1px solid #E2E8F0;">
+        <div x-data="{ activeTab: '{{ $inputType }}' }"
+             style="display:flex; gap:0.375rem; margin-bottom:1.25rem; background:#F8FAFC; padding:0.375rem; border-radius:10px; border:1px solid #E2E8F0;">
             @foreach ($tabs as $type => $tab)
-                <button wire:click="setInputType('{{ $type }}')" type="button"
-                    style="flex:1; display:flex; align-items:center; justify-content:center; gap:0.35rem; padding:0.5rem 0.5rem; border-radius:7px; border:none; font-size:0.75rem; font-weight:{{ $inputType === $type ? '600' : '400' }}; cursor:pointer; transition:all 0.15s;
-                    {{ $inputType === $type
-                        ? 'background:#fff; color:#7C3AED; box-shadow:0 1px 3px rgba(15,23,42,0.08);'
-                        : 'background:transparent; color:#475569;' }}">
+                <button type="button"
+                    x-on:click="activeTab = '{{ $type }}'; $wire.setInputType('{{ $type }}')"
+                    :style="activeTab === '{{ $type }}'
+                        ? 'flex:1; display:flex; align-items:center; justify-content:center; gap:0.35rem; padding:0.5rem 0.5rem; border-radius:7px; border:none; font-size:0.75rem; font-weight:600; cursor:pointer; transition:all 0.15s; background:#fff; color:#7C3AED; box-shadow:0 1px 3px rgba(15,23,42,0.08);'
+                        : 'flex:1; display:flex; align-items:center; justify-content:center; gap:0.35rem; padding:0.5rem 0.5rem; border-radius:7px; border:none; font-size:0.75rem; font-weight:400; cursor:pointer; transition:all 0.15s; background:transparent; color:#475569;'">
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="flex-shrink:0;">{!! $tab['icon'] !!}</svg>
                     <span style="white-space:nowrap;">{{ $tab['label'] }}</span>
                 </button>
@@ -67,13 +68,17 @@
             </div>
         @endif
 
-        {{-- Tone selector --}}
-        <div style="margin-bottom:1.25rem;">
+        {{-- Tone selector — Alpine handles instant visual, Livewire persists --}}
+        <div style="margin-bottom:1.25rem;"
+             x-data="{ activeTone: '{{ $tone }}' }">
             <label style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#94A3B8; display:block; margin-bottom:0.5rem;">Tone</label>
             <div style="display:flex; flex-wrap:wrap; gap:0.375rem;">
                 @foreach ($tones as $key => $label)
-                    <button wire:click="setTone('{{ $key }}')" type="button"
-                        style="padding:0.375rem 0.75rem; border-radius:99px; font-size:0.78rem; font-weight:{{ $tone === $key ? '600' : '400' }}; border:1px solid {{ $tone === $key ? '#7C3AED' : '#E2E8F0' }}; background:{{ $tone === $key ? '#F5F3FF' : '#fff' }}; color:{{ $tone === $key ? '#7C3AED' : '#64748B' }}; cursor:pointer; transition:all 0.15s;">
+                    <button type="button"
+                        x-on:click="activeTone = '{{ $key }}'; $wire.setTone('{{ $key }}')"
+                        :style="activeTone === '{{ $key }}'
+                            ? 'padding:0.375rem 0.75rem; border-radius:99px; font-size:0.78rem; font-weight:600; border:1px solid #7C3AED; background:#F5F3FF; color:#7C3AED; cursor:pointer; transition:all 0.15s;'
+                            : 'padding:0.375rem 0.75rem; border-radius:99px; font-size:0.78rem; font-weight:400; border:1px solid #E2E8F0; background:#fff; color:#64748B; cursor:pointer; transition:all 0.15s;'">
                         {{ $label }}
                     </button>
                 @endforeach
