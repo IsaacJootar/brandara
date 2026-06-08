@@ -6,6 +6,8 @@ use App\Models\Brand;
 use App\Models\Campaign;
 use App\Models\ContentPillar;
 use App\Models\Post;
+use App\Services\Ai\AiProviderException;
+use App\Services\CampaignPack\CampaignPackService;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
@@ -33,6 +35,24 @@ class Index extends Component
 
     public string $pillarColor = '#7C3AED';
 
+    // ── Pack generation ───────────────────────────────────────────────────────
+    public ?string $activatingPackKey = null;   // which pack the user is configuring
+
+    public string $packKeyMessage = '';
+
+    public string $packStartDate = '';
+
+    public array $packPlatforms = ['linkedin'];
+
+    /** idle | generating | done | error */
+    public string $packStatus = 'idle';
+
+    public string $packError = '';
+
+    public ?string $generatedCampaignId = null;
+
+    public int $generatedPostCount = 0;
+
     // ── Campaign form ─────────────────────────────────────────────────────────
     public bool $showCampaignForm = false;
 
@@ -57,6 +77,7 @@ class Index extends Component
         $this->brandId = $brand->id;
         $this->campaignStartDate = now()->format('Y-m-d');
         $this->campaignEndDate = now()->addDays(14)->format('Y-m-d');
+        $this->packStartDate = now()->format('Y-m-d');
     }
 
     public function placeholder(): string
@@ -315,17 +336,109 @@ class Index extends Component
         $this->resetErrorBag();
     }
 
+    // ── Pack actions ──────────────────────────────────────────────────────────
+
+    public function openPackForm(string $packKey): void
+    {
+        $pack = config("campaign-packs.{$packKey}");
+        abort_if(! $pack, 404);
+
+        $this->activatingPackKey = $packKey;
+        $this->packKeyMessage = '';
+        $this->packStartDate = now()->format('Y-m-d');
+        $this->packPlatforms = ['linkedin'];
+        $this->packStatus = 'idle';
+        $this->packError = '';
+        $this->generatedCampaignId = null;
+        $this->generatedPostCount = 0;
+    }
+
+    public function closePackForm(): void
+    {
+        $this->activatingPackKey = null;
+        $this->packStatus = 'idle';
+    }
+
+    public function togglePackPlatform(string $platform): void
+    {
+        if (in_array($platform, $this->packPlatforms)) {
+            if (count($this->packPlatforms) > 1) {
+                $this->packPlatforms = array_values(
+                    array_filter($this->packPlatforms, fn ($p) => $p !== $platform)
+                );
+            }
+        } else {
+            $this->packPlatforms[] = $platform;
+        }
+    }
+
+    public function generatePack(): void
+    {
+        $this->validate([
+            'packKeyMessage' => ['required', 'string', 'min:10', 'max:500'],
+            'packStartDate' => ['required', 'date'],
+            'packPlatforms' => ['required', 'array', 'min:1'],
+        ]);
+
+        $pack = config("campaign-packs.{$this->activatingPackKey}");
+        abort_if(! $pack, 404);
+
+        $brand = $this->brand();
+        $durationDays = $pack['duration_days'] ?? 5;
+
+        $campaign = Campaign::create([
+            'brand_id' => $brand->id,
+            'name' => $pack['name'],
+            'type' => 'pack',
+            'pack_key' => $this->activatingPackKey,
+            'goal' => $pack['default_goal'],
+            'key_message' => $this->packKeyMessage,
+            'start_date' => $this->packStartDate,
+            'end_date' => now()->parse($this->packStartDate)->addDays($durationDays - 1)->format('Y-m-d'),
+            'platforms' => $this->packPlatforms,
+            'tone' => $pack['default_tone'],
+            'status' => 'draft',
+        ]);
+
+        $this->packStatus = 'generating';
+
+        try {
+            $service = app(CampaignPackService::class);
+            $campaign = $service->generate($campaign, $brand, $pack);
+            $this->generatedCampaignId = $campaign->id;
+            $this->generatedPostCount = $campaign->posts()->count();
+            $this->packStatus = 'done';
+            $this->campaignPage = 1;
+        } catch (AiProviderException $e) {
+            $campaign->delete();
+            $this->packError = $e->isConfigError
+                ? 'AI is not configured yet. Ask your administrator to add the API key.'
+                : 'Something went wrong generating the campaign. Please try again.';
+            $this->packStatus = 'error';
+        } catch (\Throwable) {
+            $campaign->delete();
+            $this->packError = 'Something went wrong. Please try again in a moment.';
+            $this->packStatus = 'error';
+        }
+    }
+
     // ── Render ────────────────────────────────────────────────────────────────
 
     public function render()
     {
         $campaigns = $this->campaigns();
 
+        $activePack = $this->activatingPackKey
+            ? config("campaign-packs.{$this->activatingPackKey}")
+            : null;
+
         return view('livewire.plan.index', [
             'pillars' => $this->pillars(),
             'pillarBalance' => $this->pillarBalance(),
             'campaigns' => $campaigns,
             'campaignTotalPages' => (int) ceil($this->campaignTotal() / $this->campaignPerPage),
+            'allPacks' => config('campaign-packs', []),
+            'activePack' => $activePack,
         ]);
     }
 }

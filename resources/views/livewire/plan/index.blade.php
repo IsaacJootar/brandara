@@ -317,8 +317,20 @@
                     <div style="width:10px; height:10px; border-radius:50%; background:{{ $c['dot'] }}; flex-shrink:0; margin-top:5px;"></div>
 
                     <div style="flex:1; min-width:0;">
-                        <div style="font-size:0.875rem; font-weight:600; color:#0F172A;">{{ $campaign->name }}</div>
-                        <div style="font-size:0.75rem; color:#475569; margin-top:0.2rem; line-height:1.5;">{{ $campaign->key_message }}</div>
+                        <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                            <div style="font-size:0.875rem; font-weight:600; color:#0F172A;">{{ $campaign->name }}</div>
+                            @if($campaign->type === 'pack' && $campaign->pack_key)
+                                @php $packMeta = config("campaign-packs.{$campaign->pack_key}"); @endphp
+                                @if($packMeta)
+                                    <span style="font-size:0.68rem; font-weight:600; color:#D97706; background:#FFFBEB; border:1px solid #FDE68A; padding:0.1rem 0.5rem; border-radius:99px;">Pack</span>
+                                @endif
+                            @endif
+                            @php $postCount = $campaign->posts()->count(); @endphp
+                            @if($postCount > 0)
+                                <span style="font-size:0.68rem; color:#94A3B8;">{{ $postCount }} post{{ $postCount !== 1 ? 's' : '' }}</span>
+                            @endif
+                        </div>
+                        <div style="font-size:0.75rem; color:#475569; margin-top:0.2rem; line-height:1.5;">{{ Str::limit($campaign->key_message, 100) }}</div>
                         <div style="font-size:0.7rem; color:#94A3B8; margin-top:0.35rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
                             @if ($campaign->start_date)
                                 <span>📅 {{ $campaign->start_date->format('M j') }} – {{ $campaign->end_date?->format('M j, Y') }}</span>
@@ -367,6 +379,160 @@
                 </div>
             </div>
         @endif
+
+        {{-- ── Campaign Pack Library ────────────────────────────────────────── --}}
+        @if(!$activatingPackKey)
+            <div style="margin-top:2rem; padding-top:1.5rem; border-top:1px solid #E2E8F0;">
+                <div style="margin-bottom:1rem;">
+                    <h3 style="font-size:0.95rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">Campaign Packs</h3>
+                    <p style="font-size:0.8rem; color:#94A3B8; margin:0;">Ready-made campaign templates. Pick one, add your offer, and AI builds the full post sequence.</p>
+                </div>
+
+                @php
+                    $categories = [
+                        'african_holiday' => ['label' => '🌍 African Holidays', 'color' => '#D97706', 'bg' => '#FFFBEB', 'border' => '#FDE68A'],
+                        'seasonal' => ['label' => '📅 Seasonal', 'color' => '#0369A1', 'bg' => '#EFF6FF', 'border' => '#BFDBFE'],
+                        'business' => ['label' => '🚀 Business Events', 'color' => '#7C3AED', 'bg' => '#F5F3FF', 'border' => '#DDD6FE'],
+                    ];
+                    $grouped = collect($allPacks)->groupBy('category');
+                @endphp
+
+                @foreach($categories as $catKey => $cat)
+                    @if($grouped->has($catKey))
+                        <div style="margin-bottom:1.5rem;">
+                            <div style="font-size:0.75rem; font-weight:700; color:{{ $cat['color'] }}; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.625rem;">{{ $cat['label'] }}</div>
+                            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:0.625rem;">
+                                @foreach($grouped[$catKey] as $packKey => $pack)
+                                    <div style="background:{{ $cat['bg'] }}; border:1px solid {{ $cat['border'] }}; border-radius:12px; padding:1rem; display:flex; flex-direction:column; gap:0.5rem;">
+                                        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:0.5rem;">
+                                            <div>
+                                                <div style="font-size:0.875rem; font-weight:600; color:#0F172A;">{{ $pack['emoji'] }} {{ $pack['name'] }}</div>
+                                                <div style="font-size:0.72rem; color:#64748B; margin-top:0.2rem; line-height:1.45;">{{ $pack['description'] }}</div>
+                                            </div>
+                                            <span style="flex-shrink:0; font-size:0.68rem; font-weight:600; color:{{ $cat['color'] }}; background:{{ $cat['bg'] }}; border:1px solid {{ $cat['border'] }}; padding:0.15rem 0.5rem; border-radius:99px; white-space:nowrap;">
+                                                {{ $pack['duration_days'] }} days
+                                            </span>
+                                        </div>
+                                        <button type="button" wire:click="openPackForm('{{ $packKey }}')"
+                                            style="width:100%; padding:0.5rem; background:#fff; border:1px solid {{ $cat['border'] }}; border-radius:8px; font-size:0.8rem; font-weight:600; color:{{ $cat['color'] }}; cursor:pointer; transition:opacity 0.15s; text-align:center;"
+                                            onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                                            Use this pack →
+                                        </button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
+            </div>
+        @endif
+
+        {{-- ── Pack generation modal ─────────────────────────────────────────── --}}
+        @if($activatingPackKey && $activePack)
+            <div style="position:fixed; inset:0; background:rgba(15,23,42,0.6); display:flex; align-items:center; justify-content:center; padding:1rem; z-index:100;">
+                <div style="background:#fff; border-radius:16px; width:100%; max-width:520px; padding:1.75rem; box-shadow:0 24px 48px rgba(15,23,42,0.2); max-height:90vh; overflow-y:auto;">
+
+                    @if($packStatus === 'done')
+                        {{-- Success state --}}
+                        <div style="text-align:center; padding:1rem 0;">
+                            <div style="font-size:2rem; margin-bottom:0.75rem;">🎉</div>
+                            <div style="font-size:1.05rem; font-weight:700; color:#0F172A; margin-bottom:0.375rem;">Campaign created!</div>
+                            <p style="font-size:0.875rem; color:#64748B; margin:0 0 1.25rem;">
+                                <strong>{{ $generatedPostCount }} posts</strong> generated as drafts for the <strong>{{ $activePack['name'] }}</strong> campaign.
+                            </p>
+                            <p style="font-size:0.8rem; color:#94A3B8; margin:0 0 1.5rem;">Find them in <strong>Schedule → Not published yet</strong> to review and schedule each one.</p>
+                            <button type="button" wire:click="closePackForm"
+                                style="padding:0.75rem 2rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer;">
+                                Done
+                            </button>
+                        </div>
+
+                    @elseif($packStatus === 'generating')
+                        {{-- Generating state --}}
+                        <div style="text-align:center; padding:2rem 0;">
+                            <div style="width:36px; height:36px; border:3px solid #E2E8F0; border-top-color:#7C3AED; border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 1rem;"></div>
+                            <div style="font-size:0.95rem; font-weight:600; color:#0F172A; margin-bottom:0.25rem;">Building your campaign…</div>
+                            <p style="font-size:0.8rem; color:#94A3B8; margin:0;">AI is writing {{ $activePack['duration_days'] }} posts. This takes 15–30 seconds.</p>
+                        </div>
+
+                    @elseif($packStatus === 'error')
+                        {{-- Error state --}}
+                        <div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:10px; padding:1rem; margin-bottom:1rem;">
+                            <p style="font-size:0.875rem; color:#991B1B; margin:0 0 0.5rem; font-weight:500;">{{ $packError }}</p>
+                            <button type="button" wire:click="$set('packStatus', 'idle')"
+                                style="font-size:0.8rem; color:#DC2626; background:none; border:none; cursor:pointer; padding:0; text-decoration:underline;">
+                                Try again
+                            </button>
+                        </div>
+                        <button type="button" wire:click="closePackForm"
+                            style="font-size:0.85rem; color:#64748B; background:none; border:none; cursor:pointer; padding:0;">
+                            Cancel
+                        </button>
+
+                    @else
+                        {{-- Configure form --}}
+                        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.25rem;">
+                            <span style="font-size:1.5rem;">{{ $activePack['emoji'] }}</span>
+                            <div>
+                                <div style="font-size:1rem; font-weight:700; color:#0F172A;">{{ $activePack['name'] }}</div>
+                                <div style="font-size:0.78rem; color:#94A3B8;">{{ $activePack['duration_days'] }}-day campaign · {{ $activePack['default_goal'] }}</div>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; flex-direction:column; gap:1rem;">
+
+                            <div>
+                                <label style="display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.375rem;">Your key message <span style="color:#EF4444;">*</span></label>
+                                <p style="font-size:0.75rem; color:#94A3B8; margin:0 0 0.5rem;">{{ $activePack['key_message_hint'] }}</p>
+                                <textarea wire:model="packKeyMessage" rows="3"
+                                    placeholder="{{ $activePack['key_message_hint'] }}"
+                                    class="auth-input" style="font-size:0.875rem; resize:vertical; min-height:70px;"></textarea>
+                                @error('packKeyMessage')<p style="color:#EF4444; font-size:0.75rem; margin-top:0.25rem;">{{ $message }}</p>@enderror
+                            </div>
+
+                            <div>
+                                <label style="display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.375rem;">Campaign start date</label>
+                                <input wire:model="packStartDate" type="date"
+                                    class="auth-input" style="font-size:0.875rem; max-width:200px;">
+                                @error('packStartDate')<p style="color:#EF4444; font-size:0.75rem; margin-top:0.25rem;">{{ $message }}</p>@enderror
+                            </div>
+
+                            <div>
+                                <label style="display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.375rem;">Platforms</label>
+                                <div style="display:flex; flex-wrap:wrap; gap:0.375rem;">
+                                    @foreach(['linkedin'=>'LinkedIn','twitter'=>'X','facebook'=>'Facebook','instagram'=>'Instagram','whatsapp'=>'WhatsApp','threads'=>'Threads'] as $pKey => $pName)
+                                        @php $pChecked = in_array($pKey, $packPlatforms); @endphp
+                                        <button type="button" wire:click="togglePackPlatform('{{ $pKey }}')"
+                                            style="padding:0.3rem 0.75rem; border-radius:99px; font-size:0.75rem; font-weight:{{ $pChecked ? '600' : '400' }}; border:1px solid {{ $pChecked ? '#7C3AED' : '#E2E8F0' }}; background:{{ $pChecked ? '#F5F3FF' : '#fff' }}; color:{{ $pChecked ? '#7C3AED' : '#64748B' }}; cursor:pointer;">
+                                            {{ $pChecked ? '✓ ' : '' }}{{ $pName }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                                @error('packPlatforms')<p style="color:#EF4444; font-size:0.75rem; margin-top:0.25rem;">{{ $message }}</p>@enderror
+                            </div>
+
+                        </div>
+
+                        <div style="display:flex; gap:0.5rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid #F1F5F9;">
+                            <button type="button" wire:click="generatePack"
+                                wire:loading.attr="disabled" wire:target="generatePack"
+                                style="flex:1; padding:0.75rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                                <span wire:loading.remove wire:target="generatePack">✨ Generate campaign posts</span>
+                                <span wire:loading.flex wire:target="generatePack" style="display:none; align-items:center; gap:0.5rem;">
+                                    <span class="btn-spinner"></span> Generating…
+                                </span>
+                            </button>
+                            <button type="button" wire:click="closePackForm"
+                                style="padding:0.75rem 1rem; background:#F1F5F9; color:#475569; font-size:0.875rem; font-weight:500; border:none; border-radius:10px; cursor:pointer;">
+                                Cancel
+                            </button>
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        @endif
+
     @endif
 
 </div>
