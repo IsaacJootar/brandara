@@ -6,6 +6,7 @@ use App\Http\Controllers\PlatformController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\WorkspaceController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // ── Public ────────────────────────────────────────────────────────────────────
@@ -27,6 +28,17 @@ Route::middleware(['auth', 'workspace.active'])
     ->name('platform.callback');
 
 // ── Authenticated — workspace-level ───────────────────────────────────────────
+
+// ── Web Push subscription ─────────────────────────────────────────────────────
+Route::middleware('auth')->post('/push/subscribe', function (Request $request) {
+    $request->user()->updatePushSubscription(
+        $request->input('endpoint'),
+        $request->input('keys.p256dh'),
+        $request->input('keys.auth')
+    );
+
+    return response()->json(['ok' => true]);
+})->name('push.subscribe');
 
 Route::middleware(['auth', 'workspace.active'])->group(function () {
 

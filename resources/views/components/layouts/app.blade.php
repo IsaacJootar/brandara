@@ -155,11 +155,7 @@
                         {{ ucfirst($workspace->plan) }}
                     </span>
                     {{-- Notification bell --}}
-                    <button style="width:34px; height:34px; border-radius:8px; border:1px solid #E2E8F0; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#64748B;">
-                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                        </svg>
-                    </button>
+                    @livewire('notification-bell')
                 </div>
             </header>
 
@@ -194,5 +190,44 @@
     </script>
 
     @livewireScripts
+
+    {{-- Web push subscription --}}
+    @if (config('webpush.vapid.public_key'))
+    <script>
+    (function () {
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+        navigator.serviceWorker.register('/sw.js').then(function (reg) {
+            return reg.pushManager.getSubscription().then(function (sub) {
+                if (sub) return; // Already subscribed
+
+                const vapidKey = '{{ config('webpush.vapid.public_key') }}';
+                const key = urlBase64ToUint8Array(vapidKey);
+
+                return reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: key,
+                }).then(function (subscription) {
+                    return fetch('/push/subscribe', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify(subscription),
+                    });
+                });
+            });
+        }).catch(function () {});
+
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+            const raw     = window.atob(base64);
+            return new Uint8Array([...raw].map(c => c.charCodeAt(0)));
+        }
+    })();
+    </script>
+    @endif
 </body>
 </html>

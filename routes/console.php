@@ -13,3 +13,13 @@ Schedule::command('posts:dispatch-due')
     ->everyMinute()
     ->withoutOverlapping()
     ->runInBackground();
+
+// Daily — check platform tokens and notify on expiry.
+Schedule::command('platforms:check-tokens')
+    ->dailyAt('07:00')
+    ->withoutOverlapping();
+
+// Daily — notify owners whose trial expires in 3 or 1 days.
+Schedule::command('workspaces:check-trial-expiry')
+    ->dailyAt('09:00')
+    ->withoutOverlapping();

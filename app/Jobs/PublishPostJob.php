@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Post;
+use App\Services\NotificationService;
 use App\Services\Platforms\Publishers\PublisherFactory;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -128,6 +129,11 @@ class PublishPostJob implements ShouldQueue
             'failure_reason' => $message,
         ]);
 
-        // Notification dispatch (Layer 3) is handled in a follow-up module.
+        // Layer 3 — notify workspace users
+        try {
+            app(NotificationService::class)->postFailed($post);
+        } catch (Throwable) {
+            // Never let notification failure block the job record
+        }
     }
 }
