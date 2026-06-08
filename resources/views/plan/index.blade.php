@@ -1,11 +1,14 @@
 <x-layouts.app>
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-neutral">{{ ucwords('plan') }}</h1>
-        <p class="text-base-content/60 mt-1">Building this section — coming soon.</p>
-    </div>
-    <div class="card bg-base-100 border border-base-300">
-        <div class="card-body p-12 text-center">
-            <p class="text-base-content/40 text-sm">This module is being built. Check back soon.</p>
+
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+            <h1 style="font-size:1.375rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">Plan</h1>
+            <p style="font-size:0.875rem; color:#64748B; margin:0;">
+                Manage content pillars and campaigns for <strong style="color:#0F172A;">{{ $currentBrand->name }}</strong>.
+            </p>
         </div>
     </div>
+
+    @livewire('plan.index', ['brand' => $currentBrand])
+
 </x-layouts.app>

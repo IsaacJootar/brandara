@@ -1,0 +1,283 @@
+<?php
+
+namespace App\Livewire\Plan;
+
+use App\Models\Brand;
+use App\Models\Campaign;
+use App\Models\ContentPillar;
+use App\Models\Post;
+use Illuminate\Support\Str;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Lazy;
+use Livewire\Component;
+
+#[Lazy]
+class Index extends Component
+{
+    public string $brandId = '';
+
+    public string $tab = 'overview'; // overview | pillars | campaigns
+
+    // ── Pillar form ───────────────────────────────────────────────────────────
+    public bool $showPillarForm = false;
+
+    public ?string $editingPillarId = null;
+
+    public string $pillarName = '';
+
+    public string $pillarGoal = 'authority';
+
+    public string $pillarColor = '#7C3AED';
+
+    // ── Campaign form ─────────────────────────────────────────────────────────
+    public bool $showCampaignForm = false;
+
+    public ?string $editingCampaignId = null;
+
+    public string $campaignName = '';
+
+    public string $campaignGoal = '';
+
+    public string $campaignKeyMessage = '';
+
+    public string $campaignStartDate = '';
+
+    public string $campaignEndDate = '';
+
+    public array $campaignPlatforms = ['linkedin'];
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
+
+    public function mount(Brand $brand): void
+    {
+        $this->brandId = $brand->id;
+        $this->campaignStartDate = now()->format('Y-m-d');
+        $this->campaignEndDate = now()->addDays(14)->format('Y-m-d');
+    }
+
+    public function placeholder(): string
+    {
+        return view('livewire.plan.placeholder')->render();
+    }
+
+    private function brand(): Brand
+    {
+        $brand = Brand::find($this->brandId);
+        abort_if(! $brand || $brand->workspace_id !== auth()->user()->workspace_id, 403);
+
+        return $brand;
+    }
+
+    // ── Computed ──────────────────────────────────────────────────────────────
+
+    #[Computed]
+    public function pillars()
+    {
+        return ContentPillar::where('brand_id', $this->brandId)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    #[Computed]
+    public function pillarBalance(): array
+    {
+        $total = Post::where('brand_id', $this->brandId)
+            ->whereNotNull('content_pillar_id')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->count();
+
+        return ContentPillar::where('brand_id', $this->brandId)
+            ->where('is_active', true)
+            ->get()
+            ->map(function ($pillar) use ($total) {
+                $count = Post::where('brand_id', $this->brandId)
+                    ->where('content_pillar_id', $pillar->id)
+                    ->where('created_at', '>=', now()->subDays(30))
+                    ->count();
+
+                $lastPost = Post::where('brand_id', $this->brandId)
+                    ->where('content_pillar_id', $pillar->id)
+                    ->latest('created_at')
+                    ->value('created_at');
+
+                return [
+                    'pillar' => $pillar,
+                    'count' => $count,
+                    'pct' => $total > 0 ? round(($count / $total) * 100) : 0,
+                    'days_since' => $lastPost ? now()->diffInDays($lastPost) : null,
+                    'stale' => $lastPost ? now()->diffInDays($lastPost) >= 14 : true,
+                ];
+            })
+            ->toArray();
+    }
+
+    #[Computed]
+    public function campaigns()
+    {
+        return Campaign::where('brand_id', $this->brandId)
+            ->orderByDesc('created_at')
+            ->get();
+    }
+
+    // ── Actions ───────────────────────────────────────────────────────────────
+
+    public function setTab(string $tab): void
+    {
+        $this->tab = in_array($tab, ['overview', 'pillars', 'campaigns']) ? $tab : 'overview';
+        $this->showPillarForm = false;
+        $this->showCampaignForm = false;
+    }
+
+    // ── Pillar actions ────────────────────────────────────────────────────────
+
+    public function openPillarForm(?string $pillarId = null): void
+    {
+        $this->resetPillarForm();
+
+        if ($pillarId) {
+            $pillar = ContentPillar::where('brand_id', $this->brandId)->find($pillarId);
+            abort_if(! $pillar, 403);
+            $this->editingPillarId = $pillar->id;
+            $this->pillarName = $pillar->name;
+            $this->pillarGoal = $pillar->goal;
+            $this->pillarColor = $pillar->color;
+        }
+
+        $this->showPillarForm = true;
+    }
+
+    public function savePillar(): void
+    {
+        $this->validate([
+            'pillarName' => ['required', 'string', 'max:60'],
+            'pillarGoal' => ['required', 'in:authority,trust,awareness,conversion'],
+            'pillarColor' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+        ]);
+
+        $existing = ContentPillar::where('brand_id', $this->brandId)->where('is_active', true)->count();
+
+        if (! $this->editingPillarId && $existing >= 5) {
+            $this->addError('pillarName', 'You can have a maximum of 5 content pillars.');
+
+            return;
+        }
+
+        ContentPillar::updateOrCreate(
+            ['id' => $this->editingPillarId ?? Str::uuid()->toString()],
+            [
+                'brand_id' => $this->brandId,
+                'name' => $this->pillarName,
+                'goal' => $this->pillarGoal,
+                'color' => $this->pillarColor,
+                'sort_order' => $this->editingPillarId
+                    ? ContentPillar::find($this->editingPillarId)?->sort_order ?? 0
+                    : ($existing + 1),
+            ]
+        );
+
+        $this->resetPillarForm();
+        session()->flash('plan_message', 'Pillar saved.');
+    }
+
+    public function deletePillar(string $pillarId): void
+    {
+        $pillar = ContentPillar::where('brand_id', $this->brandId)->find($pillarId);
+        abort_if(! $pillar, 403);
+        $pillar->update(['is_active' => false]);
+        session()->flash('plan_message', 'Pillar removed.');
+    }
+
+    private function resetPillarForm(): void
+    {
+        $this->showPillarForm = false;
+        $this->editingPillarId = null;
+        $this->pillarName = '';
+        $this->pillarGoal = 'authority';
+        $this->pillarColor = '#7C3AED';
+        $this->resetErrorBag();
+    }
+
+    // ── Campaign actions ──────────────────────────────────────────────────────
+
+    public function openCampaignForm(?string $campaignId = null): void
+    {
+        $this->resetCampaignForm();
+
+        if ($campaignId) {
+            $campaign = Campaign::where('brand_id', $this->brandId)->find($campaignId);
+            abort_if(! $campaign, 403);
+            $this->editingCampaignId = $campaign->id;
+            $this->campaignName = $campaign->name;
+            $this->campaignGoal = $campaign->goal ?? '';
+            $this->campaignKeyMessage = $campaign->key_message ?? '';
+            $this->campaignStartDate = $campaign->start_date?->format('Y-m-d') ?? now()->format('Y-m-d');
+            $this->campaignEndDate = $campaign->end_date?->format('Y-m-d') ?? now()->addDays(14)->format('Y-m-d');
+            $this->campaignPlatforms = $campaign->platforms ?? ['linkedin'];
+        }
+
+        $this->showCampaignForm = true;
+    }
+
+    public function saveCampaign(): void
+    {
+        $this->validate([
+            'campaignName' => ['required', 'string', 'max:100'],
+            'campaignGoal' => ['required', 'string', 'max:300'],
+            'campaignKeyMessage' => ['required', 'string', 'max:500'],
+            'campaignStartDate' => ['required', 'date'],
+            'campaignEndDate' => ['required', 'date', 'after_or_equal:campaignStartDate'],
+            'campaignPlatforms' => ['required', 'array', 'min:1'],
+        ]);
+
+        Campaign::updateOrCreate(
+            ['id' => $this->editingCampaignId ?? Str::uuid()->toString()],
+            [
+                'brand_id' => $this->brandId,
+                'name' => $this->campaignName,
+                'type' => 'custom',
+                'goal' => $this->campaignGoal,
+                'key_message' => $this->campaignKeyMessage,
+                'start_date' => $this->campaignStartDate,
+                'end_date' => $this->campaignEndDate,
+                'platforms' => $this->campaignPlatforms,
+                'status' => 'draft',
+            ]
+        );
+
+        $this->resetCampaignForm();
+        session()->flash('plan_message', 'Campaign saved.');
+    }
+
+    public function archiveCampaign(string $campaignId): void
+    {
+        $campaign = Campaign::where('brand_id', $this->brandId)->find($campaignId);
+        abort_if(! $campaign, 403);
+        $campaign->update(['status' => 'archived']);
+        session()->flash('plan_message', 'Campaign archived.');
+    }
+
+    private function resetCampaignForm(): void
+    {
+        $this->showCampaignForm = false;
+        $this->editingCampaignId = null;
+        $this->campaignName = '';
+        $this->campaignGoal = '';
+        $this->campaignKeyMessage = '';
+        $this->campaignStartDate = now()->format('Y-m-d');
+        $this->campaignEndDate = now()->addDays(14)->format('Y-m-d');
+        $this->campaignPlatforms = ['linkedin'];
+        $this->resetErrorBag();
+    }
+
+    // ── Render ────────────────────────────────────────────────────────────────
+
+    public function render()
+    {
+        return view('livewire.plan.index', [
+            'pillars' => $this->pillars(),
+            'pillarBalance' => $this->pillarBalance(),
+            'campaigns' => $this->campaigns(),
+        ]);
+    }
+}
