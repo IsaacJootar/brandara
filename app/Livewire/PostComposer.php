@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Post;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class PostComposer extends Component
@@ -162,6 +163,15 @@ class PostComposer extends Component
         $this->body = '';
         $this->savedDraftId = null;
         $this->saveStatus = '';
+    }
+
+    #[On('variation-selected')]
+    public function loadVariation(string $postId, string $body): void
+    {
+        $this->body = $body;
+        $this->savedDraftId = $postId;
+        $this->saveStatus = 'saved';
+        $this->inputType = 'manual';
     }
 
     // ── Computed ──────────────────────────────────────────────────────────────

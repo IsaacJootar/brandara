@@ -85,17 +85,21 @@
             </div>
         </div>
 
+        {{-- AI Variation Picker (non-manual modes) --}}
+        @if ($inputType !== 'manual' && strlen(trim($body)) > 0 || $inputType !== 'manual')
+            <div style="margin-bottom:1.25rem;">
+                @livewire('create.variation-picker', [
+                    'brand'       => \App\Models\Brand::find($brandId),
+                    'inputType'   => $inputType,
+                    'input'       => $body,
+                    'platforms'   => $platforms,
+                    'tone'        => $tone,
+                ], key('variation-picker-'.$inputType))
+            </div>
+        @endif
+
         {{-- Action row --}}
         <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
-
-            {{-- AI Generate button --}}
-            @if ($inputType !== 'manual')
-                <button type="button"
-                    x-on:click="aiPanel = true"
-                    style="display:flex; align-items:center; gap:0.5rem; padding:0.75rem 1.25rem; background:linear-gradient(135deg,#7C3AED,#4338CA); color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer;">
-                    ✨ Generate posts
-                </button>
-            @endif
 
             {{-- Save as draft --}}
             <button wire:click="saveDraft" type="button"

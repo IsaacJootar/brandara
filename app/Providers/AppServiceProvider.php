@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Ai\AiProviderFactory;
+use App\Services\Ai\ContentGenerationService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(AiProviderFactory::class);
+        $this->app->singleton(ContentGenerationService::class, fn ($app) => new ContentGenerationService(
+            $app->make(AiProviderFactory::class)
+        ));
     }
 
     /**
