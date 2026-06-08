@@ -5,19 +5,35 @@
     <div>
 
         {{-- Input type tabs --}}
+        @php
+            $tabs = [
+                'manual'     => [
+                    'label' => 'Write',
+                    'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.213l-4 1 1-4L16.862 3.487z"/>',
+                ],
+                'topic'      => [
+                    'label' => 'From topic',
+                    'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.355a14.995 14.995 0 01-3.75 0M9.75 9.75a2.25 2.25 0 114.5 0 2.25 2.25 0 01-4.5 0zM12 3v1.5"/>',
+                ],
+                'transcript' => [
+                    'label' => 'Transcript',
+                    'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"/>',
+                ],
+                'product'    => [
+                    'label' => 'Product',
+                    'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"/>',
+                ],
+            ];
+        @endphp
         <div style="display:flex; gap:0.375rem; margin-bottom:1.25rem; background:#F8FAFC; padding:0.375rem; border-radius:10px; border:1px solid #E2E8F0;">
-            @foreach ([
-                'manual'     => ['✏️', 'Write manually'],
-                'topic'      => ['💡', 'From a topic'],
-                'transcript' => ['🎙', 'From transcript'],
-                'product'    => ['📦', 'Product post'],
-            ] as $type => [$emoji, $label])
+            @foreach ($tabs as $type => $tab)
                 <button wire:click="$set('inputType', '{{ $type }}')" type="button"
-                    style="flex:1; padding:0.5rem 0.625rem; border-radius:7px; border:none; font-size:0.78rem; font-weight:{{ $inputType === $type ? '600' : '400' }}; cursor:pointer; transition:all 0.15s;
+                    style="flex:1; display:flex; align-items:center; justify-content:center; gap:0.35rem; padding:0.5rem 0.5rem; border-radius:7px; border:none; font-size:0.75rem; font-weight:{{ $inputType === $type ? '600' : '400' }}; cursor:pointer; transition:all 0.15s;
                     {{ $inputType === $type
-                        ? 'background:#fff; color:#0F172A; box-shadow:0 1px 3px rgba(15,23,42,0.08);'
-                        : 'background:transparent; color:#64748B;' }}">
-                    {{ $emoji }} {{ $label }}
+                        ? 'background:#fff; color:#7C3AED; box-shadow:0 1px 3px rgba(15,23,42,0.08);'
+                        : 'background:transparent; color:#94A3B8;' }}">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="flex-shrink:0;">{!! $tab['icon'] !!}</svg>
+                    <span style="white-space:nowrap;">{{ $tab['label'] }}</span>
                 </button>
             @endforeach
         </div>
