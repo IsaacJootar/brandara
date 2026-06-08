@@ -27,7 +27,7 @@
         @endphp
         <div style="display:flex; gap:0.375rem; margin-bottom:1.25rem; background:#F8FAFC; padding:0.375rem; border-radius:10px; border:1px solid #E2E8F0;">
             @foreach ($tabs as $type => $tab)
-                <button wire:click="$set('inputType', '{{ $type }}')" type="button"
+                <button wire:click="setInputType('{{ $type }}')" type="button"
                     style="flex:1; display:flex; align-items:center; justify-content:center; gap:0.35rem; padding:0.5rem 0.5rem; border-radius:7px; border:none; font-size:0.75rem; font-weight:{{ $inputType === $type ? '600' : '400' }}; cursor:pointer; transition:all 0.15s;
                     {{ $inputType === $type
                         ? 'background:#fff; color:#7C3AED; box-shadow:0 1px 3px rgba(15,23,42,0.08);'
@@ -72,7 +72,7 @@
             <label style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#94A3B8; display:block; margin-bottom:0.5rem;">Tone</label>
             <div style="display:flex; flex-wrap:wrap; gap:0.375rem;">
                 @foreach ($tones as $key => $label)
-                    <button wire:click="$set('tone', '{{ $key }}')" type="button"
+                    <button wire:click="setTone('{{ $key }}')" type="button"
                         style="padding:0.375rem 0.75rem; border-radius:99px; font-size:0.78rem; font-weight:{{ $tone === $key ? '600' : '400' }}; border:1px solid {{ $tone === $key ? '#7C3AED' : '#E2E8F0' }}; background:{{ $tone === $key ? '#F5F3FF' : '#fff' }}; color:{{ $tone === $key ? '#7C3AED' : '#64748B' }}; cursor:pointer; transition:all 0.15s;">
                         {{ $label }}
                     </button>

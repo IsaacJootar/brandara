@@ -93,6 +93,21 @@ class PostComposer extends Component
 
     // ── Actions ───────────────────────────────────────────────────────────────
 
+    public function setTone(string $tone): void
+    {
+        if (array_key_exists($tone, $this->tones)) {
+            $this->tone = $tone;
+        }
+    }
+
+    public function setInputType(string $type): void
+    {
+        $allowed = ['manual', 'topic', 'transcript', 'product'];
+        if (in_array($type, $allowed)) {
+            $this->inputType = $type;
+        }
+    }
+
     public function togglePlatform(string $platform): void
     {
         if (in_array($platform, $this->platforms)) {
