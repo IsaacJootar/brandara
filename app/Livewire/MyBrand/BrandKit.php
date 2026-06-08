@@ -71,6 +71,11 @@ class BrandKit extends Component
 
     public function render(): View
     {
-        return view('livewire.my-brand.brand-kit');
+        $brand = Brand::findOrFail($this->brandId);
+        $countryCode = $brand->workspace->country ?? 'NG';
+
+        return view('livewire.my-brand.brand-kit', [
+            'currency' => countryCurrencyExample($countryCode),
+        ]);
     }
 }
