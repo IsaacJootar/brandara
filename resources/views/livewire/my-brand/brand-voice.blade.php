@@ -20,10 +20,14 @@
                         <span style="font-size:0.78rem; color:#059669;">&mdash; trained on {{ $brand->voice_samples_count }} post{{ $brand->voice_samples_count !== 1 ? 's' : '' }}</span>
                     @endif
                 </div>
-                <button wire:click="retrain"
-                    style="font-size:0.8rem; font-weight:500; color:#065F46; background:#fff; border:1px solid #A7F3D0; border-radius:8px; padding:0.375rem 0.875rem; cursor:pointer; transition:opacity 0.15s;"
-                    onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
-                    Update voice
+                <button type="button" wire:click="retrain"
+                    style="font-size:0.8rem; font-weight:600; color:#fff; background:#059669; border:none; border-radius:8px; padding:0.5rem 1rem; cursor:pointer; transition:opacity 0.15s; display:flex; align-items:center; gap:0.375rem;"
+                    onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'"
+                    title="Paste new writing samples to update your voice profile">
+                    <svg style="width:13px;height:13px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    Retrain voice
                 </button>
             </div>
 
@@ -105,6 +109,11 @@
                     </div>
                 </div>
             @endif
+
+            {{-- Retrain hint --}}
+            <p style="font-size:0.75rem; color:#6EE7B7; margin:0; border-top:1px solid #A7F3D0; padding-top:0.75rem;">
+                Your writing style evolves — click <strong>Retrain voice</strong> any time you want to update this profile with newer posts.
+            </p>
 
         </div>
 
