@@ -31,7 +31,7 @@
                     style="flex:1; display:flex; align-items:center; justify-content:center; gap:0.35rem; padding:0.5rem 0.5rem; border-radius:7px; border:none; font-size:0.75rem; font-weight:{{ $inputType === $type ? '600' : '400' }}; cursor:pointer; transition:all 0.15s;
                     {{ $inputType === $type
                         ? 'background:#fff; color:#7C3AED; box-shadow:0 1px 3px rgba(15,23,42,0.08);'
-                        : 'background:transparent; color:#94A3B8;' }}">
+                        : 'background:transparent; color:#475569;' }}">
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="flex-shrink:0;">{!! $tab['icon'] !!}</svg>
                     <span style="white-space:nowrap;">{{ $tab['label'] }}</span>
                 </button>
@@ -160,10 +160,10 @@
 
                         <span style="flex:1; font-size:0.84rem; font-weight:{{ $selected ? '600' : '400' }}; color:{{ $selected ? '#0F172A' : '#64748B' }};">{{ $name }}</span>
 
-                        {{-- Char count for this platform --}}
-                        <span style="font-size:0.72rem; color:{{ $over ? '#DC2626' : '#94A3B8' }};">
-                            {{ $over ? '⚠ ' : '' }}{{ number_format($limit) }}
-                        </span>
+                        {{-- Over-limit warning --}}
+                        @if ($over)
+                            <span style="font-size:0.7rem; color:#DC2626; font-weight:600;">Too long</span>
+                        @endif
 
                         {{-- Checkmark --}}
                         @if ($selected)
