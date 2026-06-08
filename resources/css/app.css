@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide x-cloak elements before Alpine boots — prevents flash of unstyled content */
+[x-cloak] { display: none !important; }
+
 /* ═══════════════════════════════════════════════════
    BRANDARA APP SHELL — Responsive layout (gona-style)
 ═══════════════════════════════════════════════════ */

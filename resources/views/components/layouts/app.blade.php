@@ -193,11 +193,11 @@
 
     {{-- Global toast — triggered by Livewire dispatch('show-toast', message: '...') --}}
     <div
+        x-cloak
         x-data="{ show: false, message: '' }"
         x-on:show-toast.window="if ($event.detail && $event.detail.message) { message = $event.detail.message; show = true; setTimeout(() => show = false, 3500); }"
         x-show="show"
-        x-bind:style="show ? 'display:flex' : 'display:none'"
-        style="display:none; position:fixed; top:1.25rem; right:1.25rem; z-index:9999; align-items:center; gap:0.5rem; background:#0F172A; color:#fff; font-size:0.85rem; font-weight:500; padding:0.75rem 1.125rem; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.18); min-width:220px; pointer-events:none;"
+        style="position:fixed; top:1.25rem; right:1.25rem; z-index:9999; display:flex; align-items:center; gap:0.5rem; background:#0F172A; color:#fff; font-size:0.85rem; font-weight:500; padding:0.75rem 1.125rem; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.18); min-width:220px; pointer-events:none;"
     >
         <svg style="width:16px;height:16px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
