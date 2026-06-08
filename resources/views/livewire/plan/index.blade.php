@@ -6,7 +6,7 @@
              x-show="show" x-transition:leave="transition ease-in duration-300"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-2"
-             style="position:fixed; top:1.25rem; right:1.25rem; z-index:999; background:#0F172A; color:#fff; padding:0.75rem 1.1rem; border-radius:10px; font-size:0.85rem; font-weight:500; display:flex; align-items:center; gap:0.6rem; box-shadow:0 8px 24px rgba(15,23,42,0.22); max-width:320px; pointer-events:none;">
+             style="position:fixed; top:1.25rem; right:1.25rem; z-index:999; background:#0F172A; color:#fff; padding:0.85rem 1.4rem; border-radius:10px; font-size:0.85rem; font-weight:500; display:flex; align-items:center; gap:0.6rem; box-shadow:0 8px 24px rgba(15,23,42,0.22); width:380px; pointer-events:none;">
             <svg width="16" height="16" fill="none" stroke="#4ADE80" stroke-width="2.5" viewBox="0 0 24 24" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
             {{ session('plan_message') }}
         </div>
@@ -30,7 +30,7 @@
             <svg width="16" height="16" fill="none" stroke="#7C3AED" stroke-width="1.8" viewBox="0 0 24 24" style="flex-shrink:0; margin-top:1px;"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
             <div style="font-size:0.78rem; color:#5B21B6; line-height:1.55;">
                 <strong>Pillars</strong> are your permanent content topics (e.g. Thought Leadership, Client Wins).
-                <strong>Campaigns</strong> are focused bursts of posts around a specific event or goal — like a product launch or Black Friday. Campaign posts are linked to a pillar so your content balance stays on track.
+                <strong>Campaigns</strong> are a series of posts you plan around one event or goal — like a product launch or Black Friday. Campaign posts are linked to a pillar so your content balance stays on track.
             </div>
         </div>
 
