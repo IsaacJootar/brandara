@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PlatformController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,7 +46,7 @@ Route::middleware(['auth', 'workspace.active'])->group(function () {
         Route::get('/create', [PostController::class, 'create'])->name('create');
         Route::delete('/create/{post}', [PostController::class, 'destroy'])->name('post.destroy');
         Route::get('/plan', fn () => view('plan.index'))->name('plan');
-        Route::get('/schedule', fn () => view('schedule.index'))->name('schedule');
+        Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule');
         Route::get('/grow', fn () => view('grow.index'))->name('grow');
         Route::get('/results', fn () => view('results.index'))->name('results');
         Route::get('/my-brand', fn () => view('my-brand.index'))->name('my-brand');
