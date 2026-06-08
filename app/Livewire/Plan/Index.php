@@ -259,6 +259,19 @@ class Index extends Component
         session()->flash('plan_message', 'Campaign archived.');
     }
 
+    public function toggleCampaignPlatform(string $platform): void
+    {
+        if (in_array($platform, $this->campaignPlatforms)) {
+            if (count($this->campaignPlatforms) > 1) {
+                $this->campaignPlatforms = array_values(
+                    array_filter($this->campaignPlatforms, fn ($p) => $p !== $platform)
+                );
+            }
+        } else {
+            $this->campaignPlatforms[] = $platform;
+        }
+    }
+
     private function resetCampaignForm(): void
     {
         $this->showCampaignForm = false;

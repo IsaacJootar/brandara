@@ -252,13 +252,16 @@
                         </div>
                     </div>
                     <div>
-                        <label style="font-size:0.72rem; font-weight:600; color:#475569; display:block; margin-bottom:0.5rem;">Platforms</label>
+                        <label style="font-size:0.72rem; font-weight:600; color:#475569; display:block; margin-bottom:0.25rem;">
+                            Which platforms will this campaign run on?
+                        </label>
+                        <div style="font-size:0.7rem; color:#94A3B8; margin-bottom:0.5rem;">Select all that apply — tap to toggle on/off.</div>
                         <div style="display:flex; flex-wrap:wrap; gap:0.4rem;">
                             @foreach (['linkedin'=>'LinkedIn','twitter'=>'X','facebook'=>'Facebook','instagram'=>'Instagram','threads'=>'Threads','whatsapp'=>'WhatsApp','tiktok'=>'TikTok'] as $key => $name)
                                 @php $checked = in_array($key, $campaignPlatforms); @endphp
-                                <button wire:click="$toggle('campaignPlatforms', '{{ $key }}')" type="button"
-                                    style="padding:0.35rem 0.75rem; border-radius:99px; font-size:0.75rem; font-weight:{{ $checked ? '600' : '400' }}; border:1px solid {{ $checked ? '#7C3AED' : '#E2E8F0' }}; background:{{ $checked ? '#F5F3FF' : '#fff' }}; color:{{ $checked ? '#7C3AED' : '#64748B' }}; cursor:pointer;">
-                                    {{ $name }}
+                                <button wire:click="toggleCampaignPlatform('{{ $key }}')" type="button"
+                                    style="padding:0.35rem 0.75rem; border-radius:99px; font-size:0.75rem; font-weight:{{ $checked ? '600' : '400' }}; border:1px solid {{ $checked ? '#7C3AED' : '#E2E8F0' }}; background:{{ $checked ? '#F5F3FF' : '#fff' }}; color:{{ $checked ? '#7C3AED' : '#64748B' }}; cursor:pointer; transition:all 0.12s;">
+                                    {{ $checked ? '✓ ' : '' }}{{ $name }}
                                 </button>
                             @endforeach
                         </div>
