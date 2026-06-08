@@ -136,7 +136,7 @@ brandara/
 │   ├── Services/
 │   │   ├── AI/
 │   │   │   ├── ClaudeService.php
-│   │   │   ├── VoiceDnaService.php
+│   │   │   ├── BrandVoiceService.php
 │   │   │   ├── ContentGeneratorService.php
 │   │   │   ├── CampaignPackService.php
 │   │   │   ├── AiVisibilityService.php

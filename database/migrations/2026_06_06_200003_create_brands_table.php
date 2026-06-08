@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('secondary_color')->nullable();
             $table->string('font_preference')->nullable();
             $table->string('logo_path')->nullable();
-            $table->json('voice_dna')->nullable();
+            $table->json('brand_voice')->nullable();
             $table->integer('voice_samples_count')->default(0);
             $table->enum('default_tone', ['corporate', 'professional', 'founder', 'african', 'friendly', 'educational', 'bold', 'luxury'])->default('professional');
             $table->enum('language', ['en', 'fr'])->default('en');

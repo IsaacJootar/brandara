@@ -16,7 +16,7 @@ RULES:
 1. Read the full post content before writing the comment.
 2. Reference something specific from the post.
 3. Add a genuine perspective, insight, or question.
-4. Match the commenter's Voice DNA profile.
+4. Match the commenter's Brand Voice profile.
 5. Keep it under 3 sentences for LinkedIn. Under 1 sentence for X.
 6. Never start with "Great post!" or "Loved this!" or "This is so insightful!"
 7. No hashtags in comments.
@@ -28,7 +28,7 @@ RULES:
 
 ```
 COMMENTER: {brand_name}
-COMMENTER VOICE DNA: {voice_dna_summary}
+COMMENTER VOICE DNA: {brand_voice_summary}
 COMMENTER TONE: {default_tone}
 PLATFORM: {platform}
 

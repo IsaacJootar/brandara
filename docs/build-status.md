@@ -1,7 +1,7 @@
 # Brandara — Build Status
 
 Last updated: 2026-06-08
-Current phase: **10 — Voice DNA**
+Current phase: **10 — Brand Voice**
 
 ---
 
@@ -98,7 +98,7 @@ All tables created and migrated:
 - `OpenAiProvider` — alternative. Uses Guzzle HTTP directly. Model: `gpt-4o`
 - `AiProviderFactory` — reads `BRANDARA_AI_PROVIDER` env (default: `claude`)
   - **Admin note for Module 22:** factory will read from DB setting so admin UI toggle requires zero code changes. Current hook: `config('ai.default')`
-- `ContentGenerationService` — brand-aware system prompt using Voice DNA, target audience, negative brief, positioning. Generates 3 variations in one API call.
+- `ContentGenerationService` — brand-aware system prompt using Brand Voice, target audience, negative brief, positioning. Generates 3 variations in one API call.
 - Platform adaptation: LinkedIn (paragraphs), X (280 chars), Instagram (emoji hook), TikTok (hook first), Threads (casual), WhatsApp (broadcast), Facebook (conversational)
 - JSON parser with markdown fence stripping + fallback for malformed responses
 - `VariationPicker` Livewire component:
@@ -116,14 +116,14 @@ All tables created and migrated:
 
 | # | Module | Key dependencies |
 |---|---|---|
-| 10 | Voice DNA | Paste samples → Claude trains voice profile → stored as JSON on brand |
+| 10 | Brand Voice | Paste samples → Claude trains voice profile → stored as JSON on brand |
 | 11 | Brand Kit + Profile | My Brand screen, logo upload, all fields feed into AI prompts |
 | 12 | Content pillars (advanced) | Pillar tags on posts, calendar colouring, AI balance alerts |
 | 13 | Campaign packs | African holiday library, built-in packs, one-click generation |
 | 14 | TikTok toolkit | Caption + video script + hashtag generator, pure text |
 | 15 | Media library | Upload/browse/compress, Canva button, platform compliance check |
 | 16 | WhatsApp assistant | Broadcast/status/follow-up copy, WhatsApp-native tone |
-| 17 | Engagement automation | Auto-like/comment rules, Voice DNA contextual replies |
+| 17 | Engagement automation | Auto-like/comment rules, Brand Voice contextual replies |
 | 18 | Lead tracker | Post engagers, enrichment, tags, notes, CSV export |
 | 19 | Analytics dashboard | Results screen, engagement metrics, weekly digest email |
 | 20 | Billing | Paystack (NGN) + Flutterwave (pan-Africa), webhooks, trial expiry |

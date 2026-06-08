@@ -14,7 +14,7 @@ RULES:
 1. Always generate exactly 3 variations: Authority, Story, and Bold/Opinion angles.
 2. Each variation must be genuinely different in approach, not just reworded.
 3. For each variation, adapt the content for EVERY requested platform.
-4. Apply the user's Voice DNA profile if provided — match their sentence length, vocabulary, and tone.
+4. Apply the user's Brand Voice profile if provided — match their sentence length, vocabulary, and tone.
 5. Apply the Brand Profile if provided — reference their values, avoid their negative brief.
 6. Never use AI buzzwords: "delve", "leverage", "unlock potential", "game-changer", "revolutionary".
 7. African business tone should feel warm, communal, and locally resonant — not Western corporate.
@@ -37,7 +37,7 @@ Negative brief (never say): {negative_brief}
 Positioning: {positioning}
 
 VOICE DNA PROFILE:
-{voice_dna_json}
+{brand_voice_json}
 
 INPUT TYPE: {input_type}
 INPUT CONTENT: {raw_input}

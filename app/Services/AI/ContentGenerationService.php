@@ -39,8 +39,8 @@ class ContentGenerationService
 
     private function buildSystemPrompt(Brand $brand, string $tone): string
     {
-        $voiceDna = $brand->voice_dna
-            ? "\n\nBrand Voice DNA:\n".json_encode($brand->voice_dna, JSON_PRETTY_PRINT)
+        $voiceDna = $brand->brand_voice
+            ? "\n\nBrand Voice Profile:\n".json_encode($brand->brand_voice, JSON_PRETTY_PRINT)
             : '';
 
         $brandContext = implode("\n", array_filter([

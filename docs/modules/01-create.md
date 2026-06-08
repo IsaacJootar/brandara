@@ -62,10 +62,10 @@ Generates:
 
 ## Database tables touched
 - `posts` — created as draft with ai_generated=true, variation_selected set on pick
-- `brands` — reads voice_dna and brand profile for generation context
+- `brands` — reads brand_voice and brand profile for generation context
 
 ## Prompts
-See `docs/prompts/content-generation.md` and `docs/prompts/voice-dna.md`
+See `docs/prompts/content-generation.md` and `docs/prompts/brand-voice.md`
 
 ## Livewire components
 - `PostComposer` — main composer with real-time preview

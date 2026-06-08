@@ -64,7 +64,7 @@ emerging markets as the primary market.
 | Publishing Engine | Schedule |
 | Engagement & Growth | Grow |
 | Analytics & Intelligence | Results |
-| Brand Kit + Voice DNA + Profile | My Brand |
+| Brand Kit + Brand Voice + Profile | My Brand |
 | Platform Connections | Connections |
 | Client Workspace | Clients |
 | Approval Workflow | Review |
@@ -130,7 +130,7 @@ emerging markets as the primary market.
 
 14. **Keep commits clear and module-based** — every commit message must
     name the module and what was completed. Example: "Module 01 complete —
-    Content Brain: AI generation, 3 variations, Voice DNA". No vague messages.
+    Content Brain: AI generation, 3 variations, Brand Voice". No vague messages.
 
 15. **Do not stop until a full module is complete** — do not pause halfway
     through a module because something is difficult. Work through it. A module
@@ -198,7 +198,7 @@ Run this at the start of every session to confirm identity is set.
 ## Current build phase
 
 Update this line when starting a new phase:
-**CURRENT PHASE: 10 — Voice DNA** (next to build)
+**CURRENT PHASE: 10 — Brand Voice** (next to build)
 
 Modules 01–09 complete and committed. See `docs/build-status.md` for full status.
 

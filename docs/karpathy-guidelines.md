@@ -119,7 +119,7 @@ Transform every Brandara task into a verifiable goal before starting:
   post as failed with a plain English reason after the 3rd attempt.
   Verify by scheduling a test post and checking the database."
 
-- "Add Voice DNA" → "A user can paste 10 past posts, click Train,
+- "Add Brand Voice" → "A user can paste 10 past posts, click Train,
   and subsequent generated posts noticeably reflect the phrasing
   patterns and sentence structure of the samples. Verify by comparing
   generated output before and after training."

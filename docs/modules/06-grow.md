@@ -21,7 +21,7 @@ Lead tracker turns engagement into a pipeline.
 
 **Auto-comment:**
 - AI reads the target post (not a template — actual post content)
-- Generates a genuine contextual comment in the user's Voice DNA
+- Generates a genuine contextual comment in the user's Brand Voice
 - Comment sounds like them, not a bot
 - Rules: comment on posts by [person list], containing [keyword], in [industry]
 - Review queue: optional — user reviews AI comments before they post

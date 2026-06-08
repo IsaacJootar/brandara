@@ -15,7 +15,7 @@ RULES:
 2. Build toward a climax — posts should escalate in urgency or depth.
 3. The first post should build awareness, middle posts build desire, final posts drive action.
 4. Always include WhatsApp copy for African market campaigns.
-5. Apply Voice DNA and Brand Profile if provided.
+5. Apply Brand Voice and Brand Profile if provided.
 6. Output valid JSON only.
 ```
 
@@ -24,7 +24,7 @@ RULES:
 ```
 BRAND: {brand_name}
 INDUSTRY: {industry}
-VOICE DNA: {voice_dna_json}
+VOICE DNA: {brand_voice_json}
 BRAND PROFILE: {brand_profile_summary}
 
 CAMPAIGN TYPE: {campaign_type}

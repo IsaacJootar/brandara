@@ -1,8 +1,8 @@
-# Prompt — Voice DNA Training
+# Prompt — Brand Voice Training
 
 ## When to use
-Called by `VoiceDnaService` when user submits voice samples.
-Run once (or when user updates samples). Result stored in `brands.voice_dna`.
+Called by `BrandVoiceService` when user submits voice samples.
+Run once (or when user updates samples). Result stored in `brands.brand_voice`.
 
 ## System prompt
 

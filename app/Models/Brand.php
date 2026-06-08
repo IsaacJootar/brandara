@@ -15,12 +15,12 @@ class Brand extends Model
         'workspace_id', 'name', 'slug', 'tagline', 'description',
         'vision', 'mission', 'values', 'target_audience', 'negative_brief',
         'positioning', 'primary_color', 'secondary_color', 'font_preference',
-        'logo_path', 'voice_dna', 'voice_samples_count', 'default_tone', 'language',
+        'logo_path', 'brand_voice', 'voice_samples_count', 'default_tone', 'language',
     ];
 
     protected $casts = [
         'values'    => 'array',
-        'voice_dna' => 'array',
+        'brand_voice' => 'array',
     ];
 
     public function workspace(): BelongsTo

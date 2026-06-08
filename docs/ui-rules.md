@@ -17,7 +17,7 @@
 | Publishing Engine | Schedule | The action they're taking |
 | Engagement & Growth | Grow | The outcome they want |
 | Analytics & Intelligence | Results | They want results, not analytics |
-| Brand Kit + Voice DNA + Brand Profile | My Brand | It's all about their brand |
+| Brand Kit + Brand Voice + Brand Profile | My Brand | It's all about their brand |
 | Platform OAuth Connections | Connections | Simple, non-technical |
 | Agency / Client Workspace | Clients | Agencies think in clients |
 | Draft & Approval Workflow | Review | What actually happens |

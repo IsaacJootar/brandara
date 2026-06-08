@@ -200,7 +200,7 @@ composer require anthropic-php/laravel
 
 **Model:** `claude-sonnet-4-5` (cost-efficient, high quality)
 **Max tokens:** 4096 per generation
-**Usage:** Content generation, Voice DNA, campaign packs, smart comments, WhatsApp copy, AI Visibility queries
+**Usage:** Content generation, Brand Voice, campaign packs, smart comments, WhatsApp copy, AI Visibility queries
 
 ```
 ANTHROPIC_API_KEY=sk-ant-...

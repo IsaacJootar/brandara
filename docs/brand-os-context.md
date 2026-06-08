@@ -39,8 +39,8 @@ and African-context AI visibility monitoring.
 
 | # | Name | UI label | Purpose |
 |---|---|---|---|
-| 01 | Content Brain | Create | AI generation, 3 variations, Voice DNA |
-| 02 | Brand Intelligence | My Brand | Brand Kit, Brand Profile, Voice DNA |
+| 01 | Content Brain | Create | AI generation, 3 variations, Brand Voice |
+| 02 | Brand Intelligence | My Brand | Brand Kit, Brand Profile, Brand Voice |
 | 03 | Content Strategy | Plan | Pillars, campaign packs, AI recommendations |
 | 04 | Visual & Media | Create (sub) | Carousel copy, media library, Canva integration |
 | 05 | Publishing Engine | Schedule | Composer, preview, scheduling, OAuth, retry |
@@ -75,7 +75,7 @@ No Stripe.
 ## Pricing
 
 Starter $15/mo — 1 brand, 3 platforms, 50 AI generations
-Pro $29/mo — 1 brand, all platforms, unlimited generation, Voice DNA, all modules
+Pro $29/mo — 1 brand, all platforms, unlimited generation, Brand Voice, all modules
 Agency $79/mo — up to 10 brands, client approval workflow, team seats, white-label
 
 7-day free trial on all plans. No credit card required.
@@ -99,7 +99,7 @@ inform social content strategy.
 
 - 3 content variations with distinct strategic angles
 - Per-platform content adaptation (rewritten, not reformatted)
-- Voice DNA — AI learns your exact writing style
+- Brand Voice — AI learns your exact writing style
 - Brand Profile — AI thinks like your brand, not just sounds like it
 - TikTok text toolkit (caption, script, overlay copy)
 - WhatsApp marketing assistant

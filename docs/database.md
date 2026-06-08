@@ -94,7 +94,7 @@ The `slug` is used in the URL: `brandara.com/{slug}/dashboard`.
 | secondary_color | string nullable | Hex code |
 | font_preference | string nullable | Preferred font name |
 | logo_path | string nullable | Path in storage |
-| voice_dna | json nullable | Trained voice profile from Claude |
+| brand_voice | json nullable | Trained voice profile from Claude |
 | voice_samples_count | integer default 0 | Posts used to train voice |
 | default_tone | enum | corporate, professional, founder, african, friendly, educational, bold, luxury |
 | language | enum default en | en, fr |

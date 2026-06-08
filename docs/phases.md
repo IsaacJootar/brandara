@@ -39,14 +39,14 @@ Update `CLAUDE.md` → CURRENT PHASE when starting a new session.
 | 07 | Plan — Content Strategy | ✅ | Content pillars (up to 5), pillar balance tracker, campaign builder with pagination. Maps to docs/modules/03-plan.md |
 | 08 | Notifications (4 channels) | ✅ ⚠️ | In-app bell, email (Resend), web push (service worker), SMS scaffold (Africa's Talking). Custom BrandaraDbChannel. **VAPID keys need regeneration on Linux/Render — placeholder keys used locally** |
 | 09 | AI Content Engine | ✅ | ClaudeProvider + OpenAiProvider behind AiProviderFactory. ContentGenerationService with brand-aware prompts. VariationPicker (Authority/Story/Bold). **Admin AI provider switch: ready for Module 23** |
-| 10 | Voice DNA | ⏳ | VoiceDnaService, voice sample input, stores profile on brand, used in generation |
+| 10 | Brand Voice | ⏳ | BrandVoiceService, voice sample input, stores profile on brand, used in generation |
 | 11 | Brand Kit + Profile | ⏳ | My Brand screen, brand profile form, logo upload |
 | 12 | Content pillars (advanced) | ⏳ | Pillar-tagged posts on calendar, balance alerts in AI recommendations |
 | 13 | Campaign packs | ⏳ | Built-in pack library (African holidays), one-click generation, custom campaign builder |
 | 14 | TikTok toolkit | ⏳ | Caption, video script, hashtag, bio copy — pure text, no API |
 | 15 | Media library | ⏳ | Upload, browse, compress, platform compliance check, Canva button |
 | 16 | WhatsApp assistant | ⏳ | Broadcast, status copy, follow-up sequences, WhatsApp-native tone |
-| 17 | Engagement automation | ⏳ | Auto-like/comment rules, Voice DNA replies, frequency controls |
+| 17 | Engagement automation | ⏳ | Auto-like/comment rules, Brand Voice replies, frequency controls |
 | 18 | Lead engagement tracker | ⏳ | Post engagers, enrichment, tags, notes, follow-up, CSV export |
 | 19 | Analytics dashboard | ⏳ | Results screen, engagement metrics, best posting times, weekly digest |
 | 20 | Billing — Paystack + Flutterwave | ⏳ | Pricing page, checkout, webhooks, trial expiry flow |
@@ -85,6 +85,6 @@ After every phase, manually test before moving on:
 **Phase 07:** Create a pillar. Create a campaign. Check balance tracker shows it.
 **Phase 08:** Check notification bell. Trigger a post failure. Verify in-app notification appears.
 **Phase 09:** Enter a topic in Create. Click Generate. Verify 3 variation cards appear. Select one. Verify draft created.
-**Phase 10:** Paste 10 sample posts in Voice DNA. Train. Generate a post. Verify it reflects style.
+**Phase 10:** Paste 10 sample posts in Brand Voice. Train. Generate a post. Verify it reflects style.
 **Phase 22:** Run AI visibility query. Verify results stored. Check dashboard.
 **Phase 23 (now 22):** Log into admin panel. Change tier module access. Verify sidebar updates instantly.
