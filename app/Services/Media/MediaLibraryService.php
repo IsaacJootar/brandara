@@ -40,12 +40,12 @@ class MediaLibraryService
             $this->storeCompressedImage($file, $path);
             [$width, $height] = $this->imageDimensions($path);
         } else {
-            Storage::put($path, file_get_contents($file->getRealPath()));
+            Storage::disk('public')->put($path, file_get_contents($file->getRealPath()));
             $width = null;
             $height = null;
         }
 
-        $sizeKb = (int) ceil(Storage::size($path) / 1024);
+        $sizeKb = (int) ceil(Storage::disk('public')->size($path) / 1024);
 
         return MediaFile::create([
             'brand_id' => $brand->id,
@@ -66,16 +66,16 @@ class MediaLibraryService
      */
     public function delete(MediaFile $file): void
     {
-        Storage::delete($file->storage_path);
+        Storage::disk('public')->delete($file->storage_path);
         $file->delete();
     }
 
     /**
-     * Return URL for a stored file.
+     * Return public URL for a stored file.
      */
     public function url(MediaFile $file): string
     {
-        return Storage::url($file->storage_path);
+        return Storage::disk('public')->url($file->storage_path);
     }
 
     /**
@@ -146,7 +146,7 @@ class MediaLibraryService
             $image->scaleDown(self::MAX_DIMENSION, self::MAX_DIMENSION);
         }
 
-        Storage::put($storagePath, (string) $image->encode(new JpegEncoder(82)));
+        Storage::disk('public')->put($storagePath, (string) $image->encode(new JpegEncoder(82)));
     }
 
     /**
@@ -155,7 +155,7 @@ class MediaLibraryService
     private function imageDimensions(string $storagePath): array
     {
         $manager = new ImageManager(new Driver);
-        $image = $manager->decode(Storage::get($storagePath));
+        $image = $manager->decode(Storage::disk('public')->get($storagePath));
 
         return [$image->width(), $image->height()];
     }

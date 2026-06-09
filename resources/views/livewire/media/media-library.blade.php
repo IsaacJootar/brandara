@@ -53,12 +53,7 @@
         </div>
     @endif
 
-    {{-- Success flash --}}
-    @if($uploadStatus === 'done')
-        <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:0.75rem 1rem; margin-bottom:1.25rem; font-size:0.85rem; color:#16A34A;">
-            Files uploaded successfully.
-        </div>
-    @endif
+    {{-- Success handled by toast --}}
 
     {{-- ── Search + storage bar ──────────────────────────────────────────── --}}
     <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.25rem; margin-top:0.25rem; flex-wrap:wrap;">

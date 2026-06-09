@@ -68,7 +68,7 @@ class MediaLibraryTest extends TestCase
 
     public function test_service_stores_image_and_creates_record(): void
     {
-        Storage::fake('local');
+        Storage::fake('public');
         [$user, $brand] = $this->makeWorkspace();
 
         $file = UploadedFile::fake()->image('photo.jpg', 800, 600);
@@ -81,12 +81,12 @@ class MediaLibraryTest extends TestCase
             'filename' => 'photo.jpg',
             'mime_type' => 'image/jpeg',
         ]);
-        Storage::assertExists($media->storage_path);
+        Storage::disk('public')->assertExists($media->storage_path);
     }
 
     public function test_service_rejects_invalid_file_type(): void
     {
-        Storage::fake('local');
+        Storage::fake('public');
         [$user, $brand] = $this->makeWorkspace();
 
         $file = UploadedFile::fake()->create('doc.pdf', 100, 'application/pdf');
@@ -98,7 +98,7 @@ class MediaLibraryTest extends TestCase
 
     public function test_service_deletes_file_and_record(): void
     {
-        Storage::fake('local');
+        Storage::fake('public');
         [$user, $brand] = $this->makeWorkspace();
 
         $file = UploadedFile::fake()->image('todelete.jpg', 400, 300);
@@ -109,7 +109,7 @@ class MediaLibraryTest extends TestCase
         $service->delete($media);
 
         $this->assertDatabaseMissing('media_files', ['id' => $media->id]);
-        Storage::assertMissing($path);
+        Storage::disk('public')->assertMissing($path);
     }
 
     public function test_platform_check_warns_on_oversized_instagram_image(): void
@@ -201,13 +201,13 @@ class MediaLibraryTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(MediaLibrary::class, ['brand' => $brand])
-            ->call('upload')
+            ->call('saveToLibrary')
             ->assertHasErrors(['uploads']);
     }
 
     public function test_component_delete_removes_file(): void
     {
-        Storage::fake('local');
+        Storage::fake('public');
         [$user, $brand] = $this->makeWorkspace();
 
         $media = MediaFile::create([

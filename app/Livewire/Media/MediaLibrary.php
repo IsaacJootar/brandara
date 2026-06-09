@@ -68,9 +68,11 @@ class MediaLibrary extends Component
                 $service->store($file, $brand, auth()->id());
             }
 
+            $count = count($this->uploads);
             $this->uploads = [];
-            $this->uploadStatus = 'done';
+            $this->uploadStatus = 'idle';
             $this->resetPage();
+            $this->dispatch('show-toast', message: $count === 1 ? 'File saved to library.' : "{$count} files saved to library.");
         } catch (MediaUploadException $e) {
             $this->uploadError = $e->getMessage();
             $this->uploadStatus = 'error';
