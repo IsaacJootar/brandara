@@ -48,7 +48,7 @@
         {{-- Context banner based on type --}}
         @php
             $banners = [
-                'broadcast' => ['text' => 'Write like you\'re personally updating someone who trusts you — not blasting a flyer.', 'color' => '#15803D', 'bg' => '#F0FDF4', 'border' => '#BBF7D0'],
+                'broadcast' => ['text' => 'Write like you\'re personally updating someone who trusts you — keep it real, keep it short.', 'color' => '#15803D', 'bg' => '#F0FDF4', 'border' => '#BBF7D0'],
                 'status'    => ['text' => 'Status copy needs to stop the scroll in 3 seconds. One idea, one hook, done.', 'color' => '#0369A1', 'bg' => '#F0F9FF', 'border' => '#BAE6FD'],
                 'promo'     => ['text' => 'Make the offer clear, make the deadline real, make the action obvious. No vague "DM me".', 'color' => '#B45309', 'bg' => '#FFFBEB', 'border' => '#FDE68A'],
                 'follow_up' => ['text' => 'The goal is warmth + one soft next step. Do not be pushy. Do not write an essay.', 'color' => '#7C3AED', 'bg' => '#F5F3FF', 'border' => '#DDD6FE'],
