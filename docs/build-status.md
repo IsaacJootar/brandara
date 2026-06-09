@@ -110,6 +110,30 @@ All tables created and migrated:
 - **To activate:** add `ANTHROPIC_API_KEY=sk-ant-...` to `.env`
 - **To switch to OpenAI:** `BRANDARA_AI_PROVIDER=openai` + `OPENAI_API_KEY=sk-...`
 
+### ✅ Module 10 — Brand Voice
+- `BrandVoiceService` — sends writing samples to Claude, stores voice profile JSON on brand
+- `BrandVoice` Livewire component — paste samples or answer voice interview questions, train, retrain
+- Voice profile captures: sentence length, vocabulary, tone, opening/closing patterns, emoji habits, signature phrases
+- Integrated into all AI generation prompts via `brand_voice` JSON on the brand model
+
+### ✅ Module 11 — Brand Kit + Profile
+- `BrandKit` Livewire component — brand name, tagline, description, colours, fonts, logo upload, target audience
+- `BrandProfile` Livewire component — vision, mission, values (up to 5), negative brief, positioning
+- `CompletionScore` Livewire component — % score shown on dashboard, drives users to fill in missing fields
+- All fields feed into AI content generation system prompts
+
+### ✅ Module 12 — Content Pillars (Advanced)
+- Pillar tagging on posts (content_pillar_id on post composer)
+- Calendar colour-coding by pillar
+- Pillar balance tracker with stale alert after 14 days
+- AI balance alerts when a pillar has not been used
+
+### ✅ Module 13 — Campaign Packs
+- African holiday/event pack library with built-in packs
+- One-click campaign generation from a pack
+- Custom campaign builder with date range, platform selection, goal setting
+- Pack library scrollable section on Plan page
+
 ### ✅ Module 14 — TikTok Toolkit
 - `TikTokService` — generates caption, video script (hook/body/CTA), text overlays, hashtags, bio copy
 - `TikTokToolkit` Livewire component — 6 tones, generating state, copy buttons per section
@@ -134,15 +158,10 @@ All tables created and migrated:
 
 ---
 
-## Pending modules — CORRECTED LIST
-
-Modules 10, 11, 12 were skipped in a prior session. They must be built before continuing to 16+.
+## Pending modules (16–22)
 
 | # | Module | Key dependencies |
 |---|---|---|
-| **10** | **Brand Voice** ⚠️ SKIPPED | Paste samples → Claude trains voice profile → stored as JSON on brand |
-| **11** | **Brand Kit + Profile** ⚠️ SKIPPED | My Brand screen, logo upload, all fields feed into AI prompts |
-| **12** | **Content Pillars (advanced)** ⚠️ SKIPPED | Pillar tags on posts, calendar colouring, AI balance alerts |
 | 16 | WhatsApp assistant | Broadcast/status/follow-up copy, WhatsApp-native tone |
 | 17 | Engagement automation | Auto-like/comment rules, Brand Voice contextual replies |
 | 18 | Lead tracker | Post engagers, enrichment, tags, notes, CSV export |
