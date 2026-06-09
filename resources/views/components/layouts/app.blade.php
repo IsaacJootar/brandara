@@ -77,7 +77,11 @@
                             </a>
                         @else
                             {{-- Locked item — shown with lock icon, not clickable --}}
-                            <div style="display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; border-radius:8px; font-size:0.835rem; color:rgba(255,255,255,0.22); cursor:default; margin-bottom:1px;" title="Upgrade to {{ $item['tiers'][0] }} plan to unlock">
+                            @php
+                                $requiredTier = $item['tiers'][0] ?? 'pro';
+                                $tierLabel    = config("navigation.tiers.{$requiredTier}.label", ucfirst($requiredTier));
+                            @endphp
+                            <div style="display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; border-radius:8px; font-size:0.835rem; color:rgba(255,255,255,0.22); cursor:default; margin-bottom:1px;" title="Upgrade to {{ $tierLabel }} to unlock">
                                 <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">{!! $item['icon'] !!}</svg>
                                 {{ $item['label'] }}
                                 <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:auto; flex-shrink:0; opacity:0.5;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>

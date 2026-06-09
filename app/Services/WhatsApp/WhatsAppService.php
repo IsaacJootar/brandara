@@ -5,9 +5,12 @@ namespace App\Services\WhatsApp;
 use App\Models\Brand;
 use App\Services\Ai\AiProviderException;
 use App\Services\Ai\AiProviderFactory;
+use App\Services\Ai\ChecksGenerationLimit;
 
 class WhatsAppService
 {
+    use ChecksGenerationLimit;
+
     /** Supported copy types and their display labels */
     public const TYPES = [
         'broadcast' => 'Broadcast message',
@@ -19,28 +22,21 @@ class WhatsAppService
     public function __construct(private readonly AiProviderFactory $factory) {}
 
     /**
-     * Generate WhatsApp copy for the given type and context.
+     * @return array{type: string, messages: array, do_tips: string[], dont_tips: string[]}
      *
-     * @return array{
-     *   type: string,
-     *   messages: array<int, array{label: string, body: string, emoji_note: string}>,
-     *   do_tips: string[],
-     *   dont_tips: string[]
-     * }
-     *
-     * @throws AiProviderException
+     * @throws AiProviderException|\RuntimeException
      */
     public function generate(Brand $brand, string $type, string $context): array
     {
+        $this->enforceLimit($brand);
+
         $provider = $this->factory->make();
+        $raw = $provider->generate($this->buildSystemPrompt($brand), $this->buildUserPrompt($brand, $type, $context), 2048);
+        $result = $this->parse($raw, $type);
 
-        $raw = $provider->generate(
-            $this->buildSystemPrompt($brand),
-            $this->buildUserPrompt($brand, $type, $context),
-            2048
-        );
+        $this->incrementUsage($brand);
 
-        return $this->parse($raw, $type);
+        return $result;
     }
 
     // ── Prompts ───────────────────────────────────────────────────────────────

@@ -209,11 +209,21 @@
             <div style="display:flex; flex-direction:column; gap:0.375rem;">
                 @foreach ($platformNames as $key => $name)
                     @php
-                        $selected = in_array($key, $platforms);
+                        $allowed  = $this->isPlatformAllowed($key);
+                        $selected = $allowed && in_array($key, $platforms);
                         $limit    = $charLimits[$key];
                         $count    = strlen($body);
                         $over     = $count > $limit;
                     @endphp
+                    @if(!$allowed)
+                        {{-- Locked platform — Growth plan required --}}
+                        <div style="display:flex; align-items:center; gap:0.625rem; padding:0.5rem 0.625rem; border-radius:8px; border:1px solid #F1F5F9; background:#FAFBFF; cursor:not-allowed; opacity:0.6;"
+                             title="Upgrade to Growth to publish on {{ $name }}">
+                            <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#CBD5E1;"></span>
+                            <span style="flex:1; font-size:0.84rem; color:#94A3B8;">{{ $name }}</span>
+                            <span style="font-size:0.68rem; color:#CBD5E1; background:#F1F5F9; padding:0.15rem 0.5rem; border-radius:4px; font-weight:600;">Growth</span>
+                        </div>
+                    @else
                     <button wire:click="togglePlatform('{{ $key }}')" type="button"
                         style="display:flex; align-items:center; gap:0.625rem; padding:0.5rem 0.625rem; border-radius:8px; border:1px solid {{ $selected ? '#7C3AED' : '#E2E8F0' }}; background:{{ $selected ? '#F5F3FF' : '#fff' }}; cursor:pointer; transition:all 0.15s; text-align:left;">
 
@@ -240,6 +250,7 @@
                             <svg width="14" height="14" fill="none" stroke="#7C3AED" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                         @endif
                     </button>
+                    @endif
                 @endforeach
             </div>
         </div>

@@ -5,35 +5,30 @@ namespace App\Services\TikTok;
 use App\Models\Brand;
 use App\Services\Ai\AiProviderException;
 use App\Services\Ai\AiProviderFactory;
+use App\Services\Ai\ChecksGenerationLimit;
 
 class TikTokService
 {
+    use ChecksGenerationLimit;
+
     public function __construct(private readonly AiProviderFactory $factory) {}
 
     /**
-     * Generate a complete TikTok content toolkit for the given topic.
+     * @return array{caption: string, hashtags: string[], script: array, text_overlays: array, bio_copy: string, content_tips: string}
      *
-     * @return array{
-     *   caption: string,
-     *   hashtags: string[],
-     *   script: array{hook_seconds_1_to_3: string, content_body: string, cta_closing: string, total_duration: string},
-     *   text_overlays: array<int, array{timing: string, text: string}>,
-     *   bio_copy: string,
-     *   content_tips: string
-     * }
-     *
-     * @throws AiProviderException
+     * @throws AiProviderException|\RuntimeException
      */
     public function generate(Brand $brand, string $topic, string $tone): array
     {
+        $this->enforceLimit($brand);
+
         $provider = $this->factory->make();
+        $raw = $provider->generate($this->buildSystemPrompt($brand), $this->buildUserPrompt($brand, $topic, $tone), 4096);
+        $result = $this->parse($raw);
 
-        $system = $this->buildSystemPrompt($brand);
-        $user = $this->buildUserPrompt($brand, $topic, $tone);
+        $this->incrementUsage($brand);
 
-        $raw = $provider->generate($system, $user, 4096);
-
-        return $this->parse($raw);
+        return $result;
     }
 
     // ── Prompts ───────────────────────────────────────────────────────────────

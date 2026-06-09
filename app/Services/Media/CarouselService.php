@@ -5,57 +5,40 @@ namespace App\Services\Media;
 use App\Models\Brand;
 use App\Services\Ai\AiProviderException;
 use App\Services\Ai\AiProviderFactory;
+use App\Services\Ai\ChecksGenerationLimit;
 
 class CarouselService
 {
+    use ChecksGenerationLimit;
+
     public function __construct(private readonly AiProviderFactory $factory) {}
 
-    /**
-     * Generate a carousel slide deck for the given topic.
-     *
-     * @return array{
-     *   platform: string,
-     *   structure: string,
-     *   total_slides: int,
-     *   slides: array<int, array{slide: int, type: string, headline: string, body: string, visual_note: string}>,
-     *   canva_tip: string
-     * }
-     *
-     * @throws AiProviderException
-     */
+    /** @throws AiProviderException|\RuntimeException */
     public function generate(Brand $brand, string $topic, string $platform, string $structure): array
     {
-        $provider = $this->factory->make();
-        $raw = $provider->generate(
-            $this->buildSystemPrompt($brand),
-            $this->buildUserPrompt($brand, $topic, $platform, $structure),
-            4096
-        );
+        $this->enforceLimit($brand);
 
-        return $this->parse($raw);
+        $provider = $this->factory->make();
+        $raw = $provider->generate($this->buildSystemPrompt($brand), $this->buildUserPrompt($brand, $topic, $platform, $structure), 4096);
+        $result = $this->parse($raw);
+
+        $this->incrementUsage($brand);
+
+        return $result;
     }
 
-    /**
-     * Generate quote / testimonial / motivational card copy.
-     *
-     * @return array{
-     *   quote_card: array{quote: string, attribution: string, visual_note: string},
-     *   testimonial_card: array{quote: string, name: string, result: string, visual_note: string},
-     *   motivational_card: array{quote: string, visual_note: string}
-     * }
-     *
-     * @throws AiProviderException
-     */
+    /** @throws AiProviderException|\RuntimeException */
     public function generateQuoteCards(Brand $brand, string $input, string $cardType): array
     {
-        $provider = $this->factory->make();
-        $raw = $provider->generate(
-            $this->buildQuoteSystemPrompt($brand),
-            $this->buildQuoteUserPrompt($input, $cardType),
-            2048
-        );
+        $this->enforceLimit($brand);
 
-        return $this->parseQuote($raw);
+        $provider = $this->factory->make();
+        $raw = $provider->generate($this->buildQuoteSystemPrompt($brand), $this->buildQuoteUserPrompt($input, $cardType), 2048);
+        $result = $this->parseQuote($raw);
+
+        $this->incrementUsage($brand);
+
+        return $result;
     }
 
     // ── Prompts ───────────────────────────────────────────────────────────────

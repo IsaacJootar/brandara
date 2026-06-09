@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Brand;
 use App\Models\ContentPillar;
 use App\Models\Post;
+use App\Services\Plan\PlanFeatureService;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -72,15 +73,47 @@ class PostComposer extends Component
     {
         $this->brandId = $brand->id;
 
-        // Default to connected platforms for this brand
+        // Default to connected platforms for this brand, filtered by plan access
         $connected = $brand->platformConnections()
             ->where('status', 'connected')
             ->pluck('platform')
             ->toArray();
 
         if (! empty($connected)) {
-            $this->platforms = $connected;
+            $this->platforms = array_values(
+                array_filter($connected, fn ($p) => $this->isPlatformAllowed($p))
+            );
         }
+    }
+
+    /**
+     * Returns true if the current workspace plan allows publishing to this platform.
+     * Basic plan: Facebook, LinkedIn, X only.
+     * Growth + Agency: all 7 platforms.
+     */
+    public function isPlatformAllowed(string $platform): bool
+    {
+        $basicPlatforms = ['linkedin', 'twitter', 'facebook'];
+
+        if (in_array($platform, $basicPlatforms)) {
+            return true;
+        }
+
+        return app(PlanFeatureService::class)->planHas(currentPlan(), 'all_platforms');
+    }
+
+    /**
+     * Returns platform list filtered to what this plan allows.
+     *
+     * @return array<string, string>
+     */
+    public function allowedPlatformNames(): array
+    {
+        return array_filter(
+            $this->platformNames,
+            fn ($key) => $this->isPlatformAllowed($key),
+            ARRAY_FILTER_USE_KEY
+        );
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
@@ -117,6 +150,11 @@ class PostComposer extends Component
 
     public function togglePlatform(string $platform): void
     {
+        // Server-side enforcement — reject locked platforms regardless of UI
+        if (! $this->isPlatformAllowed($platform)) {
+            return;
+        }
+
         if (in_array($platform, $this->platforms)) {
             if (count($this->platforms) > 1) {
                 $this->platforms = array_values(

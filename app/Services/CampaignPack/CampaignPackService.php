@@ -7,11 +7,14 @@ use App\Models\Campaign;
 use App\Models\Post;
 use App\Services\Ai\AiProviderException;
 use App\Services\Ai\AiProviderFactory;
+use App\Services\Ai\ChecksGenerationLimit;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 class CampaignPackService
 {
+    use ChecksGenerationLimit;
+
     public function __construct(private readonly AiProviderFactory $factory) {}
 
     /**
@@ -20,21 +23,22 @@ class CampaignPackService
      *
      * @param  array<string, mixed>  $pack
      *
-     * @throws AiProviderException
+     * @throws AiProviderException|\RuntimeException
      */
     public function generate(Campaign $campaign, Brand $brand, array $pack): Campaign
     {
-        $provider = $this->factory->make();
+        $this->enforceLimit($brand);
 
+        $provider = $this->factory->make();
         $system = $this->buildSystemPrompt($brand);
         $user = $this->buildUserPrompt($campaign, $brand, $pack);
-
         $raw = $provider->generate($system, $user, 8192);
         $posts = $this->parseResponse($raw);
 
         $this->savePosts($campaign, $brand, $posts);
-
         $campaign->update(['status' => 'active']);
+
+        $this->incrementUsage($brand);
 
         return $campaign->fresh();
     }

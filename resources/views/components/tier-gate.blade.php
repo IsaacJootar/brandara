@@ -1,7 +1,9 @@
+@props(['feature'])
 @php
     use App\Services\Plan\PlanFeatureService;
     $svc          = app(PlanFeatureService::class);
-    $allowed      = $svc->workspaceHas(currentWorkspace(), $feature);
+    $workspace    = currentWorkspace();
+    $allowed      = $workspace ? $svc->workspaceHas($workspace, $feature) : false;
     $gate         = $svc->gate($feature);
     $upgradeTo    = $gate['upgrade_to'] ?? 'pro';
     $upgradeLabel = $svc->planLabel($upgradeTo);
