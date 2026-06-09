@@ -116,7 +116,7 @@
                         style="padding:0.75rem 1.75rem; background:#7C3AED; color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:0.5rem; transition:opacity 0.15s;"
                         onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
                         <span wire:loading.remove wire:target="generate">Write my carousel slides</span>
-                        <span wire:loading wire:target="generate" style="display:flex; align-items:center; gap:0.5rem;"><span class="btn-spinner"></span> Writing slides…</span>
+                        <span wire:loading.flex wire:target="generate" style="display:none; align-items:center; gap:0.5rem;"><span class="btn-spinner"></span> Writing slides…</span>
                     </button>
                 </div>
             </div>
@@ -161,7 +161,7 @@
                         style="padding:0.75rem 1.75rem; background:#7C3AED; color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:0.5rem; transition:opacity 0.15s;"
                         onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
                         <span wire:loading.remove wire:target="generate">Create my cards</span>
-                        <span wire:loading wire:target="generate" style="display:flex; align-items:center; gap:0.5rem;"><span class="btn-spinner"></span> Writing cards…</span>
+                        <span wire:loading.flex wire:target="generate" style="display:none; align-items:center; gap:0.5rem;"><span class="btn-spinner"></span> Writing cards…</span>
                     </button>
                 </div>
             </div>
