@@ -37,11 +37,11 @@
     @if(count($uploads))
         <div style="background:#F5F3FF; border:1px solid #DDD6FE; border-radius:10px; padding:0.875rem 1rem; display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; gap:1rem; flex-wrap:wrap;">
             <span style="font-size:0.85rem; color:#6D28D9; font-weight:500;">{{ count($uploads) }} file(s) ready to upload</span>
-            <button type="button" wire:click="upload"
-                wire:loading.attr="disabled" wire:target="upload"
+            <button type="button" wire:click="saveToLibrary"
+                wire:loading.attr="disabled" wire:target="saveToLibrary"
                 style="padding:0.4rem 1rem; background:#7C3AED; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:0.375rem;">
-                <span wire:loading.remove wire:target="upload">Save to library</span>
-                <span wire:loading wire:target="upload">Saving…</span>
+                <span wire:loading.remove wire:target="saveToLibrary">Save to library</span>
+                <span wire:loading.flex wire:target="saveToLibrary" style="display:none; align-items:center; gap:0.375rem;"><span class="btn-spinner"></span>Saving…</span>
             </button>
         </div>
     @endif
@@ -61,7 +61,7 @@
     @endif
 
     {{-- ── Search + storage bar ──────────────────────────────────────────── --}}
-    <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.25rem; margin-top:0.25rem; flex-wrap:wrap;">
         <div style="position:relative; flex:1; min-width:200px; max-width:320px;">
             <svg style="position:absolute; left:0.625rem; top:50%; transform:translateY(-50%); width:14px;height:14px;color:#94A3B8; pointer-events:none;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>

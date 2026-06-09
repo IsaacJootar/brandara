@@ -46,7 +46,7 @@ class MediaLibrary extends Component
         $this->resetPage();
     }
 
-    public function upload(): void
+    public function saveToLibrary(): void
     {
         $this->validate([
             'uploads' => ['required', 'array', 'min:1'],
