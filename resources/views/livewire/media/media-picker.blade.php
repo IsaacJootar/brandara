@@ -49,7 +49,7 @@
                     @if($files->isEmpty())
                         <div style="text-align:center;padding:2.5rem 1rem;color:#94A3B8;">
                             <p style="font-size:0.875rem;margin:0;">No files in your library yet.</p>
-                            <a href="{{ route('media', ['brand' => request()->route('brand')]) }}"
+                            <a href="{{ route('media', ['brand' => \App\Models\Brand::find($brandId)?->slug ?? '']) }}"
                                style="font-size:0.8rem;color:#7C3AED;text-decoration:none;font-weight:500;">Upload files →</a>
                         </div>
                     @else
