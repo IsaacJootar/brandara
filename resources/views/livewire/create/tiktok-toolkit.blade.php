@@ -34,9 +34,8 @@
                         <button type="button"
                             x-on:click="activeTone = '{{ $key }}'; $wire.setTone('{{ $key }}')"
                             :style="activeTone === '{{ $key }}'
-                                ? 'background:#0F172A; color:#fff; border-color:#0F172A; font-weight:600;'
-                                : 'background:#F8FAFC; color:#64748B; border-color:#E2E8F0;'"
-                            style="padding:0.35rem 0.875rem; border-radius:99px; font-size:0.78rem; border:1px solid; cursor:pointer; transition:all 0.15s;">
+                                ? 'padding:0.35rem 0.875rem; border-radius:99px; font-size:0.78rem; border:1px solid; cursor:pointer; transition:all 0.15s; background:#0F172A; color:#fff; border-color:#0F172A; font-weight:600;'
+                                : 'padding:0.35rem 0.875rem; border-radius:99px; font-size:0.78rem; border:1px solid; cursor:pointer; transition:all 0.15s; background:#F8FAFC; color:#64748B; border-color:#E2E8F0;'">
                             {{ $label }}
                         </button>
                     @endforeach
