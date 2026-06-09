@@ -1,6 +1,6 @@
 <x-layouts.app>
     <div style="margin-bottom:1.5rem;">
-        <h1 style="font-size:1.375rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">AI Visibility & Trends</h1>
+        <h1 style="font-size:1.375rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">AI Visibility</h1>
         <p style="font-size:0.875rem; color:#64748B; margin:0;">See where your brand appears in ChatGPT, Gemini, and Perplexity.</p>
     </div>
 

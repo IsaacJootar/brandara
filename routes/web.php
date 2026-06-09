@@ -76,6 +76,7 @@ Route::middleware(['auth', 'workspace.active'])->group(function () {
         Route::get('/grow', fn () => view('grow.index'))->name('grow');
         Route::get('/results', fn () => view('results.index'))->name('results');
         Route::get('/my-brand', fn () => view('my-brand.index'))->name('my-brand');
+        Route::get('/trends', fn () => view('trends.index'))->name('trends');
         Route::get('/ai-presence', fn () => view('ai-presence.index'))->name('ai-presence');
     });
 });

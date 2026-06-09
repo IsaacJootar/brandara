@@ -83,6 +83,14 @@ return [
             'upgrade_to'  => 'pro',
         ],
 
+        // Trend monitoring
+        'trends' => [
+            'plans'       => ['pro', 'agency'],
+            'label'       => 'Trend monitoring',
+            'description' => 'See trending topics and content signals in your industry to stay ahead.',
+            'upgrade_to'  => 'pro',
+        ],
+
         // AI Visibility & Trends module
         'ai_visibility' => [
             'plans'       => ['pro', 'agency'],
