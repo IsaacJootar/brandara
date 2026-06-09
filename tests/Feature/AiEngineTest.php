@@ -121,7 +121,8 @@ class AiEngineTest extends TestCase
         $factory = $this->createMock(AiProviderFactory::class);
         $factory->method('make')->willReturn($mockProvider);
 
-        $service = new ContentGenerationService($factory);
+        $this->app->instance(AiProviderFactory::class, $factory);
+        $service = app(ContentGenerationService::class);
         $result = $service->generate($brand, 'topic', 'Why founders undercharge', ['linkedin'], 'professional');
 
         $this->assertArrayHasKey('authority', $result);

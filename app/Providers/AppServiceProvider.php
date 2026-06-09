@@ -6,6 +6,7 @@ use App\Services\Ai\AiProviderFactory;
 use App\Services\Ai\ContentGenerationService;
 use App\Services\BrandVoice\BrandVoiceService;
 use App\Services\CampaignPack\CampaignPackService;
+use App\Services\Plan\PlanFeatureService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,8 +17,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(AiProviderFactory::class);
+        $this->app->singleton(PlanFeatureService::class);
         $this->app->singleton(ContentGenerationService::class, fn ($app) => new ContentGenerationService(
-            $app->make(AiProviderFactory::class)
+            $app->make(AiProviderFactory::class),
+            $app->make(PlanFeatureService::class),
         ));
         $this->app->singleton(BrandVoiceService::class, fn ($app) => new BrandVoiceService(
             $app->make(AiProviderFactory::class)

@@ -14,10 +14,12 @@ class Workspace extends Model
         'name', 'slug', 'owner_email', 'country', 'timezone',
         'plan', 'trial_ends_at', 'subscription_status',
         'paystack_customer_id', 'flutterwave_customer_id', 'language',
+        'ai_generations_used', 'usage_reset_date',
     ];
 
     protected $casts = [
         'trial_ends_at' => 'datetime',
+        'usage_reset_date' => 'date',
     ];
 
     public function users(): HasMany
@@ -40,6 +42,7 @@ class Workspace extends Model
         if (! $this->trial_ends_at) {
             return 0;
         }
+
         return max(0, (int) now()->diffInDays($this->trial_ends_at, false));
     }
 
@@ -51,6 +54,7 @@ class Workspace extends Model
         if ($this->subscription_status === 'trialing' && $this->trial_ends_at?->isFuture()) {
             return true;
         }
+
         return false;
     }
 }

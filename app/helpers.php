@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Brand;
+use App\Models\Workspace;
+use App\Services\Plan\PlanFeatureService;
 
 if (! function_exists('currentBrand')) {
     /**
@@ -10,6 +12,27 @@ if (! function_exists('currentBrand')) {
     function currentBrand(): Brand
     {
         return app('current.brand');
+    }
+}
+
+if (! function_exists('currentWorkspace')) {
+    function currentWorkspace(): ?Workspace
+    {
+        return auth()->user()?->workspace;
+    }
+}
+
+if (! function_exists('currentPlan')) {
+    function currentPlan(): string
+    {
+        return auth()->user()?->workspace?->plan ?? 'starter';
+    }
+}
+
+if (! function_exists('planHas')) {
+    function planHas(string $feature): bool
+    {
+        return app(PlanFeatureService::class)->planHas(currentPlan(), $feature);
     }
 }
 

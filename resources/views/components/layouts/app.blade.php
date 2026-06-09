@@ -86,21 +86,47 @@
                     @endforeach
                 @endforeach
 
-                {{-- Brand switcher --}}
-                @php $otherBrands = auth()->user()->workspace->brands()->where('id','!=',$currentBrand->id)->get(); @endphp
-                @if ($otherBrands->isNotEmpty())
-                    <div style="margin-top:0.875rem; padding-top:0.875rem; border-top:1px solid rgba(255,255,255,0.08);">
-                        <div style="font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.28); padding:0 0.75rem; margin-bottom:0.4rem;">Switch brand</div>
-                        @foreach ($otherBrands as $other)
-                            <a href="{{ route('dashboard', ['brand' => $other->slug]) }}"
-                               onclick="closeSidebar()"
-                               style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.75rem; border-radius:8px; font-size:0.82rem; color:rgba(255,255,255,0.45); text-decoration:none;">
-                                <div style="width:18px; height:18px; border-radius:4px; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:0.62rem; font-weight:700; color:rgba(255,255,255,0.6); flex-shrink:0;">{{ strtoupper(substr($other->name,0,1)) }}</div>
-                                <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $other->name }}</span>
-                            </a>
-                        @endforeach
+                {{-- Brand switcher + Add brand --}}
+                @php
+                    $workspace       = auth()->user()->workspace;
+                    $otherBrands     = $workspace->brands()->where('id','!=',$currentBrand->id)->get();
+                    $planSvc         = app(\App\Services\Plan\PlanFeatureService::class);
+                    $canAddBrand     = ! $planSvc->isBrandLimitReached($workspace);
+                    $brandLimit      = $planSvc->brandLimit($workspace->plan);
+                    $brandCount      = $workspace->brands()->count();
+                @endphp
+                <div style="margin-top:0.875rem; padding-top:0.875rem; border-top:1px solid rgba(255,255,255,0.08);">
+                    <div style="font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.28); padding:0 0.75rem; margin-bottom:0.4rem;">
+                        Brands
+                        <span style="font-weight:400; opacity:0.6; margin-left:4px;">{{ $brandCount }}/{{ $brandLimit === 0 ? '∞' : $brandLimit }}</span>
                     </div>
-                @endif
+
+                    @foreach ($otherBrands as $other)
+                        <a href="{{ route('dashboard', ['brand' => $other->slug]) }}"
+                           onclick="closeSidebar()"
+                           style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.75rem; border-radius:8px; font-size:0.82rem; color:rgba(255,255,255,0.45); text-decoration:none;">
+                            <div style="width:18px; height:18px; border-radius:4px; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:0.62rem; font-weight:700; color:rgba(255,255,255,0.6); flex-shrink:0;">{{ strtoupper(substr($other->name,0,1)) }}</div>
+                            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $other->name }}</span>
+                        </a>
+                    @endforeach
+
+                    @if($canAddBrand)
+                        <a href="{{ route('brand.create') }}"
+                           style="display:flex; align-items:center; gap:0.5rem; padding:0.45rem 0.75rem; border-radius:8px; font-size:0.78rem; color:rgba(255,255,255,0.35); text-decoration:none; margin-top:0.25rem; border:1px dashed rgba(255,255,255,0.12);">
+                            <svg style="width:13px;height:13px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Add brand
+                        </a>
+                    @else
+                        <div style="display:flex; align-items:center; gap:0.5rem; padding:0.45rem 0.75rem; border-radius:8px; font-size:0.72rem; color:rgba(255,255,255,0.22); margin-top:0.25rem; border:1px dashed rgba(255,255,255,0.07);">
+                            <svg style="width:11px;height:11px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            Upgrade to add brands
+                        </div>
+                    @endif
+                </div>
             </nav>
 
             {{-- Trial banner --}}
@@ -152,7 +178,7 @@
                 <div style="display:flex; align-items:center; gap:0.625rem;">
                     {{-- Plan badge --}}
                     <span style="font-size:0.68rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; padding:0.25rem 0.6rem; border-radius:6px; background:#F5F3FF; color:#7C3AED;">
-                        {{ ucfirst($workspace->plan) }}
+                        {{ app(\App\Services\Plan\PlanFeatureService::class)->planLabel($workspace->plan) }}
                     </span>
                     {{-- Notification bell --}}
                     @livewire('notification-bell')

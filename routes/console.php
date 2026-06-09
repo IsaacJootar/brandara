@@ -23,3 +23,8 @@ Schedule::command('platforms:check-tokens')
 Schedule::command('workspaces:check-trial-expiry')
     ->dailyAt('09:00')
     ->withoutOverlapping();
+
+// 1st of each month — reset AI generation counters for Basic workspaces.
+Schedule::command('usage:reset-monthly')
+    ->monthlyOn(1, '00:05')
+    ->withoutOverlapping();

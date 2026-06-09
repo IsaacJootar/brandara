@@ -3,10 +3,14 @@
 namespace App\Services\Ai;
 
 use App\Models\Brand;
+use App\Services\Plan\PlanFeatureService;
 
 class ContentGenerationService
 {
-    public function __construct(private readonly AiProviderFactory $factory) {}
+    public function __construct(
+        private readonly AiProviderFactory $factory,
+        private readonly PlanFeatureService $plan,
+    ) {}
 
     /**
      * Generate 3 post variations for the given input and platforms.
@@ -18,6 +22,7 @@ class ContentGenerationService
      * @return array{authority: array, story: array, bold: array}
      *
      * @throws AiProviderException
+     * @throws \RuntimeException when generation limit is reached
      */
     public function generate(
         Brand $brand,
@@ -26,13 +31,27 @@ class ContentGenerationService
         array $platforms,
         string $tone,
     ): array {
+        $workspace = $brand->workspace;
+
+        if ($this->plan->isGenerationLimitReached($workspace)) {
+            $limit = $this->plan->generationLimit($workspace->plan);
+            throw new \RuntimeException(
+                "You've used all {$limit} content generations for this month. Upgrade to Growth for unlimited generations."
+            );
+        }
+
         $provider = $this->factory->make();
         $system = $this->buildSystemPrompt($brand, $tone);
         $user = $this->buildUserPrompt($inputType, $input, $platforms);
 
         $raw = $provider->generate($system, $user);
 
-        return $this->parseVariations($raw, $platforms);
+        $result = $this->parseVariations($raw, $platforms);
+
+        // Increment usage counter after successful generation
+        $this->plan->incrementGenerations($workspace);
+
+        return $result;
     }
 
     // ── Prompts ───────────────────────────────────────────────────────────────

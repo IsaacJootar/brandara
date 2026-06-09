@@ -125,22 +125,25 @@ return [
     */
     'tiers' => [
         'starter' => [
-            'label'       => 'Starter',
+            'label'       => 'Basic',
             'color'       => '#64748B',
             'bg'          => '#F1F5F9',
-            'description' => 'Core content creation and scheduling',
+            'description' => 'Content generation, Brand Voice, 3 platforms, 30 generations/month',
+            'price_usd'   => 19,
         ],
         'pro' => [
-            'label'       => 'Pro',
+            'label'       => 'Growth',
             'color'       => '#7C3AED',
             'bg'          => '#F5F3FF',
-            'description' => 'Everything in Starter + AI Visibility & Trends',
+            'description' => 'Everything in Basic + all 7 platforms, AI Visibility, lead tracker, 3 brands',
+            'price_usd'   => 39,
         ],
         'agency' => [
             'label'       => 'Agency',
             'color'       => '#F59E0B',
             'bg'          => '#FFFBEB',
-            'description' => 'Everything in Pro + unlimited brands + client workspace',
+            'description' => 'Everything in Growth + unlimited brands + client workspaces + approvals',
+            'price_usd'   => 89,
         ],
     ],
 

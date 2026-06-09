@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CanvaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PlatformController;
@@ -47,6 +48,10 @@ Route::middleware('auth')->post('/push/subscribe', function (Request $request) {
 Route::middleware(['auth', 'workspace.active'])->group(function () {
 
     Route::get('/home', [WorkspaceController::class, 'home'])->name('home');
+
+    // ── Brand management ──────────────────────────────────────────────────────
+    Route::get('/brands/create', [BrandController::class, 'create'])->name('brand.create');
+    Route::post('/brands', [BrandController::class, 'store'])->name('brand.store');
 
     // ── Brand-scoped routes ───────────────────────────────────────────────────
     Route::prefix('{brand}')->middleware('brand')->group(function () {
