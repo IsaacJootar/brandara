@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\CanvaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PlatformController;
 use App\Http\Controllers\PostController;
@@ -26,6 +27,9 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 Route::middleware(['auth', 'workspace.active'])
     ->get('/oauth/callback/{platform}', [PlatformController::class, 'callback'])
     ->name('platform.callback');
+
+// ── Canva webhook — no auth, Canva calls this directly ───────────────────────
+Route::post('/webhooks/canva/{brand}', [CanvaController::class, 'webhook'])->name('canva.webhook');
 
 // ── Authenticated — workspace-level ───────────────────────────────────────────
 
@@ -58,7 +62,9 @@ Route::middleware(['auth', 'workspace.active'])->group(function () {
         Route::get('/create', [PostController::class, 'create'])->name('create');
         Route::delete('/create/{post}', [PostController::class, 'destroy'])->name('post.destroy');
         Route::get('/create/tiktok', fn () => view('create.tiktok', ['brand' => currentBrand()]))->name('create.tiktok');
+        Route::get('/create/carousel', fn () => view('create.carousel', ['brand' => currentBrand()]))->name('create.carousel');
         Route::get('/media', fn () => view('media.index', ['brand' => currentBrand()]))->name('media');
+        Route::post('/canva/link', [CanvaController::class, 'link'])->name('canva.link');
         Route::get('/plan', fn () => view('plan.index'))->name('plan');
         Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule');
         Route::get('/grow', fn () => view('grow.index'))->name('grow');

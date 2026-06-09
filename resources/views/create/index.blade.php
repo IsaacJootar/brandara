@@ -50,6 +50,25 @@
         </svg>
     </a>
 
+    {{-- Carousel & Cards link --}}
+    <a href="{{ route('create.carousel', ['brand' => $brand->slug]) }}"
+       style="display:flex; align-items:center; gap:1rem; background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1rem 1.25rem; margin-bottom:1.75rem; text-decoration:none; transition:border-color 0.15s, box-shadow 0.15s;"
+       onmouseover="this.style.borderColor='#7C3AED';this.style.boxShadow='0 2px 12px rgba(124,58,237,0.08)'"
+       onmouseout="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'">
+        <div style="width:40px;height:40px;background:linear-gradient(135deg,#7C3AED,#A78BFA);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg style="width:20px;height:20px;color:#fff;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+        </div>
+        <div style="flex:1; min-width:0;">
+            <div style="font-size:0.9rem; font-weight:700; color:#0F172A; margin:0 0 0.2rem;">Carousel &amp; Cards</div>
+            <div style="font-size:0.8rem; color:#64748B;">Slide copy · Quote cards · Client testimonials · Canva-ready</div>
+        </div>
+        <svg style="width:16px;height:16px;color:#CBD5E1;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+    </a>
+
     @if ($drafts->isNotEmpty())
         <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden;">
             <div style="padding:1rem 1.5rem; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between;">
