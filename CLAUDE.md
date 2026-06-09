@@ -198,9 +198,11 @@ Run this at the start of every session to confirm identity is set.
 ## Current build phase
 
 Update this line when starting a new phase:
-**CURRENT PHASE: 16 — WhatsApp Assistant** (next to build)
+**CURRENT PHASE: 17 — Engagement Automation** (next to build)
 
-Modules 01–15 all complete and committed. See `docs/build-status.md` for full status.
+Modules 01–16 all complete and committed.
+Tier & multi-brand architecture complete (see docs/architecture.md).
+See `docs/build-status.md` for full status.
 
 See `docs/phases.md` for all 22 phases.
 

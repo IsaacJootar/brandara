@@ -156,19 +156,42 @@ All tables created and migrated:
 - `CanvaController` — Canva webhook scaffold ready for when Canva Connect app is approved
 - 21 tests passing (12 media + 9 carousel)
 
+### ✅ Module 16 — WhatsApp Assistant
+- `WhatsAppService` — 4 copy types (broadcast, status, promo, follow-up), 2 variations each, do/don't tips
+- `WhatsAppAssistant` Livewire component — type selector (Blade-driven, no Alpine state), brief input, results
+- WhatsApp Share API button — "Send on WhatsApp" opens WA with message pre-filled (`wa.me/?text=`)
+- Route: `/{brand}/create/whatsapp` → `create.whatsapp`, link card on Create page
+- Brand Voice integrated — matches user's natural writing tone
+- 12 tests passing
+
+### ✅ Tier & Multi-Brand Architecture (between 16 and 17)
+- `config/features.php` — single source of truth for feature gates, brand limits, generation limits, storage limits
+- `PlanFeatureService` — all tier checks through one service; Phase 1: config-driven, Phase 2 (Module 22): DB-driven with zero other changes
+- `<x-tier-gate feature="...">` — wrap any feature; shows upgrade card if locked, content if allowed
+- `ChecksGenerationLimit` trait — applied to all 5 AI services (ContentGenerationService, TikTokService, WhatsAppService, CarouselService, CampaignPackService)
+- Generation counter: `ai_generations_used` + `usage_reset_date` columns on workspaces
+- `usage:reset-monthly` Artisan command — resets Basic counters on 1st of month, scheduled
+- `BrandController` — create/store brand with tier limit enforcement
+- Multi-brand sidebar: "Add brand" button (if under limit), "Upgrade to add brands" (if at limit), brand count shown
+- Platform restriction in PostComposer: Basic = Facebook/LinkedIn/X only; locked platforms shown with "Growth" badge; server-side enforcement in `togglePlatform()`
+- Plan labels: `starter` → "Basic", `pro` → "Growth", `agency` → "Agency" everywhere
+- Trends split from AI Visibility: separate nav item, route, view, feature gate
+- Pricing updated on website: Basic $19 · Growth $39 · Agency $89 (NGN equivalents shown)
+- Brand limits: Basic 1, Growth 3, Agency unlimited
+- Storage limits: Basic 500MB, Growth 2GB, Agency 10GB
+
 ---
 
-## Pending modules (16–22)
+## Pending modules (17–22)
 
 | # | Module | Key dependencies |
 |---|---|---|
-| 16 | WhatsApp assistant | Broadcast/status/follow-up copy, WhatsApp-native tone |
-| 17 | Engagement automation | Auto-like/comment rules, Brand Voice contextual replies |
-| 18 | Lead tracker | Post engagers, enrichment, tags, notes, CSV export |
-| 19 | Analytics dashboard | Results screen, engagement metrics, weekly digest email |
-| 20 | Billing | Paystack (NGN) + Flutterwave (pan-Africa), webhooks, trial expiry |
-| 21 | AI Visibility & Trends | Queries 4 AI systems, stores reports, dashboard with sentiment |
-| 22 | Admin Panel | /brandara-admin, DB-driven tier/module access, workspace mgmt |
+| 17 | Engagement automation | Auto-like/comment rules, Brand Voice contextual replies — Pro+ only |
+| 18 | Lead tracker | Post engagers, enrichment, tags, notes, CSV export — Pro+ only |
+| 19 | Analytics dashboard | Results screen, engagement metrics, weekly digest email — Pro+ only |
+| 20 | Billing | Paystack (NGN) + Flutterwave (pan-Africa), webhooks, trial expiry — Basic $19 / Growth $39 / Agency $89 |
+| 21 | AI Visibility | Queries ChatGPT/Perplexity/Gemini/Claude, stores reports, dashboard with sentiment — Pro+ only |
+| 22 | Admin Panel | /brandara-admin, DB-driven tier/module access, workspace mgmt — replaces config/features.php |
 
 ---
 
@@ -176,14 +199,14 @@ All tables created and migrated:
 
 | Item | Deferred to |
 |---|---|
-| Canva Connect API pre-population | When Canva Connect app approved — webhook scaffold in place |
-| Drag-drop reschedule on calendar | Module 12 |
-| Pillar colour on calendar | Module 12 |
+| Canva Connect API pre-population | When Canva Connect partner app approved — webhook scaffold in place |
 | VAPID key regeneration (EC keys need Linux) | Before go-live on Render |
 | Real platform API publishers (LinkedIn/X/Meta live) | When OAuth dev apps approved |
 | AI provider switch in admin UI | Module 22 — `AiProviderFactory` already has hook |
-| Campaign → post tagging from composer | Module 10 AI generation |
 | SMS via Africa's Talking (live) | When `AT_API_KEY` added to production |
+| Supabase Storage activation | One-line `.env` change before launch — local disk is ephemeral on Render |
+| Tier gates via DB (Admin Panel) | Module 22 — `PlanFeatureService` already abstracts config vs DB |
+| Billing integration (Paystack/Flutterwave) | Module 20 — plan field currently set manually |
 
 ---
 
@@ -196,3 +219,9 @@ All tables created and migrated:
 - **Notification table** — custom schema (user_id direct), not Laravel's morph pattern
 - **FakePublisher** — real platform API calls are behind `services.publishing.live` flag; safe to test without live OAuth apps
 - **Alpine for instant UI + Livewire for persistence** — used on tone/tab selectors to prevent blur race condition
+- **Multi-brand architecture** — one account → one workspace → many brands (isolated by brand_id). Limits: Basic 1, Growth 3, Agency unlimited
+- **Tier enforcement** — `PlanFeatureService` + `config/features.php` is the single source of truth. `<x-tier-gate>` wraps features in views. Module 22 switches to DB-driven without touching any view
+- **Generation limits** — Basic: 30/month (counted via `ai_generations_used` on workspace, reset 1st of month). Growth/Agency: unlimited. All 5 AI services use `ChecksGenerationLimit` trait
+- **Platform restriction** — Basic: Facebook/LinkedIn/X only. Growth+: all 7 platforms. Enforced in `PostComposer::isPlatformAllowed()` — both UI and server-side
+- **Pricing** — Basic $19 / Growth $39 / Agency $89. NGN equivalents shown on website. 7-day free trial. Cancel anytime
+- **Trends vs AI Visibility** — separate nav items, routes, and feature gates. Trends = industry content signals (Module 17/18). AI Visibility = brand mentions in ChatGPT/Gemini/Perplexity (Module 21)
