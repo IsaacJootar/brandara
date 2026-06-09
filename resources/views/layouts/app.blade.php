@@ -61,9 +61,12 @@
                 @endphp
 
                 @foreach ($navItems as $item)
-                    @php $active = request()->routeIs($item['route']); @endphp
+                    @php
+                        $active = request()->routeIs($item['route']);
+                        $brandSlug = $currentBrand->slug ?? request()->route('brand') ?? '';
+                    @endphp
                     <a
-                        href="{{ route($item['route']) }}"
+                        href="{{ $brandSlug ? route($item['route'], ['brand' => $brandSlug]) : '#' }}"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
                                {{ $active
                                     ? 'nav-item-active text-white'
