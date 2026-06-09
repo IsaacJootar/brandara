@@ -88,3 +88,12 @@ After every phase, manually test before moving on:
 **Phase 10:** Paste 10 sample posts in Brand Voice. Train. Generate a post. Verify it reflects style.
 **Phase 22:** Run AI visibility query. Verify results stored. Check dashboard.
 **Phase 23 (now 22):** Log into admin panel. Change tier module access. Verify sidebar updates instantly.
+
+---
+
+## Post-launch: documentation and tutorials
+After all 22 modules are complete:
+- In-product workflow guides (how to use each tool, shown on first visit)
+- Help centre articles (one per module)
+- Onboarding checklist (brand setup → first post → first scheduled post)
+- Video walkthrough scripts (based on the docs/modules/ files)

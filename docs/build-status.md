@@ -134,11 +134,15 @@ All tables created and migrated:
 
 ---
 
-## Pending modules (16–22)
+## Pending modules — CORRECTED LIST
+
+Modules 10, 11, 12 were skipped in a prior session. They must be built before continuing to 16+.
 
 | # | Module | Key dependencies |
 |---|---|---|
-| 16 | WhatsApp assistant | Broadcast/status/follow-up copy, WhatsApp-native tone |
+| **10** | **Brand Voice** ⚠️ SKIPPED | Paste samples → Claude trains voice profile → stored as JSON on brand |
+| **11** | **Brand Kit + Profile** ⚠️ SKIPPED | My Brand screen, logo upload, all fields feed into AI prompts |
+| **12** | **Content Pillars (advanced)** ⚠️ SKIPPED | Pillar tags on posts, calendar colouring, AI balance alerts |
 | 16 | WhatsApp assistant | Broadcast/status/follow-up copy, WhatsApp-native tone |
 | 17 | Engagement automation | Auto-like/comment rules, Brand Voice contextual replies |
 | 18 | Lead tracker | Post engagers, enrichment, tags, notes, CSV export |

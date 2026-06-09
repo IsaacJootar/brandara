@@ -198,9 +198,11 @@ Run this at the start of every session to confirm identity is set.
 ## Current build phase
 
 Update this line when starting a new phase:
-**CURRENT PHASE: 16 — WhatsApp Assistant** (next to build)
+**CURRENT PHASE: 10 — Brand Voice** (next to build)
 
-Modules 01–15 complete and committed. See `docs/build-status.md` for full status.
+Modules 01–09, 13, 14, 15 complete and committed.
+**Modules 10, 11, 12 were skipped — must be built before continuing to 16.**
+See `docs/build-status.md` for full status.
 
 See `docs/phases.md` for all 22 phases.
 
