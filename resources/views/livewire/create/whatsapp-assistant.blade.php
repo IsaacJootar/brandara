@@ -73,9 +73,9 @@
         @endphp
         <div style="margin-bottom:1.25rem;">
             <label style="display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.25rem;">
-                What is this message about? <span style="color:#EF4444;">*</span>
+                Give Brandara a brief <span style="color:#EF4444;">*</span>
             </label>
-            <p style="font-size:0.78rem; color:#94A3B8; margin:0 0 0.5rem;">Include your offer, product, result, or context. The more specific, the better the message.</p>
+            <p style="font-size:0.78rem; color:#94A3B8; margin:0 0 0.5rem;">Tell us what the message is about — your offer, news, or context. Brandara writes the actual WhatsApp message for you.</p>
             <textarea wire:model="context" rows="4" maxlength="1000"
                 placeholder="{{ $placeholders[$type] }}"
                 class="auth-input" style="font-size:0.875rem; resize:vertical; min-height:90px;"></textarea>
