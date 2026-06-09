@@ -110,18 +110,35 @@ All tables created and migrated:
 - **To activate:** add `ANTHROPIC_API_KEY=sk-ant-...` to `.env`
 - **To switch to OpenAI:** `BRANDARA_AI_PROVIDER=openai` + `OPENAI_API_KEY=sk-...`
 
+### ✅ Module 14 — TikTok Toolkit
+- `TikTokService` — generates caption, video script (hook/body/CTA), text overlays, hashtags, bio copy
+- `TikTokToolkit` Livewire component — 6 tones, generating state, copy buttons per section
+- Route: `/{brand}/create/tiktok` → `create.tiktok`
+- Link card on Create page
+- Tone selector fixed (Alpine `:style` binding — static `style` conflict resolved)
+- **Note:** Text-only tool. TikTok has no publishing API in v1 — copy is pasted manually into TikTok app
+- 9 tests passing
+
+### ✅ Module 15 — Media Library + Carousel + Cards
+- `MediaLibraryService` — upload, compress (Intervention Image v4), platform compliance check, delete, storage quota
+- `MediaLibrary` Livewire component — drag-drop upload, search, grid, delete, picker mode
+- `MediaPicker` Livewire component — modal picker in post composer, dispatches `media-selected` event
+- `PostComposer` updated — `attachedMedia` state, `onMediaSelected` listener, thumbnail strip, remove button
+- Route: `/{brand}/media` → `media`, added to sidebar nav
+- `CarouselService` — carousel slide deck generation + quote/testimonial/motivational card copy
+- `CarouselGenerator` Livewire component — carousel mode + quote card mode, two modes in one component
+- Route: `/{brand}/create/carousel` → `create.carousel`, link card on Create page
+- Canva "Design in Canva" button (deep link, no API key needed in v1)
+- `CanvaController` — Canva webhook scaffold ready for when Canva Connect app is approved
+- 21 tests passing (12 media + 9 carousel)
+
 ---
 
-## Pending modules (10–22)
+## Pending modules (16–22)
 
 | # | Module | Key dependencies |
 |---|---|---|
-| 10 | Brand Voice | Paste samples → Claude trains voice profile → stored as JSON on brand |
-| 11 | Brand Kit + Profile | My Brand screen, logo upload, all fields feed into AI prompts |
-| 12 | Content pillars (advanced) | Pillar tags on posts, calendar colouring, AI balance alerts |
-| 13 | Campaign packs | African holiday library, built-in packs, one-click generation |
-| 14 | TikTok toolkit | Caption + video script + hashtag generator, pure text |
-| 15 | Media library | Upload/browse/compress, Canva button, platform compliance check |
+| 16 | WhatsApp assistant | Broadcast/status/follow-up copy, WhatsApp-native tone |
 | 16 | WhatsApp assistant | Broadcast/status/follow-up copy, WhatsApp-native tone |
 | 17 | Engagement automation | Auto-like/comment rules, Brand Voice contextual replies |
 | 18 | Lead tracker | Post engagers, enrichment, tags, notes, CSV export |
@@ -136,7 +153,7 @@ All tables created and migrated:
 
 | Item | Deferred to |
 |---|---|
-| Media upload in composer | Module 15 |
+| Canva Connect API pre-population | When Canva Connect app approved — webhook scaffold in place |
 | Drag-drop reschedule on calendar | Module 12 |
 | Pillar colour on calendar | Module 12 |
 | VAPID key regeneration (EC keys need Linux) | Before go-live on Render |
