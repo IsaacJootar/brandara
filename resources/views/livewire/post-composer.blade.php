@@ -156,23 +156,28 @@
 
             {{-- Save as draft --}}
             <button wire:click="saveDraft" type="button"
-                style="display:flex; align-items:center; gap:0.5rem; padding:0.75rem 1.25rem; background:#F8FAFC; color:#475569; font-size:0.875rem; font-weight:600; border:1px solid #E2E8F0; border-radius:10px; cursor:pointer;">
+                wire:loading.attr="disabled" wire:target="saveDraft"
+                style="display:flex; align-items:center; gap:0.5rem; padding:0.75rem 1.5rem; background:#7C3AED; color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; transition:opacity 0.15s;"
+                onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
                 @if ($saveStatus === 'saving')
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="animation:spin 1s linear infinite;"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                    Saving...
+                    Saving…
                 @elseif ($saveStatus === 'saved')
-                    ✓ Saved as draft
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    Saved as draft
                 @else
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
                     Save as draft
                 @endif
             </button>
 
-            {{-- Schedule (placeholder) --}}
-            <button type="button" disabled
-                style="display:flex; align-items:center; gap:0.5rem; padding:0.75rem 1.25rem; background:#F8FAFC; color:#CBD5E1; font-size:0.875rem; font-weight:600; border:1px solid #E2E8F0; border-radius:10px; cursor:not-allowed;"
-                title="Complete brand setup first">
-                🗓 Schedule
-            </button>
+            {{-- Schedule --}}
+            <a href="{{ route('schedule', ['brand' => \App\Models\Brand::find($brandId)?->slug ?? '']) }}"
+                style="display:flex; align-items:center; gap:0.5rem; padding:0.75rem 1.5rem; background:#F59E0B; color:#fff; font-size:0.875rem; font-weight:600; border:none; border-radius:10px; cursor:pointer; text-decoration:none; transition:opacity 0.15s;"
+                onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Schedule
+            </a>
 
             @if ($savedDraftId)
                 <button wire:click="clearComposer" type="button"

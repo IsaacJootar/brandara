@@ -14,15 +14,15 @@
 
     {{-- Modal --}}
     @if($open)
-        <div style="position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;padding:1rem;"
+        <div style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:1rem;"
              x-data x-on:keydown.escape.window="$wire.closePicker()">
 
             {{-- Backdrop --}}
             <div wire:click="closePicker"
-                 style="position:fixed;inset:0;background:rgba(0,0,0,0.45);"></div>
+                 style="position:fixed;inset:0;background:rgba(0,0,0,0.5);"></div>
 
             {{-- Panel --}}
-            <div style="position:relative;width:100%;max-width:680px;max-height:80vh;background:#fff;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -4px 32px rgba(0,0,0,0.12);">
+            <div style="position:relative;width:100%;max-width:700px;height:80vh;background:#fff;border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
 
                 {{-- Header --}}
                 <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid #F1F5F9;flex-shrink:0;">
