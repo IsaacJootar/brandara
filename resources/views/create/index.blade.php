@@ -69,6 +69,25 @@
         </svg>
     </a>
 
+    {{-- WhatsApp Assistant link --}}
+    <a href="{{ route('create.whatsapp', ['brand' => $brand->slug]) }}"
+       style="display:flex; align-items:center; gap:1rem; background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1rem 1.25rem; margin-bottom:1.75rem; text-decoration:none; transition:border-color 0.15s, box-shadow 0.15s;"
+       onmouseover="this.style.borderColor='#25D366';this.style.boxShadow='0 2px 12px rgba(37,211,102,0.08)'"
+       onmouseout="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'">
+        <div style="width:40px;height:40px;background:#25D366;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg style="width:20px;height:20px;color:#fff;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
+        </div>
+        <div style="flex:1; min-width:0;">
+            <div style="font-size:0.9rem; font-weight:700; color:#0F172A; margin:0 0 0.2rem;">WhatsApp Assistant</div>
+            <div style="font-size:0.8rem; color:#64748B;">Broadcast · Status · Promo · Customer follow-up</div>
+        </div>
+        <svg style="width:16px;height:16px;color:#CBD5E1;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+    </a>
+
     @if ($drafts->isNotEmpty())
         <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden;">
             <div style="padding:1rem 1.5rem; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between;">

@@ -63,6 +63,7 @@ Route::middleware(['auth', 'workspace.active'])->group(function () {
         Route::delete('/create/{post}', [PostController::class, 'destroy'])->name('post.destroy');
         Route::get('/create/tiktok', fn () => view('create.tiktok', ['brand' => currentBrand()]))->name('create.tiktok');
         Route::get('/create/carousel', fn () => view('create.carousel', ['brand' => currentBrand()]))->name('create.carousel');
+        Route::get('/create/whatsapp', fn () => view('create.whatsapp', ['brand' => currentBrand()]))->name('create.whatsapp');
         Route::get('/media', fn () => view('media.index', ['brand' => currentBrand()]))->name('media');
         Route::post('/canva/link', [CanvaController::class, 'link'])->name('canva.link');
         Route::get('/plan', fn () => view('plan.index'))->name('plan');
