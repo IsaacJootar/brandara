@@ -1,33 +1,34 @@
 <div>
 
     {{-- ── TYPE SELECTOR ────────────────────────────────────────────────────── --}}
-    <div x-data="{ activeType: '{{ $type }}' }" style="margin-bottom:1.75rem;">
+    <div style="margin-bottom:1.75rem;">
         <p style="font-size:0.8rem; font-weight:600; color:#374151; margin:0 0 0.625rem;">What do you need to send?</p>
         <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:0.5rem;">
 
             @php
                 $typeDetails = [
-                    'broadcast'  => ['icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z', 'hint' => 'Update your whole contact list'],
-                    'status'     => ['icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', 'hint' => '24-hour visibility post'],
-                    'promo'      => ['icon' => 'M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z', 'hint' => 'Offer, sale, or new product'],
-                    'follow_up'  => ['icon' => 'M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6', 'hint' => 'After a chat or purchase'],
+                    'broadcast' => ['icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z', 'hint' => 'Update your whole contact list'],
+                    'status'    => ['icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', 'hint' => '24-hour visibility post'],
+                    'promo'     => ['icon' => 'M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z', 'hint' => 'Offer, sale, or new product'],
+                    'follow_up' => ['icon' => 'M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6', 'hint' => 'After a chat or purchase'],
                 ];
             @endphp
 
             @foreach($types as $key => $label)
-                @php $detail = $typeDetails[$key]; @endphp
+                @php
+                    $detail  = $typeDetails[$key];
+                    $active  = $type === $key;
+                @endphp
                 <button type="button"
-                    x-on:click="activeType = '{{ $key }}'; $wire.setType('{{ $key }}')"
-                    :style="activeType === '{{ $key }}'
-                        ? 'padding:0.75rem 1rem; border-radius:12px; border:2px solid #25D366; background:#F0FDF4; cursor:pointer; text-align:left; display:flex; align-items:flex-start; gap:0.625rem;'
-                        : 'padding:0.75rem 1rem; border-radius:12px; border:1px solid #E2E8F0; background:#fff; cursor:pointer; text-align:left; display:flex; align-items:flex-start; gap:0.625rem;'">
-                    <div :style="activeType === '{{ $key }}' ? 'width:32px;height:32px;border-radius:8px;background:#25D366;display:flex;align-items:center;justify-content:center;flex-shrink:0;' : 'width:32px;height:32px;border-radius:8px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;flex-shrink:0;'">
-                        <svg :style="activeType === '{{ $key }}' ? 'width:16px;height:16px;color:#fff;' : 'width:16px;height:16px;color:#64748B;'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    wire:click="setType('{{ $key }}')"
+                    style="padding:0.75rem 1rem; border-radius:12px; border:{{ $active ? '2px solid #25D366' : '1px solid #E2E8F0' }}; background:{{ $active ? '#F0FDF4' : '#fff' }}; cursor:pointer; text-align:left; display:flex; align-items:flex-start; gap:0.625rem; transition:border-color 0.15s, background 0.15s;">
+                    <div style="width:32px;height:32px;border-radius:8px;background:{{ $active ? '#25D366' : '#F1F5F9' }};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s;">
+                        <svg style="width:16px;height:16px;color:{{ $active ? '#fff' : '#64748B' }};" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $detail['icon'] }}"/>
                         </svg>
                     </div>
                     <div>
-                        <p :style="activeType === '{{ $key }}' ? 'font-size:0.82rem;font-weight:700;color:#15803D;margin:0 0 0.125rem;' : 'font-size:0.82rem;font-weight:600;color:#374151;margin:0 0 0.125rem;'">{{ $label }}</p>
+                        <p style="font-size:0.82rem;font-weight:{{ $active ? '700' : '600' }};color:{{ $active ? '#15803D' : '#374151' }};margin:0 0 0.125rem;">{{ $label }}</p>
                         <p style="font-size:0.72rem;color:#94A3B8;margin:0;">{{ $detail['hint'] }}</p>
                     </div>
                 </button>
