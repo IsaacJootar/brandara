@@ -31,6 +31,25 @@
         @livewire('post-composer', ['brand' => $brand])
     </div>
 
+    {{-- TikTok Toolkit card --}}
+    <a href="{{ route('create.tiktok', ['brand' => $brand->slug]) }}"
+       style="display:flex; align-items:center; gap:1rem; background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1rem 1.25rem; margin-bottom:1.75rem; text-decoration:none; transition:border-color 0.15s, box-shadow 0.15s;"
+       onmouseover="this.style.borderColor='#FE2C55';this.style.boxShadow='0 2px 12px rgba(254,44,85,0.08)'"
+       onmouseout="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'">
+        <div style="width:40px;height:40px;background:linear-gradient(135deg,#FE2C55,#010101);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg style="width:20px;height:20px;color:#fff;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.069A1 1 0 0121 8.868V15.13a1 1 0 01-1.447.9L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+            </svg>
+        </div>
+        <div style="flex:1; min-width:0;">
+            <div style="font-size:0.9rem; font-weight:700; color:#0F172A; margin:0 0 0.2rem;">TikTok Toolkit</div>
+            <div style="font-size:0.8rem; color:#64748B;">Script · Caption · Overlays · Hashtags · Bio — one click</div>
+        </div>
+        <svg style="width:16px;height:16px;color:#CBD5E1;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+    </a>
+
     @if ($drafts->isNotEmpty())
         <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden;">
             <div style="padding:1rem 1.5rem; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between;">
