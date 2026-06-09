@@ -58,6 +58,7 @@ Route::middleware(['auth', 'workspace.active'])->group(function () {
         Route::get('/create', [PostController::class, 'create'])->name('create');
         Route::delete('/create/{post}', [PostController::class, 'destroy'])->name('post.destroy');
         Route::get('/create/tiktok', fn () => view('create.tiktok', ['brand' => currentBrand()]))->name('create.tiktok');
+        Route::get('/media', fn () => view('media.index', ['brand' => currentBrand()]))->name('media');
         Route::get('/plan', fn () => view('plan.index'))->name('plan');
         Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule');
         Route::get('/grow', fn () => view('grow.index'))->name('grow');

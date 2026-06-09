@@ -32,6 +32,9 @@ class PostComposer extends Component
 
     public string $saveStatus = '';
 
+    /** @var array<int, array{id: string, url: string, name: string, mime: string}> */
+    public array $attachedMedia = [];
+
     public array $charLimits = [
         'linkedin' => 3000,
         'twitter' => 280,
@@ -167,6 +170,26 @@ class PostComposer extends Component
         $this->body = '';
         $this->savedDraftId = null;
         $this->saveStatus = '';
+        $this->attachedMedia = [];
+    }
+
+    public function removeMedia(string $id): void
+    {
+        $this->attachedMedia = array_values(
+            array_filter($this->attachedMedia, fn ($m) => $m['id'] !== $id)
+        );
+    }
+
+    #[On('media-selected')]
+    public function onMediaSelected(array $files): void
+    {
+        foreach ($files as $file) {
+            // Avoid duplicates
+            $exists = array_filter($this->attachedMedia, fn ($m) => $m['id'] === $file['id']);
+            if (empty($exists)) {
+                $this->attachedMedia[] = $file;
+            }
+        }
     }
 
     #[On('variation-selected')]

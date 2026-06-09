@@ -51,6 +51,7 @@
                         ['route' => 'create',      'icon' => 'pencil-square',     'label' => 'Create'],
                         ['route' => 'plan',        'icon' => 'calendar-days',     'label' => 'Plan'],
                         ['route' => 'schedule',    'icon' => 'clock',             'label' => 'Schedule'],
+                        ['route' => 'media',       'icon' => 'photo',             'label' => 'Media'],
                         ['route' => 'grow',        'icon' => 'arrow-trending-up', 'label' => 'Grow'],
                         ['route' => 'results',     'icon' => 'chart-bar',         'label' => 'Results'],
                         ['route' => 'my-brand',    'icon' => 'star',              'label' => 'My Brand'],

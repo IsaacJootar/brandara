@@ -121,6 +121,36 @@
             </div>
         @endif
 
+        {{-- Media picker + attached thumbnails --}}
+        <div style="margin-bottom:1.25rem;">
+            @livewire('media.media-picker', ['brand' => \App\Models\Brand::find($brandId)], key('media-picker'))
+
+            @if(count($attachedMedia))
+                <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem;">
+                    @foreach($attachedMedia as $media)
+                        <div style="position:relative; width:72px; height:72px; border-radius:8px; overflow:hidden; border:1px solid #E2E8F0; flex-shrink:0;">
+                            @if(str_starts_with($media['mime'], 'image/'))
+                                <img src="{{ $media['url'] }}" alt="{{ $media['name'] }}"
+                                    style="width:100%; height:100%; object-fit:cover; display:block;">
+                            @else
+                                <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#F5F3FF;">
+                                    <svg style="width:20px;height:20px;color:#7C3AED;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.069A1 1 0 0121 8.868V15.13a1 1 0 01-1.447.9L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+                                    </svg>
+                                </div>
+                            @endif
+                            <button type="button" wire:click="removeMedia('{{ $media['id'] }}')"
+                                style="position:absolute;top:2px;right:2px;width:18px;height:18px;background:rgba(0,0,0,0.6);border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                                <svg style="width:10px;height:10px;color:#fff;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
         {{-- Action row --}}
         <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
 
