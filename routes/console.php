@@ -28,3 +28,17 @@ Schedule::command('workspaces:check-trial-expiry')
 Schedule::command('usage:reset-monthly')
     ->monthlyOn(1, '00:05')
     ->withoutOverlapping();
+
+// Every Monday at 08:00 — send weekly digest emails to all active workspaces.
+Schedule::call(function () {
+    \App\Models\Brand::whereHas('workspace', fn ($q) => $q->whereIn('subscription_status', ['active', 'trialing']))
+        ->whereHas('workspace', fn ($q) => $q->whereIn('plan', ['pro', 'agency']))
+        ->each(function (\App\Models\Brand $brand) {
+            $owner = $brand->workspace->users()->where('role', 'owner')->first();
+            if ($owner) {
+                \Illuminate\Support\Facades\Mail::to($owner->email)->queue(
+                    new \App\Mail\WeeklyDigestMail($brand)
+                );
+            }
+        });
+})->weeklyOn(1, '08:00'); // Monday 8AM
