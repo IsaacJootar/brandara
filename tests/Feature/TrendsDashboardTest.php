@@ -56,7 +56,7 @@ class TrendsDashboardTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
         Livewire::actingAs($user)
             ->test(TrendsDashboard::class, ['brand' => $brand])
-            ->assertSee('No trend data yet');
+            ->assertSee('Your trend data is on its way');
     }
 
     // ── FakeTrendsSeeder ──────────────────────────────────────────────────────

@@ -148,7 +148,7 @@ class Index extends Component
 
         $this->schedulingPostId = null;
         $this->tab = 'scheduled';
-        session()->flash('schedule_message', 'Post scheduled.');
+        $this->dispatch('show-toast', message: 'Post scheduled.');
     }
 
     public function cancelSchedule(string $postId): void
@@ -163,7 +163,7 @@ class Index extends Component
             'scheduled_at' => null,
         ]);
 
-        session()->flash('schedule_message', 'Schedule cancelled — moved back to drafts.');
+        $this->dispatch('show-toast', message: 'Schedule cancelled — moved back to drafts.');
     }
 
     public function deletePost(string $postId): void
@@ -172,7 +172,7 @@ class Index extends Component
         abort_if(! $post, 403);
 
         $post->delete();
-        session()->flash('schedule_message', 'Post deleted.');
+        $this->dispatch('show-toast', message: 'Post deleted.');
     }
 
     public function retryFailed(string $postId): void
@@ -189,7 +189,7 @@ class Index extends Component
             'retry_count' => 0,
         ]);
 
-        session()->flash('schedule_message', 'Post re-queued for delivery.');
+        $this->dispatch('show-toast', message: 'Post re-queued for delivery.');
     }
 
     // ── Render ────────────────────────────────────────────────────────────────

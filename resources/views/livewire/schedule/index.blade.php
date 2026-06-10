@@ -1,12 +1,5 @@
 <div>
 
-    {{-- ── Flash ─────────────────────────────────────────────────────────── --}}
-    @if (session('schedule_message'))
-        <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:0.75rem 1rem; margin-bottom:1rem; font-size:0.85rem; color:#16A34A;">
-            {{ session('schedule_message') }}
-        </div>
-    @endif
-
     {{-- ── Toolbar: view switch + tab counts ───────────────────────────── --}}
     <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
 
