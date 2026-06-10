@@ -252,23 +252,54 @@
 
     </div>
 
-    {{-- ── Hidden plan ID map for JS ───────────────────────────────────────── --}}
+    {{-- ── Inline notice banner (hidden by default) ───────────────────────── --}}
+    <div id="billingNotice" style="display:none; position:fixed; top:1.25rem; right:1.25rem; z-index:9999; max-width:360px; background:#0F172A; color:#fff; border-radius:12px; padding:1rem 1.25rem; box-shadow:0 4px 20px rgba(0,0,0,0.2); font-size:0.85rem; line-height:1.5;">
+        <div style="display:flex; align-items:flex-start; gap:0.75rem;">
+            <div id="billingNoticeIcon" style="flex-shrink:0; margin-top:1px; font-size:1rem;">ℹ️</div>
+            <div>
+                <p id="billingNoticeText" style="margin:0; font-weight:500;"></p>
+            </div>
+            <button onclick="hideBillingNotice()" style="flex-shrink:0; background:none; border:none; color:rgba(255,255,255,0.5); cursor:pointer; font-size:1rem; line-height:1; padding:0; margin-left:0.5rem;">×</button>
+        </div>
+    </div>
+
+    {{-- ── JS ─────────────────────────────────────────────────────────────── --}}
     @php
         $jsPlanMap = $plans['monthly']->merge($plans['yearly'])
             ->map(function($p) { return ['id' => $p->id, 'plan' => $p->plan, 'interval' => $p->interval]; })
             ->values();
     @endphp
     <script>
-    const brandaraPlans = {!! json_encode($jsPlanMap) !!};
-    const brandaraProvider = {!! json_encode($provider) !!};
-    const brandaraFwPublicKey = {!! json_encode($settings['flutterwave_public_key']) !!};
-    const brandaraPsPublicKey = {!! json_encode($settings['paystack_public_key']) !!};
+    const brandaraPlans      = {!! json_encode($jsPlanMap) !!};
+    const brandaraProvider   = {!! json_encode($provider) !!};
+    const brandaraFwKey      = {!! json_encode($settings['flutterwave_public_key']) !!};
+    const brandaraPsKey      = {!! json_encode($settings['paystack_public_key']) !!};
     const brandaraCheckoutUrl = {!! json_encode(route('billing.checkout')) !!};
-    const brandaraCsrf = {!! json_encode(csrf_token()) !!};
+    const brandaraVerifyUrl  = {!! json_encode(route('billing.verify')) !!};
+    const brandaraCsrf       = {!! json_encode(csrf_token()) !!};
+
+    function showBillingNotice(msg, icon) {
+        document.getElementById('billingNoticeText').textContent = msg;
+        document.getElementById('billingNoticeIcon').textContent = icon || 'ℹ️';
+        document.getElementById('billingNotice').style.display = 'block';
+        setTimeout(hideBillingNotice, 8000);
+    }
+    function hideBillingNotice() {
+        document.getElementById('billingNotice').style.display = 'none';
+    }
 
     function startCheckout(plan, interval) {
         const match = brandaraPlans.find(p => p.plan === plan && p.interval === interval);
-        if (!match) { alert('Plan not found. Please refresh and try again.'); return; }
+        if (!match) {
+            showBillingNotice('Plan not found. Please refresh the page and try again.', '⚠️');
+            return;
+        }
+
+        // Disable button visually
+        const btn = event.currentTarget;
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Loading…';
 
         fetch(brandaraCheckoutUrl, {
             method: 'POST',
@@ -277,20 +308,40 @@
         })
         .then(r => r.json())
         .then(res => {
-            if (!res.success) { alert(res.message || 'Could not start checkout. Please try again.'); return; }
+            btn.disabled = false;
+            btn.textContent = originalText;
+
+            if (!res.success) {
+                showBillingNotice(res.message || 'Could not start checkout. Please try again.', '⚠️');
+                return;
+            }
+
+            // Test mode — payment popup not active yet
+            if (res.test_mode) {
+                showBillingNotice(
+                    'Billing is in test mode. Add your Flutterwave API keys to .env to enable real payments. (FLW_PUBLIC_KEY, FLW_SECRET_KEY)',
+                    '🔧'
+                );
+                return;
+            }
+
             openPaymentPopup(res.data);
         })
-        .catch(() => alert('Network error. Please check your connection and try again.'));
+        .catch(err => {
+            btn.disabled = false;
+            btn.textContent = originalText;
+            showBillingNotice('Network error. Check your connection and try again.', '⚠️');
+        });
     }
 
     function openPaymentPopup(data) {
         if (brandaraProvider === 'flutterwave') {
             if (typeof FlutterwaveCheckout === 'undefined') {
-                alert('Payment popup failed to load. Please refresh the page.');
+                showBillingNotice('Payment window failed to load. Please refresh the page.', '⚠️');
                 return;
             }
             FlutterwaveCheckout({
-                public_key:     brandaraFwPublicKey || data.public_key,
+                public_key:     brandaraFwKey || data.public_key,
                 tx_ref:         data.tx_ref,
                 amount:         data.amount,
                 currency:       data.currency,
@@ -299,34 +350,33 @@
                 customizations: data.customizations,
                 callback: function(resp) {
                     if (resp.status === 'successful' || resp.status === 'completed') {
-                        window.location = '{{ route('billing.verify') }}?tx_ref=' + resp.tx_ref + '&provider=flutterwave';
+                        window.location.href = brandaraVerifyUrl + '?tx_ref=' + resp.tx_ref + '&provider=flutterwave';
                     }
                 },
-                onclose: function() { /* user closed popup */ }
+                onclose: function() {}
             });
         } else {
             if (typeof PaystackPop === 'undefined') {
-                alert('Payment popup failed to load. Please refresh the page.');
+                showBillingNotice('Payment window failed to load. Please refresh the page.', '⚠️');
                 return;
             }
             const handler = PaystackPop.setup({
-                key:       brandaraPsPublicKey || data.public_key,
-                email:     data.email,
-                amount:    data.amount,
-                currency:  data.currency,
-                ref:       data.tx_ref,
-                metadata:  data.metadata,
+                key:      brandaraPsKey || data.public_key,
+                email:    data.email,
+                amount:   data.amount,
+                currency: data.currency,
+                ref:      data.tx_ref,
+                metadata: data.metadata,
                 callback: function(resp) {
-                    window.location = '{{ route('billing.verify') }}?reference=' + resp.reference + '&provider=paystack';
+                    window.location.href = brandaraVerifyUrl + '?reference=' + resp.reference + '&provider=paystack';
                 },
-                onClose: function() { /* user closed popup */ }
+                onClose: function() {}
             });
             handler.openIframe();
         }
     }
     </script>
 
-    {{-- Load payment SDKs --}}
     <script src="https://checkout.flutterwave.com/v3.js" defer></script>
     <script src="https://js.paystack.co/v1/inline.js" defer></script>
 

@@ -49,8 +49,13 @@ class BillingController extends Controller
 
         try {
             $data = $this->billing->initializePayment($workspace, $request->plan_id);
+            $isTestMode = BillingSetting::get('test_mode', 'true') === 'true';
 
-            return response()->json(['success' => true, 'data' => $data]);
+            return response()->json([
+                'success' => true,
+                'test_mode' => $isTestMode,
+                'data' => $data,
+            ]);
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'message' => 'Could not start checkout. Please try again.'], 422);
         }
