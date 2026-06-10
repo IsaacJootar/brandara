@@ -1,6 +1,6 @@
 <x-layouts.app>
 
-    {{-- Page header --}}
+    {{-- ── Page header ──────────────────────────────────────────────────────── --}}
     <div style="margin-bottom:1.75rem;">
         <h1 style="font-size:1.375rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">
             Good {{ now()->hour < 12 ? 'morning' : (now()->hour < 17 ? 'afternoon' : 'evening') }},
@@ -11,71 +11,107 @@
         </p>
     </div>
 
-    {{-- Stat cards (lazy-loaded Livewire) --}}
+    {{-- ── Stat cards + activity sections (lazy-loaded) ────────────────────── --}}
     @livewire('dashboard.metrics', ['brand' => $brand])
 
-    {{-- Quick actions --}}
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:1rem; margin-bottom:1.75rem;">
-        <a href="{{ route('create', ['brand' => $brand->slug]) }}"
-           style="display:block; background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem; text-decoration:none; transition:border-color 0.15s, box-shadow 0.15s;"
-           onmouseover="this.style.borderColor='#7C3AED'; this.style.boxShadow='0 4px 12px rgba(124,58,237,0.1)'"
-           onmouseout="this.style.borderColor='#E2E8F0'; this.style.boxShadow='none'">
-            <div style="width:40px; height:40px; border-radius:10px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; margin-bottom:0.75rem;">
-                <svg width="18" height="18" fill="none" stroke="#7C3AED" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-            </div>
-            <div style="font-size:0.9rem; font-weight:600; color:#0F172A; margin-bottom:0.25rem;">Write a post</div>
-            <div style="font-size:0.8rem; color:#64748B;">Generate AI content or write manually</div>
-        </a>
-
-        <a href="{{ route('connections', ['brand' => $brand->slug]) }}"
-           style="display:block; background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem; text-decoration:none; transition:border-color 0.15s, box-shadow 0.15s;"
-           onmouseover="this.style.borderColor='#7C3AED'; this.style.boxShadow='0 4px 12px rgba(124,58,237,0.1)'"
-           onmouseout="this.style.borderColor='#E2E8F0'; this.style.boxShadow='none'">
-            <div style="width:40px; height:40px; border-radius:10px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; margin-bottom:0.75rem;">
-                <svg width="18" height="18" fill="none" stroke="#7C3AED" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-            </div>
-            <div style="font-size:0.9rem; font-weight:600; color:#0F172A; margin-bottom:0.25rem;">Connect platforms</div>
-            <div style="font-size:0.8rem; color:#64748B;">Link LinkedIn, X, Instagram and more</div>
-        </a>
-
-        <a href="{{ route('my-brand', ['brand' => $brand->slug]) }}"
-           style="display:block; background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem; text-decoration:none; transition:border-color 0.15s, box-shadow 0.15s;"
-           onmouseover="this.style.borderColor='#7C3AED'; this.style.boxShadow='0 4px 12px rgba(124,58,237,0.1)'"
-           onmouseout="this.style.borderColor='#E2E8F0'; this.style.boxShadow='none'">
-            <div style="width:40px; height:40px; border-radius:10px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; margin-bottom:0.75rem;">
-                <svg width="18" height="18" fill="none" stroke="#7C3AED" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
-            </div>
-            <div style="font-size:0.9rem; font-weight:600; color:#0F172A; margin-bottom:0.25rem;">Set up My Brand</div>
-            <div style="font-size:0.8rem; color:#64748B;">Add your voice, colours, and brand profile</div>
-        </a>
-    </div>
-
-    {{-- Getting started checklist --}}
-    <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden;">
-        <div style="padding:1.25rem 1.5rem; border-bottom:1px solid #F1F5F9;">
-            <div style="font-size:0.9rem; font-weight:600; color:#0F172A;">Get {{ $brand->name }} ready in 3 steps</div>
-        </div>
-        <div style="padding:1rem 1.5rem; display:flex; flex-direction:column; gap:0.75rem;">
-            @foreach ([
-                ['num'=>'1','title'=>'Set up your brand profile','sub'=>'Add your mission, voice, and colours','route'=>'my-brand','btn'=>'Start'],
-                ['num'=>'2','title'=>'Connect your social platforms','sub'=>'LinkedIn, X, Instagram, and more','route'=>'connections','btn'=>'Connect'],
-                ['num'=>'3','title'=>'Write your first post','sub'=>'Let AI write 3 versions for you','route'=>'create','btn'=>'Write a post'],
-            ] as $step)
-                <div style="display:flex; align-items:center; gap:0.875rem; padding:0.875rem 1rem; background:#F8FAFC; border-radius:10px;">
-                    <div style="width:28px; height:28px; border-radius:50%; border:2px solid #E2E8F0; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                        <span style="font-size:0.72rem; font-weight:700; color:#94A3B8;">{{ $step['num'] }}</span>
+    {{-- ── Quick actions ────────────────────────────────────────────────────── --}}
+    <div style="margin-bottom:1.75rem;">
+        <p style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#94A3B8; margin:0 0 0.75rem;">Quick actions</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:0.75rem;">
+            @foreach([
+                ['label'=>'Write a post',       'sub'=>'AI generates 3 versions',      'route'=>'create',       'icon'=>'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'],
+                ['label'=>'Plan content',        'sub'=>'Pillars & campaigns',          'route'=>'plan',         'icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'],
+                ['label'=>'Check results',       'sub'=>'Reach & engagement',           'route'=>'results',      'icon'=>'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
+                ['label'=>'View trends',         'sub'=>'What\'s hot right now',        'route'=>'trends',       'icon'=>'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6'],
+            ] as $action)
+                <a href="{{ route($action['route'], ['brand' => $brand->slug]) }}"
+                   style="display:flex; align-items:center; gap:0.75rem; background:#fff; border:1px solid #E2E8F0; border-radius:12px; padding:0.875rem 1rem; text-decoration:none; transition:border-color 0.15s, box-shadow 0.15s;"
+                   onmouseover="this.style.borderColor='#7C3AED';this.style.boxShadow='0 4px 12px rgba(124,58,237,0.08)'"
+                   onmouseout="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'">
+                    <div style="width:36px; height:36px; border-radius:9px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <svg width="16" height="16" fill="none" stroke="#7C3AED" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $action['icon'] }}"/></svg>
                     </div>
-                    <div style="flex:1; min-width:0;">
-                        <div style="font-size:0.85rem; font-weight:600; color:#0F172A;">{{ $step['title'] }}</div>
-                        <div style="font-size:0.78rem; color:#94A3B8;">{{ $step['sub'] }}</div>
+                    <div>
+                        <div style="font-size:0.82rem; font-weight:600; color:#0F172A;">{{ $action['label'] }}</div>
+                        <div style="font-size:0.72rem; color:#94A3B8;">{{ $action['sub'] }}</div>
                     </div>
-                    <a href="{{ route($step['route'], ['brand' => $brand->slug]) }}"
-                       style="flex-shrink:0; font-size:0.78rem; font-weight:600; color:#fff; background:#7C3AED; padding:0.375rem 0.875rem; border-radius:7px; text-decoration:none; white-space:nowrap;">
-                        {{ $step['btn'] }}
-                    </a>
-                </div>
+                </a>
             @endforeach
         </div>
+    </div>
+
+    {{-- ── Get started — 3 steps ────────────────────────────────────────────── --}}
+    <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden; box-shadow:0 1px 3px rgba(15,23,42,0.06);">
+
+        {{-- Header --}}
+        <div style="padding:1.125rem 1.5rem; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; gap:0.625rem;">
+            <div style="width:28px; height:28px; border-radius:7px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="14" height="14" fill="none" stroke="#7C3AED" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+            </div>
+            <div>
+                <p style="font-size:0.875rem; font-weight:700; color:#0F172A; margin:0;">Get {{ $brand->name }} ready in 3 steps</p>
+                <p style="font-size:0.75rem; color:#94A3B8; margin:0;">Complete these once and Brandara runs on its own</p>
+            </div>
+        </div>
+
+        {{-- Steps --}}
+        @php
+            $steps = [
+                [
+                    'num'   => '1',
+                    'title' => 'Set up your Brand',
+                    'sub'   => 'Add your brand\'s voice, colours, mission, and target audience. This trains the AI to write exactly like you.',
+                    'route' => 'my-brand',
+                    'btn'   => 'Set up brand',
+                    'color' => '#7C3AED',
+                    'bg'    => '#F5F3FF',
+                ],
+                [
+                    'num'   => '2',
+                    'title' => 'Connect your platforms',
+                    'sub'   => 'Link LinkedIn, X, Instagram, and more. Brandara schedules and publishes directly — no copy-pasting.',
+                    'route' => 'connections',
+                    'btn'   => 'Connect now',
+                    'color' => '#0369A1',
+                    'bg'    => '#EFF6FF',
+                ],
+                [
+                    'num'   => '3',
+                    'title' => 'Write your first post',
+                    'sub'   => 'Enter a topic and let AI write 3 variations — Authority, Story, and Bold angle. Pick one, edit if you like, publish.',
+                    'route' => 'create',
+                    'btn'   => 'Write a post',
+                    'color' => '#0F766E',
+                    'bg'    => '#F0FDFA',
+                ],
+            ];
+        @endphp
+
+        @foreach($steps as $step)
+            <div style="display:flex; gap:1.25rem; padding:1.375rem 1.5rem; {{ !$loop->last ? 'border-bottom:1px solid #F1F5F9;' : '' }} align-items:flex-start;">
+
+                {{-- Number badge --}}
+                <div style="flex-shrink:0; display:flex; flex-direction:column; align-items:center;">
+                    <div style="width:36px; height:36px; border-radius:50%; background:{{ $step['bg'] }}; border:2px solid {{ $step['color'] }}20; display:flex; align-items:center; justify-content:center;">
+                        <span style="font-size:0.875rem; font-weight:800; color:{{ $step['color'] }};">{{ $step['num'] }}</span>
+                    </div>
+                    @if(!$loop->last)
+                        <div style="width:2px; height:100%; min-height:20px; background:#F1F5F9; margin-top:6px; border-radius:99px;"></div>
+                    @endif
+                </div>
+
+                {{-- Content --}}
+                <div style="flex:1; min-width:0; padding-top:0.125rem;">
+                    <p style="font-size:0.9rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">{{ $step['title'] }}</p>
+                    <p style="font-size:0.82rem; color:#64748B; margin:0 0 0.875rem; line-height:1.6;">{{ $step['sub'] }}</p>
+                    <a href="{{ route($step['route'], ['brand' => $brand->slug]) }}"
+                       style="display:inline-flex; align-items:center; gap:0.375rem; font-size:0.8rem; font-weight:600; color:{{ $step['color'] }}; background:{{ $step['bg'] }}; padding:0.45rem 1rem; border-radius:8px; text-decoration:none; border:1px solid {{ $step['color'] }}20;">
+                        {{ $step['btn'] }}
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+        @endforeach
     </div>
 
 </x-layouts.app>
