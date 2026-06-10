@@ -1,5 +1,23 @@
 <div>
 
+    {{-- ── DISABLED STATE ──────────────────────────────────────────────────── --}}
+    @if(!$engagementEnabled)
+        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:14px; padding:2rem; text-align:center; margin-bottom:1.5rem;">
+            <div style="width:44px;height:44px;background:#F1F5F9;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 0.875rem;">
+                <svg style="width:20px;height:20px;color:#94A3B8;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                </svg>
+            </div>
+            <p style="font-size:0.9rem; font-weight:700; color:#0F172A; margin:0 0 0.375rem;">Engagement automation is off</p>
+            <p style="font-size:0.82rem; color:#64748B; margin:0 0 1.25rem; max-width:380px; margin-left:auto; margin-right:auto; line-height:1.6;">No automated actions are running for this brand. Turn it on in Settings when you're ready — your rules will be waiting.</p>
+            <a href="{{ route('settings', ['brand' => \App\Models\Brand::find($brandId)?->slug ?? '']) }}"
+               style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.6rem 1.25rem; background:#7C3AED; color:#fff; font-size:0.85rem; font-weight:600; border-radius:10px; text-decoration:none; transition:opacity 0.15s;"
+               onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                Go to Settings → Engagement
+            </a>
+        </div>
+    @endif
+
     {{-- ── HEADER ROW ─────────────────────────────────────────────────────── --}}
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:0.75rem;">
         <div>

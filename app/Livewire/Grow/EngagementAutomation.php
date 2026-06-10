@@ -129,6 +129,9 @@ class EngagementAutomation extends Component
     {
         $brand = Brand::findOrFail($this->brandId);
 
+        // Check brand-level setting — if disabled, show the disabled state
+        $engagementEnabled = (bool) $brand->setting('engagement_enabled');
+
         $rules = EngagementRule::where('brand_id', $this->brandId)
             ->latest()
             ->get();
@@ -147,7 +150,7 @@ class EngagementAutomation extends Component
             ->get();
 
         return view('livewire.grow.engagement-automation', compact(
-            'rules', 'pendingComments', 'recentActions'
+            'engagementEnabled', 'rules', 'pendingComments', 'recentActions'
         ));
     }
 

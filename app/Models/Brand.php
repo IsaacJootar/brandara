@@ -16,12 +16,60 @@ class Brand extends Model
         'vision', 'mission', 'values', 'target_audience', 'negative_brief',
         'positioning', 'primary_color', 'secondary_color', 'font_preference',
         'logo_path', 'brand_voice', 'voice_samples_count', 'default_tone', 'language',
+        'settings',
     ];
 
     protected $casts = [
-        'values'    => 'array',
+        'values' => 'array',
         'brand_voice' => 'array',
+        'settings' => 'array',
     ];
+
+    /**
+     * Default settings for every brand.
+     * Merge these with stored settings so new keys are always present.
+     */
+    public static function defaultSettings(): array
+    {
+        return [
+            // Engagement automation
+            'engagement_enabled' => false,  // opt-in, off by default
+            'engagement_scan_frequency' => 'daily', // daily | twice_daily | weekly
+
+            // Publishing
+            'default_post_time' => '09:00',
+            'timezone' => 'Africa/Lagos',
+            'evergreen_recycling' => false,
+
+            // Notifications
+            'notify_post_failed' => true,
+            'notify_post_published' => false,
+            'notify_lead_captured' => true,
+            'notify_trial_expiring' => true,
+        ];
+    }
+
+    /**
+     * Get a specific setting value, falling back to the default.
+     */
+    public function setting(string $key): mixed
+    {
+        $stored = $this->settings ?? [];
+        $defaults = self::defaultSettings();
+
+        return $stored[$key] ?? $defaults[$key] ?? null;
+    }
+
+    /**
+     * Update one or more settings.
+     *
+     * @param  array<string, mixed>  $values
+     */
+    public function updateSettings(array $values): void
+    {
+        $current = $this->settings ?? [];
+        $this->update(['settings' => array_merge($current, $values)]);
+    }
 
     public function workspace(): BelongsTo
     {

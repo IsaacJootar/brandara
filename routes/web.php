@@ -78,6 +78,7 @@ Route::middleware(['auth', 'workspace.active'])->group(function () {
         Route::get('/my-brand', fn () => view('my-brand.index'))->name('my-brand');
         Route::get('/trends', fn () => view('trends.index'))->name('trends');
         Route::get('/ai-presence', fn () => view('ai-presence.index'))->name('ai-presence');
+        Route::get('/settings', fn () => view('settings.index'))->name('settings');
     });
 });
 
