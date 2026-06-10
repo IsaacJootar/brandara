@@ -1,3 +1,5 @@
+<div>
+
 {{-- ── STAT CARDS ──────────────────────────────────────────────────────────── --}}
 <div class="metric-grid">
     <div class="metric-card metric-violet">
@@ -195,4 +197,6 @@
             @endif
         </div>
     </div>
+</div>
+
 </div>
