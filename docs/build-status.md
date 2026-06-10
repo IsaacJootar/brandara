@@ -208,6 +208,18 @@ All tables created and migrated:
 - Stat cards use same full-color gradient design as Dashboard metric cards
 - 8 tests passing
 
+### ✅ Trends Dashboard (between 19 and 20)
+- Full dashboard at `/{brand}/trends` — Growth+ only
+- 4 metric stat cards (same gradient style as Dashboard): Industry signals, Format trends, Competitor signals, Hottest platform
+- **Tab 1 — Industry Trends:** Top 10 trending topics in brand's niche, strength bar (1–100), platform badges, Hot/Rising/Emerging labels
+- **Tab 2 — Content Formats:** Cards per format with description, signal strength meter, platform colour bar — what types of posts are working and why
+- **Tab 3 — Competitor Signals:** Keyword/competitor activity with Alert/Watch/Low badges + Tracked Keywords manager (add/remove keywords per platform)
+- `TrendsService` — reads `trend_signals` table (source-agnostic: fake | ai | api)
+- `FakeTrendsSeeder` — 30 realistic signals (10 per category). Command: `php artisan trends:seed-fake {brand_slug}`
+- `TrackedKeyword` model — user-defined keywords/competitors to monitor per brand
+- Architecture ready: when real APIs arrive (X API, Google Trends), `LiveTrendsFetcher` writes to same table — zero other changes
+- 10 tests passing
+
 ---
 
 ## Pending modules (20–22)
