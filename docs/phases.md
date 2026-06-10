@@ -47,9 +47,9 @@ Update `CLAUDE.md` → CURRENT PHASE when starting a new session.
 | 15 | Media library | ✅ | Upload, browse, compress, platform compliance check, Canva button, carousel generator |
 | 16 | WhatsApp assistant | ✅ | Broadcast, status, promo, follow-up — WhatsApp Share API button, Brand Voice integrated |
 | — | Tier & multi-brand architecture | ✅ | PlanFeatureService, TierGate, feature registry, brand limits, generation counter, platform restriction |
-| 17 | Engagement automation | ⏳ | Auto-like/comment rules, Brand Voice replies, frequency controls — Pro+ only |
-| 18 | Lead engagement tracker | ⏳ | Post engagers, enrichment, tags, notes, follow-up, CSV export — Pro+ only |
-| 19 | Analytics dashboard | ⏳ | Results screen, engagement metrics, best posting times, weekly digest — Pro+ only |
+| 17 | Engagement automation | ✅ | Auto-like/comment rules, Brand Voice replies, frequency controls, opt-in per brand in Settings — Growth+ only |
+| 18 | Lead engagement tracker | ✅ | Lead Tracker + Automation tabs on Grow page, CSV export, inline edit, cross-brand security — Growth+ only |
+| 19 | Analytics dashboard | ✅ | Results screen, stat cards (gradient style), Chart.js line chart, platform breakdown, best posting times, top posts, weekly digest email — Growth+ only |
 | 20 | Billing — Paystack + Flutterwave | ⏳ | Pricing page Basic $19/Growth $39/Agency $89, checkout, webhooks, trial expiry flow |
 | 21 | AI Visibility | ⏳ | Queries ChatGPT/Perplexity/Gemini/Claude, stores results, dashboard — Pro+ only |
 | 22 | Admin Panel | ⏳ | /brandara-admin, DB-driven tier/module access, replaces config/features.php |

@@ -30,6 +30,12 @@ class BrandController extends Controller
             );
         }
 
+        // Share the first brand so the app layout nav can render
+        $firstBrand = $workspace->brands()->first();
+        if ($firstBrand) {
+            view()->share('currentBrand', $firstBrand);
+        }
+
         return view('brands.create');
     }
 

@@ -1,7 +1,7 @@
 # Brandara — Build Status
 
-Last updated: 2026-06-08
-Current phase: **10 — Brand Voice**
+Last updated: 2026-06-10
+Current phase: **20 — Billing (Paystack + Flutterwave)**
 
 ---
 
@@ -180,15 +180,40 @@ All tables created and migrated:
 - Brand limits: Basic 1, Growth 3, Agency unlimited
 - Storage limits: Basic 500MB, Growth 2GB, Agency 10GB
 
+### ✅ Module 17 — Engagement Automation
+- `EngagementService` — orchestrates auto-like/comment logic per brand rules
+- `CommentGeneratorService` — AI-generated comments in Brand Voice tone
+- `FakeEngagementPublisher` — logs actions; activates when real OAuth apps approved
+- `EngagementAutomation` Livewire component — rules engine with review queue (approve before AI posts)
+- Opt-in per brand: master toggle in Settings → Engagement (off by default)
+- Scan frequency options: daily, twice daily, weekly, twice weekly
+- Growth+ only — Basic users see upgrade prompt
+- 10 tests passing
+
+### ✅ Module 18 — Lead Tracker (Engagement & Growth)
+- `LeadTracker` Livewire component — search, tag/platform filters, inline edit (tag, notes, follow-up date)
+- CSV export, stats bar (total, warm, follow-ups due)
+- Cross-brand security via `findLead()` helper
+- Engagement & Growth page has tab switcher: Lead Tracker | Automation
+- Both tabs wrapped in `<x-tier-gate feature="lead_tracker">` — Growth+ only
+- 11 tests passing
+
+### ✅ Module 19 — Analytics Dashboard
+- `AnalyticsService` — summary(), dailyChart(), platformBreakdown(), topPosts(), bestPostingTimes(), weekOverWeek()
+- `ResultsDashboard` Livewire component — period selector (7/30/90 days), stat cards, Chart.js line chart
+- `FakeAnalyticsSeeder` — seeds realistic fake analytics for dev/demo. Command: `php artisan analytics:seed-fake {brand_slug}`
+- `WeeklyDigestMail` — queued mailable, Growth+ only. Scheduled every Monday 8AM
+- `usage:reset-monthly` Artisan command — resets Basic AI generation counters on 1st of month
+- Basic plan: blurred preview with compelling upgrade card listing 5 specific features
+- Stat cards use same full-color gradient design as Dashboard metric cards
+- 8 tests passing
+
 ---
 
-## Pending modules (17–22)
+## Pending modules (20–22)
 
 | # | Module | Key dependencies |
 |---|---|---|
-| 17 | Engagement automation | Auto-like/comment rules, Brand Voice contextual replies — Pro+ only |
-| 18 | Lead tracker | Post engagers, enrichment, tags, notes, CSV export — Pro+ only |
-| 19 | Analytics dashboard | Results screen, engagement metrics, weekly digest email — Pro+ only |
 | 20 | Billing | Paystack (NGN) + Flutterwave (pan-Africa), webhooks, trial expiry — Basic $19 / Growth $39 / Agency $89 |
 | 21 | AI Visibility | Queries ChatGPT/Perplexity/Gemini/Claude, stores reports, dashboard with sentiment — Pro+ only |
 | 22 | Admin Panel | /brandara-admin, DB-driven tier/module access, workspace mgmt — replaces config/features.php |
