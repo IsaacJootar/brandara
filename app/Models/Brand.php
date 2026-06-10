@@ -34,7 +34,7 @@ class Brand extends Model
         return [
             // Engagement automation
             'engagement_enabled' => false,  // opt-in, off by default
-            'engagement_scan_frequency' => 'daily', // daily | twice_daily | weekly
+            'engagement_scan_frequency' => 'daily', // daily | twice_daily | weekly | twice_weekly
 
             // Publishing
             'default_post_time' => '09:00',

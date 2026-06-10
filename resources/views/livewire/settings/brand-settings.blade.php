@@ -1,19 +1,19 @@
-<div style="display:flex; gap:1.5rem; align-items:flex-start; flex-wrap:wrap;">
+<div>
 
-    {{-- ── SIDEBAR NAV ──────────────────────────────────────────────────────── --}}
-    <div style="width:200px; flex-shrink:0; background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:0.5rem; position:sticky; top:1.5rem;">
-        @php
-            $sections = [
-                'general'       => ['icon' => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z', 'label' => 'General'],
-                'engagement'    => ['icon' => 'M13 10V3L4 14h7v7l9-11h-7z', 'label' => 'Engagement'],
-                'publishing'    => ['icon' => 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', 'label' => 'Publishing'],
-                'notifications' => ['icon' => 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9', 'label' => 'Notifications'],
-            ];
-        @endphp
+    @php
+        $sections = [
+            'general'       => ['icon' => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z', 'label' => 'General'],
+            'engagement'    => ['icon' => 'M13 10V3L4 14h7v7l9-11h-7z', 'label' => 'Engagement'],
+            'publishing'    => ['icon' => 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', 'label' => 'Publishing'],
+            'notifications' => ['icon' => 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9', 'label' => 'Notifications'],
+        ];
+    @endphp
 
+    {{-- ── SECTION TABS — horizontal scroll on mobile, sidebar on desktop ─── --}}
+    <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:0.375rem; margin-bottom:1.25rem; display:flex; gap:0.25rem; overflow-x:auto; -webkit-overflow-scrolling:touch;">
         @foreach($sections as $key => $section)
             <button type="button" wire:click="setSection('{{ $key }}')"
-                style="width:100%; display:flex; align-items:center; gap:0.5rem; padding:0.55rem 0.75rem; border-radius:9px; border:none; cursor:pointer; font-size:0.82rem; font-weight:{{ $activeSection === $key ? '600' : '400' }}; background:{{ $activeSection === $key ? '#F5F3FF' : 'transparent' }}; color:{{ $activeSection === $key ? '#7C3AED' : '#64748B' }}; text-align:left; transition:all 0.15s;">
+                style="display:flex; align-items:center; gap:0.5rem; padding:0.55rem 0.875rem; border-radius:9px; border:none; cursor:pointer; font-size:0.82rem; font-weight:{{ $activeSection === $key ? '600' : '400' }}; background:{{ $activeSection === $key ? '#F5F3FF' : 'transparent' }}; color:{{ $activeSection === $key ? '#7C3AED' : '#64748B' }}; white-space:nowrap; transition:all 0.15s; flex-shrink:0;">
                 <svg style="width:14px;height:14px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $section['icon'] }}"/>
                 </svg>
@@ -23,7 +23,7 @@
     </div>
 
     {{-- ── SECTION CONTENT ──────────────────────────────────────────────────── --}}
-    <div style="flex:1; min-width:0;">
+    <div>
 
         {{-- GENERAL ─────────────────────────────────────────────────────────── --}}
         @if($activeSection === 'general')
@@ -121,7 +121,7 @@
                             <label style="display:block; font-size:0.78rem; font-weight:600; color:#374151; margin-bottom:0.25rem;">Scan frequency</label>
                             <p style="font-size:0.75rem; color:#94A3B8; margin:0 0 0.5rem;">How often Brandara checks for new posts matching your rules.</p>
                             <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-                                @foreach(['daily' => 'Once a day', 'twice_daily' => 'Twice a day', 'weekly' => 'Once a week'] as $val => $lbl)
+                                @foreach(['daily' => 'Once a day', 'twice_daily' => 'Twice a day', 'weekly' => 'Once a week', 'twice_weekly' => 'Twice a week'] as $val => $lbl)
                                     <button type="button" wire:click="$set('engagementScanFrequency', '{{ $val }}')"
                                         style="padding:0.4rem 0.875rem; border-radius:8px; font-size:0.8rem; border:{{ $engagementScanFrequency === $val ? '2px solid #7C3AED' : '1px solid #E2E8F0' }}; background:{{ $engagementScanFrequency === $val ? '#F5F3FF' : '#fff' }}; color:{{ $engagementScanFrequency === $val ? '#7C3AED' : '#64748B' }}; cursor:pointer; font-weight:{{ $engagementScanFrequency === $val ? '600' : '400' }};">
                                         {{ $lbl }}
