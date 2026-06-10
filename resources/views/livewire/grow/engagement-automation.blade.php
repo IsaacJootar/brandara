@@ -128,8 +128,12 @@
 
                     <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
                         <div>
-                            <p style="font-size:0.82rem; font-weight:600; color:#374151; margin:0 0 0.2rem;">Review comments before posting</p>
-                            <p style="font-size:0.75rem; color:#64748B; margin:0;">AI writes the comment — you approve it first. Recommended.</p>
+                            <p style="font-size:0.82rem; font-weight:600; color:#374151; margin:0 0 0.2rem;">
+                                {{ $requireReview ? 'I review each comment before it posts' : 'Post comments automatically without review' }}
+                            </p>
+                            <p style="font-size:0.75rem; color:#64748B; margin:0;">
+                                {{ $requireReview ? 'AI writes it — you approve it. Nothing posts without your sign-off.' : 'AI writes and posts immediately. Faster, but no review step.' }}
+                            </p>
                         </div>
                         <button type="button" wire:click="$set('requireReview', {{ $requireReview ? 'false' : 'true' }})"
                             style="width:44px; height:24px; border-radius:99px; border:none; cursor:pointer; transition:background 0.2s; background:{{ $requireReview ? '#7C3AED' : '#CBD5E1' }}; position:relative; flex-shrink:0;">
