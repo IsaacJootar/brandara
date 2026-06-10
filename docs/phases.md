@@ -51,7 +51,7 @@ Update `CLAUDE.md` → CURRENT PHASE when starting a new session.
 | 18 | Lead engagement tracker | ✅ | Lead Tracker + Automation tabs on Grow page, CSV export, inline edit, cross-brand security — Growth+ only |
 | 19 | Analytics dashboard | ✅ | Results screen, stat cards (gradient style), Chart.js line chart, platform breakdown, best posting times, top 5 + bottom 5 posts, weekly digest email — Growth+ only |
 | — | Trends Dashboard | ✅ | 3-tab dashboard: Industry Trends, Content Formats, Competitor Signals. FakeTrendsSeeder (30 signals). Tracked Keywords manager. LiveTrendsFetcher scaffold ready for X API / Google Trends when approved — Growth+ only |
-| 20 | Billing — Paystack + Flutterwave | ⏳ | Pricing page Basic $19/Growth $39/Agency $89, checkout, webhooks, trial expiry flow |
+| 20 | Billing — Flutterwave + Paystack | ✅ | DB-configurable plans (36 seeded), monthly+yearly, all African currencies + USD/GBP, Flutterwave default, Paystack fallback, webhooks, receipt email, trial expiry redirect |
 | 21 | AI Visibility | ⏳ | Queries ChatGPT/Perplexity/Gemini/Claude, stores results, dashboard — Pro+ only |
 | 22 | Admin Panel | ⏳ | /brandara-admin, DB-driven tier/module access, replaces config/features.php |
 

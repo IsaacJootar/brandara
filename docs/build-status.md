@@ -222,11 +222,29 @@ All tables created and migrated:
 
 ---
 
-## Pending modules (20–22)
+### ✅ Module 20 — Billing (Flutterwave + Paystack)
+- `billing_plans` table — 36 plans seeded: Basic/Growth/Agency × monthly/yearly × USD/NGN/GBP/GHS/KES/ZAR. Admin-editable from Module 22
+- `billing_settings` table — key/value store: default_provider (flutterwave), fallback_provider (paystack), yearly_discount_label, default_currency, test_mode
+- `subscriptions` table — records every payment with plan, interval, currency, amount, provider, period dates
+- `PaymentProviderInterface` — shared contract for both providers. Swap provider by changing one DB setting
+- `FlutterwaveProvider` — default. Handles initializePayment, verifyPayment, parseWebhook (verif-hash signature). Accepts cards from any country
+- `PaystackProvider` — fallback. Handles same interface. Paystack amounts converted to kobo internally
+- `BillingService` — orchestrator: resolves provider from DB, detects currency from workspace country, handles payment success/cancellation, usage summary
+- `BillingController` — `/billing` page, `/billing/checkout` (POST → returns popup data as JSON), `/billing/verify` (callback after payment)
+- `FlutterwaveWebhookController` + `PaystackWebhookController` — webhook endpoints exempt from CSRF, verify signatures, dispatch events
+- `PaymentReceiptMail` — queued, sent on successful payment. Shows plan, interval, amount, next billing date
+- Billing page: current plan + usage summary cards, monthly/yearly toggle (Alpine), plan cards with prices from DB, yearly savings calculated dynamically, Flutterwave/Paystack JS popups
+- Trial expiry: `EnsureWorkspaceActive` now redirects to `/billing` with plain-English message instead of blank page
+- Billing link added to sidebar footer
+- Provider toggle ready for Module 22 admin UI — zero code changes needed
+- 11 tests passing
+
+---
+
+## Pending modules (21–22)
 
 | # | Module | Key dependencies |
 |---|---|---|
-| 20 | Billing | Paystack (NGN) + Flutterwave (pan-Africa), webhooks, trial expiry — Basic $19 / Growth $39 / Agency $89 |
 | 21 | AI Visibility | Queries ChatGPT/Perplexity/Gemini/Claude, stores reports, dashboard with sentiment — Pro+ only |
 | 22 | Admin Panel | /brandara-admin, DB-driven tier/module access, workspace mgmt — replaces config/features.php |
 

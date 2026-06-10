@@ -58,16 +58,16 @@ return [
     // Get from: dashboard.paystack.com → Settings → API Keys
     'paystack' => [
         'public_key' => env('PAYSTACK_PUBLIC_KEY'),
-        'secret_key' => env('PAYSTACK_SECRET_KEY'),
-        'url' => env('PAYSTACK_PAYMENT_URL', 'https://api.paystack.co'),
+        'secret_key' => env('PAYSTACK_SECRET_KEY'),  // Also used as webhook HMAC key
+        'url'        => env('PAYSTACK_PAYMENT_URL', 'https://api.paystack.co'),
     ],
 
     // ── Flutterwave ───────────────────────────────────────────────────────────
     // Get from: app.flutterwave.com → Settings → API
     'flutterwave' => [
-        'public_key' => env('FLW_PUBLIC_KEY'),
-        'secret_key' => env('FLW_SECRET_KEY'),
-        'secret_hash' => env('FLW_SECRET_HASH'),
+        'public_key'     => env('FLW_PUBLIC_KEY'),
+        'secret_key'     => env('FLW_SECRET_KEY'),
+        'webhook_secret' => env('FLW_WEBHOOK_SECRET', env('FLW_SECRET_HASH')), // verif-hash header
     ],
 
     // ── Canva ─────────────────────────────────────────────────────────────────

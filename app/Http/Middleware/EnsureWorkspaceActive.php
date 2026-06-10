@@ -17,12 +17,11 @@ class EnsureWorkspaceActive
         }
 
         if (! $workspace->isActive()) {
-            return response()->view('billing.upgrade', [
-                'reason' => $workspace->subscription_status === 'trialing'
-                    ? 'Your free trial has ended.'
-                    : 'Your subscription is inactive.',
-                'workspace' => $workspace,
-            ]);
+            $reason = $workspace->subscription_status === 'trialing'
+                ? 'Your free trial has ended. Choose a plan to keep publishing.'
+                : 'Your subscription is inactive. Choose a plan to reactivate your account.';
+
+            return redirect()->route('billing')->with('expired_reason', $reason);
         }
 
         return $next($request);

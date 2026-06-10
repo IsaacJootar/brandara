@@ -153,13 +153,20 @@
                         <div style="color:rgba(255,255,255,0.35); font-size:0.65rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ auth()->user()->email }}</div>
                     </div>
                 </div>
-                <form method="POST" action="{{ route('logout') }}" data-loading-form>
-                    @csrf
-                    <button type="submit" style="font-size:0.72rem; color:rgba(255,255,255,0.35); background:none; border:none; cursor:pointer; padding:0;">
-                        <span class="btn-label">Sign out →</span>
-                        <span class="btn-loading" style="display:none; align-items:center; gap:0.4rem;"><span class="btn-spinner"></span>Signing out…</span>
-                    </button>
-                </form>
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <a href="{{ route('billing') }}" style="font-size:0.72rem; color:rgba(255,255,255,0.4); text-decoration:none; display:flex; align-items:center; gap:0.3rem; transition:color 0.15s;"
+                       onmouseover="this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+                        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                        Billing
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}" data-loading-form>
+                        @csrf
+                        <button type="submit" style="font-size:0.72rem; color:rgba(255,255,255,0.35); background:none; border:none; cursor:pointer; padding:0;">
+                            <span class="btn-label">Sign out →</span>
+                            <span class="btn-loading" style="display:none; align-items:center; gap:0.4rem;"><span class="btn-spinner"></span>Signing out…</span>
+                        </button>
+                    </form>
+                </div>
             </div>
 
         </aside>

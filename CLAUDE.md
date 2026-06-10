@@ -198,9 +198,9 @@ Run this at the start of every session to confirm identity is set.
 ## Current build phase
 
 Update this line when starting a new phase:
-**CURRENT PHASE: 20 — Billing (Paystack + Flutterwave)** (next to build)
+**CURRENT PHASE: 21 — AI Visibility** (next to build)
 
-Modules 01–19 all complete and committed.
+Modules 01–20 all complete and committed.
 Tier & multi-brand architecture complete (see docs/architecture.md).
 See `docs/build-status.md` for full status.
 

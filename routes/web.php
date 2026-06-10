@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CanvaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FlutterwaveWebhookController;
+use App\Http\Controllers\PaystackWebhookController;
 use App\Http\Controllers\PlatformController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ScheduleController;
@@ -32,6 +35,10 @@ Route::middleware(['auth', 'workspace.active'])
 // ── Canva webhook — no auth, Canva calls this directly ───────────────────────
 Route::post('/webhooks/canva/{brand}', [CanvaController::class, 'webhook'])->name('canva.webhook');
 
+// ── Payment webhooks — no auth, providers call these directly ────────────────
+Route::post('/webhooks/flutterwave', [FlutterwaveWebhookController::class, 'handle'])->name('webhook.flutterwave');
+Route::post('/webhooks/paystack', [PaystackWebhookController::class, 'handle'])->name('webhook.paystack');
+
 // ── Authenticated — workspace-level ───────────────────────────────────────────
 
 // ── Web Push subscription ─────────────────────────────────────────────────────
@@ -44,6 +51,13 @@ Route::middleware('auth')->post('/push/subscribe', function (Request $request) {
 
     return response()->json(['ok' => true]);
 })->name('push.subscribe');
+
+// ── Billing — auth only, no workspace.active check (users need billing access when expired) ──
+Route::middleware('auth')->group(function () {
+    Route::get('/billing', [BillingController::class, 'index'])->name('billing');
+    Route::post('/billing/checkout', [BillingController::class, 'initializeCheckout'])->name('billing.checkout');
+    Route::get('/billing/verify', [BillingController::class, 'verifyPayment'])->name('billing.verify');
+});
 
 Route::middleware(['auth', 'workspace.active'])->group(function () {
 
