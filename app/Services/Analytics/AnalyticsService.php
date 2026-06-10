@@ -105,6 +105,26 @@ class AnalyticsService
     }
 
     /**
+     * Bottom N posts by total engagements (lowest performers).
+     */
+    public function bottomPosts(Brand $brand, int $limit = 5, int $days = 30): Collection
+    {
+        $from = now()->subDays($days)->startOfDay();
+
+        return PostAnalytic::where('post_analytics.brand_id', $brand->id)
+            ->where('fetched_date', '>=', $from)
+            ->join('posts', 'posts.id', '=', 'post_analytics.post_id')
+            ->selectRaw('post_analytics.post_id, posts.raw_input, post_analytics.platform,
+                SUM(likes + comments + shares) as total_engagements,
+                SUM(reach) as total_reach,
+                AVG(engagement_rate) as avg_rate')
+            ->groupBy('post_analytics.post_id', 'posts.raw_input', 'post_analytics.platform')
+            ->orderBy('total_engagements')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
      * Best posting hours based on historical engagement.
      *
      * @return array<int, array{hour: int, label: string, avg_engagements: float}>

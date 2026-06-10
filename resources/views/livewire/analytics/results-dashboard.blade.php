@@ -143,6 +143,29 @@
         </div>
     @endif
 
+    {{-- ── BOTTOM POSTS ─────────────────────────────────────────────────────── --}}
+    @if($bottomPosts->isNotEmpty())
+        <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden; box-shadow:0 1px 3px rgba(15,23,42,0.06); margin-top:1.25rem;">
+            <div style="padding:1rem 1.25rem; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; gap:0.5rem;">
+                <p style="font-size:0.875rem; font-weight:600; color:#0F172A; margin:0;">Needs improvement</p>
+                <span style="font-size:0.72rem; color:#94A3B8; background:#F8FAFC; padding:2px 7px; border-radius:99px;">lowest engagement</span>
+            </div>
+            @foreach($bottomPosts as $i => $post)
+                <div style="padding:0.875rem 1.25rem; {{ !$loop->last ? 'border-bottom:1px solid #F8FAFC;' : '' }} display:flex; align-items:center; gap:1rem;">
+                    <span style="width:26px; height:26px; border-radius:7px; background:#FEF2F2; color:#DC2626; font-size:0.72rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;">{{ $i + 1 }}</span>
+                    <p style="flex:1; font-size:0.85rem; color:#374151; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                        {{ Str::limit($post->raw_input ?? 'Untitled post', 70) }}
+                    </p>
+                    <div style="text-align:right; flex-shrink:0;">
+                        <p style="font-size:0.875rem; font-weight:700; color:#0F172A; margin:0;">{{ number_format($post->total_engagements) }}</p>
+                        <p style="font-size:0.68rem; color:#94A3B8; margin:0;">engagements</p>
+                    </div>
+                    <span style="font-size:0.72rem; color:#DC2626; background:#FEF2F2; padding:3px 8px; border-radius:99px; font-weight:600; flex-shrink:0;">{{ round($post->avg_rate, 1) }}%</span>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
     {{-- Chart.js init --}}
     <script>
     (function() {

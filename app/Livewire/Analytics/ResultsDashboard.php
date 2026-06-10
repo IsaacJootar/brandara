@@ -44,6 +44,7 @@ class ResultsDashboard extends Component
             'chart' => $svc->dailyChart($brand, $this->period),
             'platformBreakdown' => $svc->platformBreakdown($brand, $this->period),
             'topPosts' => $svc->topPosts($brand, 5, $this->period),
+            'bottomPosts' => $svc->bottomPosts($brand, 5, $this->period),
             'bestTimes' => $svc->bestPostingTimes($brand),
             'period' => $this->period,
         ]);
