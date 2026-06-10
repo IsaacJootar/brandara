@@ -9,11 +9,8 @@
             </svg>
         </div>
         <p style="font-size:0.95rem; font-weight:700; color:#0F172A; margin:0 0 0.5rem;">No analytics data yet</p>
-        <p style="font-size:0.85rem; color:#64748B; margin:0 0 1.25rem; max-width:380px; margin-left:auto; margin-right:auto; line-height:1.6;">
-            Publish posts and connect your platforms — Brandara will start tracking reach, engagement, and performance automatically.
-        </p>
-        <p style="font-size:0.75rem; color:#94A3B8; margin:0;">
-            In development mode, run <code style="background:#F1F5F9;padding:2px 6px;border-radius:4px;font-size:0.72rem;">php artisan analytics:seed-fake {{ $brandSlug }}</code> to load sample data.
+        <p style="font-size:0.85rem; color:#64748B; margin:0; max-width:380px; margin-left:auto; margin-right:auto; line-height:1.6;">
+            Publish posts and connect your platforms — Brandara will start tracking your reach, engagement, and performance automatically.
         </p>
     </div>
 

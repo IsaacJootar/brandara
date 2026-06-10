@@ -33,7 +33,6 @@ class ResultsDashboard extends Component
         if (! $hasData) {
             return view('livewire.analytics.results-dashboard', [
                 'hasData' => false,
-                'brandSlug' => $brand->slug,
             ]);
         }
 
