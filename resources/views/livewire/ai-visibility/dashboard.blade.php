@@ -12,30 +12,31 @@
     <div style="display:flex; gap:1.25rem; flex-wrap:wrap; font-size:0.78rem; opacity:0.85; position:relative;">
         <span>✓ Scan your website for AI-readiness</span>
         <span>✓ Fix technical gaps with one click</span>
-        <span>✓ Track if AI mentions your brand</span>
+        <span>✓ Track if AI mentions your brand over time</span>
     </div>
 </div>
 
 {{-- ── TAB SWITCHER ─────────────────────────────────────────────────────────── --}}
 @php
     $tabConfig = [
-        'readiness' => ['label' => 'AI Readiness',     'color' => '#7C3AED', 'bg' => '#F5F3FF', 'border' => '#DDD6FE', 'icon' => '🔍'],
-        'entity'    => ['label' => 'Entity Clarity',    'color' => '#0369A1', 'bg' => '#F0F9FF', 'border' => '#BAE6FD', 'icon' => '🏢'],
-        'content'   => ['label' => 'Content Signals',   'color' => '#16A34A', 'bg' => '#F0FDF4', 'border' => '#BBF7D0', 'icon' => '📝'],
-        'quickfix'  => ['label' => 'Quick-Fix Assets',  'color' => '#D97706', 'bg' => '#FFFBEB', 'border' => '#FDE68A', 'icon' => '⚡'],
-        'presence'  => ['label' => 'Live AI Presence',  'color' => '#DC2626', 'bg' => '#FEF2F2', 'border' => '#FECACA', 'icon' => '🤖'],
+        'readiness' => ['label' => 'AI Readiness',     'color' => '#7C3AED', 'activeBg' => '#7C3AED', 'lightBg' => '#F5F3FF', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>'],
+        'entity'    => ['label' => 'Entity Clarity',    'color' => '#0369A1', 'activeBg' => '#0369A1', 'lightBg' => '#F0F9FF', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>'],
+        'content'   => ['label' => 'Content Signals',   'color' => '#16A34A', 'activeBg' => '#16A34A', 'lightBg' => '#F0FDF4', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>'],
+        'quickfix'  => ['label' => 'Quick-Fix Assets',  'color' => '#D97706', 'activeBg' => '#D97706', 'lightBg' => '#FFFBEB', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>'],
+        'presence'  => ['label' => 'Live AI Presence',  'color' => '#DC2626', 'activeBg' => '#DC2626', 'lightBg' => '#FEF2F2', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>'],
     ];
 @endphp
 <div style="display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap;">
     @foreach($tabConfig as $tab => $cfg)
         <button type="button" wire:click="setTab('{{ $tab }}')"
-            style="flex:1; min-width:130px; padding:0.6rem 0.75rem; border-radius:10px; font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.15s; white-space:nowrap; display:flex; align-items:center; justify-content:center; gap:0.35rem;
+            style="flex:1; min-width:130px; padding:0.6rem 0.75rem; border-radius:10px; font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.15s; white-space:nowrap; display:flex; align-items:center; justify-content:center; gap:0.4rem;
             @if($activeTab === $tab)
-                background:{{ $cfg['bg'] }}; color:{{ $cfg['color'] }}; border:2px solid {{ $cfg['border'] }}; box-shadow:0 2px 8px {{ $cfg['color'] }}18;
+                background:{{ $cfg['activeBg'] }}; color:#fff; border:2px solid {{ $cfg['activeBg'] }}; box-shadow:0 3px 10px {{ $cfg['activeBg'] }}30;
             @else
-                background:#F8FAFC; color:#64748B; border:2px solid transparent;
+                background:{{ $cfg['lightBg'] }}; color:{{ $cfg['color'] }}; border:2px solid transparent;
             @endif">
-            <span style="font-size:0.85rem;">{{ $cfg['icon'] }}</span> {{ $cfg['label'] }}
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;">{!! $cfg['icon'] !!}</svg>
+            {{ $cfg['label'] }}
         </button>
     @endforeach
 </div>
