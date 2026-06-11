@@ -2,7 +2,7 @@
     <h1 style="font-size:1.25rem; font-weight:800; color:#0F172A; margin:0 0 1.5rem;">Billing & Plans</h1>
 
     {{-- Billing settings --}}
-    <div class="admin-card" style="margin-bottom:1.5rem;">
+    <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem; box-shadow:0 1px 3px rgba(15,23,42,0.06);" style="margin-bottom:1.5rem;">
         <p style="font-size:0.875rem; font-weight:700; color:#0F172A; margin:0 0 1rem;">Payment settings</p>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1rem;">
             <div>
@@ -35,7 +35,7 @@
     </div>
 
     {{-- Plans table --}}
-    <div class="admin-card" style="margin-bottom:1.5rem; overflow-x:auto;">
+    <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem; box-shadow:0 1px 3px rgba(15,23,42,0.06);" style="margin-bottom:1.5rem; overflow-x:auto;">
         <p style="font-size:0.875rem; font-weight:700; color:#0F172A; margin:0 0 1rem;">Plan pricing</p>
         <table style="width:100%; border-collapse:collapse; font-size:0.82rem;">
             <thead>
@@ -71,7 +71,7 @@
     </div>
 
     {{-- Recent subscriptions --}}
-    <div class="admin-card" style="overflow-x:auto;">
+    <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem; box-shadow:0 1px 3px rgba(15,23,42,0.06);" style="overflow-x:auto;">
         <p style="font-size:0.875rem; font-weight:700; color:#0F172A; margin:0 0 1rem;">Recent subscriptions</p>
         @if($subscriptions->isEmpty())
             <p style="font-size:0.82rem; color:#94A3B8; margin:0;">No subscriptions yet.</p>

@@ -1,36 +1,40 @@
 <div>
     <h1 style="font-size:1.25rem; font-weight:800; color:#0F172A; margin:0 0 1.5rem;">Admin Dashboard</h1>
 
-    {{-- Stat cards --}}
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:1.5rem;">
-        <div class="admin-card" style="border-left:4px solid #7C3AED;">
-            <p style="font-size:0.72rem; font-weight:600; color:#94A3B8; text-transform:uppercase; margin:0 0 0.375rem;">Total workspaces</p>
-            <p style="font-size:1.75rem; font-weight:800; color:#0F172A; margin:0;">{{ $totalWorkspaces }}</p>
+    {{-- Stat cards — gradient style --}}
+    <div class="metric-grid" style="margin-bottom:1.5rem;">
+        <div class="metric-card metric-violet">
+            <div class="metric-label">Total workspaces</div>
+            <div class="metric-value">{{ $totalWorkspaces }}</div>
+            <div class="metric-sub">Across all plans</div>
         </div>
-        <div class="admin-card" style="border-left:4px solid #16A34A;">
-            <p style="font-size:0.72rem; font-weight:600; color:#94A3B8; text-transform:uppercase; margin:0 0 0.375rem;">Active</p>
-            <p style="font-size:1.75rem; font-weight:800; color:#16A34A; margin:0;">{{ $active }}</p>
+        <div class="metric-card metric-teal">
+            <div class="metric-label">Active</div>
+            <div class="metric-value">{{ $active }}</div>
+            <div class="metric-sub">Paying customers</div>
         </div>
-        <div class="admin-card" style="border-left:4px solid #D97706;">
-            <p style="font-size:0.72rem; font-weight:600; color:#94A3B8; text-transform:uppercase; margin:0 0 0.375rem;">Trialing</p>
-            <p style="font-size:1.75rem; font-weight:800; color:#D97706; margin:0;">{{ $trialing }}</p>
+        <div class="metric-card metric-amber">
+            <div class="metric-label">Trialing</div>
+            <div class="metric-value">{{ $trialing }}</div>
+            <div class="metric-sub">Free trial users</div>
         </div>
-        <div class="admin-card" style="border-left:4px solid #DC2626;">
-            <p style="font-size:0.72rem; font-weight:600; color:#94A3B8; text-transform:uppercase; margin:0 0 0.375rem;">Expired</p>
-            <p style="font-size:1.75rem; font-weight:800; color:#DC2626; margin:0;">{{ $expired }}</p>
+        <div class="metric-card metric-rose">
+            <div class="metric-label">Expired</div>
+            <div class="metric-value">{{ $expired }}</div>
+            <div class="metric-sub">Need follow-up</div>
         </div>
     </div>
 
     <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; margin-bottom:1.5rem;">
         {{-- MRR --}}
-        <div class="admin-card">
-            <p style="font-size:0.72rem; font-weight:600; color:#94A3B8; text-transform:uppercase; margin:0 0 0.375rem;">Estimated MRR</p>
-            <p style="font-size:1.5rem; font-weight:800; color:#0F172A; margin:0;">${{ number_format($mrr / 100, 2) }}</p>
-            <p style="font-size:0.75rem; color:#64748B; margin:0.25rem 0 0;">From active subscriptions</p>
+        <div class="metric-card metric-blue">
+            <div class="metric-label">Estimated MRR</div>
+            <div class="metric-value">${{ number_format($mrr / 100, 2) }}</div>
+            <div class="metric-sub">From active subscriptions</div>
         </div>
 
         {{-- By plan --}}
-        <div class="admin-card">
+        <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem; box-shadow:0 1px 3px rgba(15,23,42,0.06);">
             <p style="font-size:0.72rem; font-weight:600; color:#94A3B8; text-transform:uppercase; margin:0 0 0.75rem;">By plan</p>
             @foreach(['starter' => 'Basic', 'pro' => 'Growth', 'agency' => 'Agency'] as $key => $label)
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.375rem;">
@@ -42,7 +46,7 @@
     </div>
 
     {{-- Recent payments --}}
-    <div class="admin-card">
+    <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem; box-shadow:0 1px 3px rgba(15,23,42,0.06);">
         <p style="font-size:0.875rem; font-weight:700; color:#0F172A; margin:0 0 1rem;">Recent payments</p>
         @if($recentPayments->isEmpty())
             <p style="font-size:0.82rem; color:#94A3B8; margin:0;">No payments recorded yet.</p>
