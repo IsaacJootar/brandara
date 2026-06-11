@@ -53,7 +53,7 @@ Update `CLAUDE.md` → CURRENT PHASE when starting a new session.
 | — | Trends Dashboard | ✅ | 3-tab dashboard: Industry Trends, Content Formats, Competitor Signals. FakeTrendsSeeder (30 signals). Tracked Keywords manager. LiveTrendsFetcher scaffold ready for X API / Google Trends when approved — Growth+ only |
 | 20 | Billing — Flutterwave + Paystack | ✅ | DB-configurable plans (36 seeded), monthly+yearly, all African currencies + USD/GBP, Flutterwave default, Paystack fallback, webhooks, receipt email, trial expiry redirect |
 | 21 | AI Visibility | ✅ | 5-section dashboard: Readiness Score (20-check scanner), Entity Clarity (manual checklist), Content Signals (country-aware directories), Quick-Fix generators (5 asset types via Claude), Live AI Presence (Claude+ChatGPT+Gemini) — Growth+ only. 11 tests passing |
-| 22 | Admin Panel | ⏳ | /brandara-admin, DB-driven tier/module access, replaces config/features.php |
+| 22 | Admin Panel | ✅ | /brandara-admin — 5 screens (Dashboard, Workspaces, Features, Billing, AI), DB-driven tier/module access via AdminSetting, PlanFeatureService reads DB first. 13 tests passing |
 
 ---
 

@@ -11,6 +11,7 @@ use App\Http\Controllers\PlatformController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\WorkspaceController;
+use App\Http\Middleware\EnsurePlatformAdmin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -94,6 +95,15 @@ Route::middleware(['auth', 'workspace.active'])->group(function () {
         Route::get('/ai-presence', fn () => view('ai-presence.index'))->name('ai-presence');
         Route::get('/settings', fn () => view('settings.index'))->name('settings');
     });
+});
+
+// ── Admin Panel ──────────────────────────────────────────────────────────────
+Route::prefix('brandara-admin')->middleware(['auth', EnsurePlatformAdmin::class])->group(function () {
+    Route::get('/', fn () => view('admin.dashboard-page'))->name('admin.dashboard');
+    Route::get('/workspaces', fn () => view('admin.workspaces-page'))->name('admin.workspaces');
+    Route::get('/features', fn () => view('admin.features-page'))->name('admin.features');
+    Route::get('/billing', fn () => view('admin.billing-page'))->name('admin.billing');
+    Route::get('/ai', fn () => view('admin.ai-page'))->name('admin.ai');
 });
 
 require __DIR__.'/auth.php';

@@ -263,11 +263,24 @@ All tables created and migrated:
 
 ---
 
-## Pending modules (22)
+### ✅ Module 22 — Admin Panel
 
-| # | Module | Key dependencies |
-|---|---|---|
-| 22 | Admin Panel | /brandara-admin, DB-driven tier/module access, workspace mgmt — replaces config/features.php |
+- Admin panel at `/brandara-admin` — 5 screens, dark sidebar, Livewire-powered
+- `EnsurePlatformAdmin` middleware — access controlled by `ADMIN_EMAILS` env (default: jootarisaac@gmail.com)
+- `AdminSetting` model — platform-level key-value store with `get()`, `set()`, `getJson()`, `setJson()`, `group()` methods
+- `admin_settings` table — seeded with feature gates, limits, AI settings, general settings
+- **Dashboard:** total workspaces, active/trialing/expired counts, MRR estimate, by-plan breakdown, recent payments table
+- **Workspaces:** search by name/email/slug, filter by plan/status, inline plan change (dropdown), extend trial (+7 days button), brand count
+- **Features & Tiers:** checkbox matrix — toggle any feature for any plan (Basic/Growth/Agency). Saves to DB instantly. Generation limits, brand limits, storage limits editable with Save button
+- **Billing & Plans:** switch default/fallback payment provider (Flutterwave/Paystack), toggle test mode, edit plan prices inline, toggle plan active/inactive, recent subscriptions table
+- **AI Settings:** switch content generation provider (Claude/OpenAI), toggle AI presence providers (Claude/ChatGPT/Gemini/Perplexity), shows API key status
+- `PlanFeatureService` upgraded — reads from `admin_settings` DB first, falls back to `config/features.php`. All existing tier gates, limits, and feature checks work unchanged
+- `AdminSettingsSeeder` seeds all initial settings from current config values
+- 13 tests passing
+
+---
+
+## All 22 modules complete ✅
 
 ---
 
@@ -278,10 +291,8 @@ All tables created and migrated:
 | Canva Connect API pre-population | When Canva Connect partner app approved — webhook scaffold in place |
 | VAPID key regeneration (EC keys need Linux) | Before go-live on Render |
 | Real platform API publishers (LinkedIn/X/Meta live) | When OAuth dev apps approved |
-| AI provider switch in admin UI | Module 22 — `AiProviderFactory` already has hook |
 | SMS via Africa's Talking (live) | When `AT_API_KEY` added to production |
 | Supabase Storage activation | One-line `.env` change before launch — local disk is ephemeral on Render |
-| Tier gates via DB (Admin Panel) | Module 22 — `PlanFeatureService` already abstracts config vs DB |
 
 ---
 
@@ -295,7 +306,7 @@ All tables created and migrated:
 - **FakePublisher** — real platform API calls are behind `services.publishing.live` flag; safe to test without live OAuth apps
 - **Alpine for instant UI + Livewire for persistence** — used on tone/tab selectors to prevent blur race condition
 - **Multi-brand architecture** — one account → one workspace → many brands (isolated by brand_id). Limits: Basic 1, Growth 3, Agency unlimited
-- **Tier enforcement** — `PlanFeatureService` + `config/features.php` is the single source of truth. `<x-tier-gate>` wraps features in views. Module 22 switches to DB-driven without touching any view
+- **Tier enforcement** — `PlanFeatureService` reads from `admin_settings` DB first, falls back to `config/features.php`. `<x-tier-gate>` wraps features in views. Admin panel at `/brandara-admin` manages all tier access, limits, and AI settings from UI
 - **Generation limits** — Basic: 30/month (counted via `ai_generations_used` on workspace, reset 1st of month). Growth/Agency: unlimited. All 5 AI services use `ChecksGenerationLimit` trait
 - **Platform restriction** — Basic: Facebook/LinkedIn/X only. Growth+: all 7 platforms. Enforced in `PostComposer::isPlatformAllowed()` — both UI and server-side
 - **Pricing** — Basic $19 / Growth $39 / Agency $89. NGN equivalents shown on website. 7-day free trial. Cancel anytime

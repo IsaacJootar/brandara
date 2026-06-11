@@ -69,6 +69,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Platform Admin Emails
+    |--------------------------------------------------------------------------
+    |
+    | Comma-separated list of email addresses that can access /brandara-admin.
+    |
+    */
+
+    'admin_emails' => env('ADMIN_EMAILS', 'jootarisaac@gmail.com'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------
     |
