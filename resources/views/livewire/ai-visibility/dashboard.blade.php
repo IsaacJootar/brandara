@@ -467,18 +467,40 @@
         </div>
 
         @if(!empty($activeProviders))
-            <div style="margin-top:1rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
-                <button type="button" wire:click="runPresenceQuery('all')" wire:loading.attr="disabled"
-                    style="padding:0.55rem 1.25rem; background:#7C3AED; color:#fff; border:none; border-radius:9px; font-size:0.85rem; font-weight:600; cursor:pointer;">
-                    <span wire:loading.remove wire:target="runPresenceQuery">Run AI presence scan</span>
-                    <span wire:loading wire:target="runPresenceQuery">Scanning all providers…</span>
-                </button>
+            <div style="margin-top:1rem; display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
+                @if($canScanPresence)
+                    <button type="button" wire:click="runPresenceQuery('all')" wire:loading.attr="disabled"
+                        style="padding:0.55rem 1.25rem; background:#7C3AED; color:#fff; border:none; border-radius:9px; font-size:0.85rem; font-weight:600; cursor:pointer;">
+                        <span wire:loading.remove wire:target="runPresenceQuery">Run AI presence scan</span>
+                        <span wire:loading wire:target="runPresenceQuery">Scanning all providers…</span>
+                    </button>
+                    <span style="font-size:0.75rem; color:#94A3B8;">You get 1 scan per month</span>
+                @else
+                    <button type="button" disabled
+                        style="padding:0.55rem 1.25rem; background:#E2E8F0; color:#94A3B8; border:none; border-radius:9px; font-size:0.85rem; font-weight:600; cursor:not-allowed;">
+                        Scan used this month
+                    </button>
+                    <span style="font-size:0.78rem; color:#64748B;">Next scan available on <strong>{{ $nextPresenceScanDate->format('M j, Y') }}</strong></span>
+                @endif
             </div>
         @else
             <div style="margin-top:1rem; background:#FFF7ED; border:1px solid #FED7AA; border-radius:10px; padding:0.75rem 1rem;">
-                <p style="font-size:0.82rem; color:#92400E; margin:0;">Add <code>ANTHROPIC_API_KEY</code>, <code>OPENAI_API_KEY</code>, or <code>GEMINI_API_KEY</code> to your .env file to activate live AI presence scans.</p>
+                <p style="font-size:0.82rem; color:#92400E; margin:0;">AI presence scans are not active yet. API keys will be connected automatically when your account is ready.</p>
             </div>
         @endif
+    </div>
+
+    {{-- Monitoring advice --}}
+    <div style="background:linear-gradient(135deg,#F5F3FF,#EDE9FE); border:1px solid #DDD6FE; border-radius:14px; padding:1.25rem 1.5rem; margin-bottom:1.25rem;">
+        <p style="font-size:0.875rem; font-weight:700; color:#5B21B6; margin:0 0 0.5rem;">AI visibility improves over time — not overnight</p>
+        <p style="font-size:0.8rem; color:#6D28D9; margin:0 0 0.75rem; line-height:1.65;">
+            Every time you publish content, update your website, or get listed in a directory, AI systems learn more about your brand. Your visibility score will grow month by month as you follow the steps in each tab. Let Brandara keep monitoring — run your monthly scan to track your progress.
+        </p>
+        <div style="display:flex; gap:1.25rem; flex-wrap:wrap; font-size:0.78rem; color:#7C3AED; font-weight:500;">
+            <span>→ Publish consistently</span>
+            <span>→ Fix technical gaps</span>
+            <span>→ Scan monthly to track growth</span>
+        </div>
     </div>
 
     @if($presenceSummary['has_data'])

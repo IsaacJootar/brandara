@@ -3,12 +3,14 @@
 namespace App\Livewire\AiVisibility;
 
 use App\Models\AiGeneratedAsset;
+use App\Models\AiPresenceResult;
 use App\Models\AiVisibilityCheck;
 use App\Models\Brand;
 use App\Services\AiVisibility\AiPresenceService;
 use App\Services\AiVisibility\AssetGeneratorService;
 use App\Services\AiVisibility\CountryDirectoryService;
 use App\Services\AiVisibility\WebsiteScannerService;
+use Carbon\Carbon;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -111,6 +113,17 @@ class Dashboard extends Component
     public function runPresenceQuery(string $provider = 'all'): void
     {
         $brand = Brand::findOrFail($this->brandId);
+
+        // Once per month limit
+        $lastScan = AiPresenceResult::where('brand_id', $brand->id)
+            ->max('queried_at');
+        if ($lastScan && now()->diffInDays($lastScan) < 30) {
+            $nextDate = Carbon::parse($lastScan)->addDays(30)->format('M j, Y');
+            $this->dispatch('show-toast', message: "You can run one AI presence scan per month. Your next scan is available on {$nextDate}.", type: 'error');
+
+            return;
+        }
+
         $this->querying = true;
 
         try {
@@ -120,7 +133,7 @@ class Dashboard extends Component
             } else {
                 $svc->runProvider($brand, $provider);
             }
-            $this->dispatch('show-toast', message: 'AI presence scan complete.', type: 'success');
+            $this->dispatch('show-toast', message: 'AI presence scan complete. Your next scan will be available in 30 days.', type: 'success');
         } catch (\Throwable $e) {
             $this->dispatch('show-toast', message: 'Could not complete the AI presence scan. Check your API keys.', type: 'error');
         }
@@ -138,6 +151,11 @@ class Dashboard extends Component
         $scanner = app(WebsiteScannerService::class);
         $presence = app(AiPresenceService::class);
 
+        // Once-per-month presence scan check
+        $lastPresenceScan = AiPresenceResult::where('brand_id', $brand->id)->max('queried_at');
+        $canScanPresence = ! $lastPresenceScan || now()->diffInDays($lastPresenceScan) >= 30;
+        $nextPresenceScanDate = $lastPresenceScan ? Carbon::parse($lastPresenceScan)->addDays(30) : null;
+
         return view('livewire.ai-visibility.dashboard', [
             'brand' => $brand,
             'check' => $check,
@@ -147,6 +165,8 @@ class Dashboard extends Component
             'presenceSummary' => $presence->presenceSummary($brand),
             'activeProviders' => $presence->activeProviders(),
             'activeTab' => $this->activeTab,
+            'canScanPresence' => $canScanPresence,
+            'nextPresenceScanDate' => $nextPresenceScanDate,
         ]);
     }
 }
