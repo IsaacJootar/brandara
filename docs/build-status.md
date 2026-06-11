@@ -251,6 +251,14 @@ All tables created and migrated:
 - **Section 5 — Live AI Presence:** `AiPresenceService` — queries Claude (haiku), ChatGPT (gpt-4o-mini), Gemini (2.0-flash). 6 tailored prompts per brand (discovery, trust, local intent, consideration). Detection: brand mention, position, sentiment (positive/neutral/negative/not_mentioned), competitors. Perplexity labelled "Coming soon".
 - Tables: `ai_visibility_checks`, `ai_presence_results`, `ai_generated_assets`, `website_url` on brands
 - AI provider toggles ready for Module 22 admin UI — zero code changes needed
+- Welcome hero explaining AI visibility journey in plain language
+- Colored SVG tabs: purple (Readiness), blue (Entity), green (Content), amber (Quick-Fix), red (Presence)
+- Content checklist rewritten as questions with status icons and clear fix steps
+- Copy button fixed: copies to clipboard + "Copied ✓" feedback
+- Local + global directories shown together; asset generation includes country-aware directory suggestions
+- Once-per-month live presence scan limit (server-side enforced + UI disabled state with next date)
+- Monitoring advice card: "AI visibility improves over time — not overnight"
+- "Don't have a website?" card guiding brands to get one built
 - 11 tests passing
 
 ---
