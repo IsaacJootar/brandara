@@ -1,7 +1,7 @@
 # Brandara — Build Status
 
-Last updated: 2026-06-10
-Current phase: **20 — Billing (Paystack + Flutterwave)**
+Last updated: 2026-06-11
+Current phase: **21 — AI Visibility (complete)**
 
 ---
 
@@ -241,11 +241,24 @@ All tables created and migrated:
 
 ---
 
-## Pending modules (21–22)
+### ✅ Module 21 — AI Visibility
+
+- 5-section dashboard at `/{brand}/ai-presence` — Livewire component with tab navigation
+- **Section 1 — AI Readiness Score:** `WebsiteScannerService` — 20 automated checks across 3 tiers (Tier 1: 15 foundation checks, Tier 2: 5 advanced checks). Fetches HTML, robots.txt, headers, sitemap. Checks: HTTPS, title, meta description, canonical, JSON-LD, FAQ schema, about/contact pages, contact details, city/industry mentions, sameAs links, indexability, AI bot allowance, mobile viewport, local business schema. Score = % passed across all tiers.
+- **Section 2 — Entity Clarity:** 5 manual toggle checklist items — Google Business Profile, NAP consistency, reviews, directory listings, social profiles. Toggle saves immediately. Guidance text per item.
+- **Section 3 — Content Signals:** Post count cards, content checklist, country-aware directory guide via `CountryDirectoryService` (NG: VConnect/Techpoint/BusinessDay, GH: MyJoyOnline/GhanaWeb, KE: Nation Africa, ZA: Bizcommunity/ITWeb, GB: Yell/Guardian). Effort levels per directory.
+- **Section 4 — Quick-Fix Assets:** `AssetGeneratorService` — generates 5 asset types via Claude API with fallbacks: JSON-LD, LocalBusiness schema, FAQ schema, About page copy, Brand markdown. Copy button + "Mark as published" flow.
+- **Section 5 — Live AI Presence:** `AiPresenceService` — queries Claude (haiku), ChatGPT (gpt-4o-mini), Gemini (2.0-flash). 6 tailored prompts per brand (discovery, trust, local intent, consideration). Detection: brand mention, position, sentiment (positive/neutral/negative/not_mentioned), competitors. Perplexity labelled "Coming soon".
+- Tables: `ai_visibility_checks`, `ai_presence_results`, `ai_generated_assets`, `website_url` on brands
+- AI provider toggles ready for Module 22 admin UI — zero code changes needed
+- 11 tests passing
+
+---
+
+## Pending modules (22)
 
 | # | Module | Key dependencies |
 |---|---|---|
-| 21 | AI Visibility | Queries ChatGPT/Perplexity/Gemini/Claude, stores reports, dashboard with sentiment — Pro+ only |
 | 22 | Admin Panel | /brandara-admin, DB-driven tier/module access, workspace mgmt — replaces config/features.php |
 
 ---
@@ -261,7 +274,6 @@ All tables created and migrated:
 | SMS via Africa's Talking (live) | When `AT_API_KEY` added to production |
 | Supabase Storage activation | One-line `.env` change before launch — local disk is ephemeral on Render |
 | Tier gates via DB (Admin Panel) | Module 22 — `PlanFeatureService` already abstracts config vs DB |
-| Billing integration (Paystack/Flutterwave) | Module 20 — plan field currently set manually |
 
 ---
 

@@ -16,7 +16,7 @@ class Brand extends Model
         'vision', 'mission', 'values', 'target_audience', 'negative_brief',
         'positioning', 'primary_color', 'secondary_color', 'font_preference',
         'logo_path', 'brand_voice', 'voice_samples_count', 'default_tone', 'language',
-        'settings',
+        'website_url', 'settings',
     ];
 
     protected $casts = [
