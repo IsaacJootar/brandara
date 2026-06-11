@@ -90,7 +90,9 @@ class AssetGeneratorService
             'Write a clear, professional About page for this business. '.
             'Structure: 1 opening paragraph (who we are), 1 paragraph (what we do and who we serve), '.
             '1 paragraph (why we exist / mission), 1 paragraph (why choose us). '.
-            'Write in a tone that matches the brand voice. Plain English. No jargon. Max 350 words. '.
+            'After the main content, add a short section titled "Find us on" with 3-5 recommended directories '.
+            'from the list above where this business should create or claim a profile to boost AI visibility. '.
+            'Write in a tone that matches the brand voice. Plain English. No jargon. Max 400 words. '.
             'This will be used on the business website to help AI systems understand who the business is.'
         );
 
@@ -102,7 +104,8 @@ class AssetGeneratorService
         $prompt = $this->buildPrompt($brand,
             'Generate a brand.md file for this business. This file will be placed at the root of their website '.
             'so that AI agents and crawlers can quickly understand the business. '.
-            'Include sections: # About, ## What we do, ## Who we serve, ## Where we are, ## Contact, ## Social profiles. '.
+            'Include sections: # About, ## What we do, ## Who we serve, ## Where we are, ## Contact, ## Social profiles, '.
+            '## Directory listings (list 3-5 recommended directories from the list above where this business should be listed). '.
             'Use Markdown format. Be concise and factual. This is not a sales page — it is a machine-readable identity file. '.
             'Return only the Markdown content, no explanation.'
         );
@@ -142,6 +145,16 @@ class AssetGeneratorService
             default => 'Africa',
         };
 
+        // Include country-relevant directories for AI-aware suggestions
+        $dirService = app(CountryDirectoryService::class);
+        $dirs = $dirService->forCountry($country);
+        $dirList = '';
+        foreach ($dirs as $group) {
+            foreach ($group['items'] as $item) {
+                $dirList .= "- {$item['name']} ({$item['url']})\n";
+            }
+        }
+
         return "Business context:\n".
             "Name: {$brand->name}\n".
             ($brand->tagline ? "Tagline: {$brand->tagline}\n" : '').
@@ -150,6 +163,7 @@ class AssetGeneratorService
             ($brand->mission ? "Mission: {$brand->mission}\n" : '').
             ($brand->website_url ? "Website: {$brand->website_url}\n" : '').
             "Location: {$location}\n\n".
+            "Relevant directories and platforms for this business (use in sameAs or recommendations where appropriate):\n{$dirList}\n".
             "Task: {$task}";
     }
 

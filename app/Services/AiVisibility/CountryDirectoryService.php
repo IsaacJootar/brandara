@@ -10,14 +10,16 @@ class CountryDirectoryService
 {
     public function forCountry(string $country): array
     {
-        return match ($country) {
+        $local = match ($country) {
             'NG' => $this->nigeria(),
             'GH' => $this->ghana(),
             'KE' => $this->kenya(),
             'ZA' => $this->southAfrica(),
             'GB' => $this->uk(),
-            default => $this->global(),
+            default => [],
         };
+
+        return array_merge($local, $this->global());
     }
 
     private function nigeria(): array

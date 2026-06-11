@@ -1,17 +1,41 @@
 <div>
 
+{{-- ── WELCOME HERO ───────────────────────────────────────────────────────── --}}
+<div style="background:linear-gradient(135deg,#7C3AED 0%,#4F46E5 50%,#0369A1 100%); border-radius:16px; padding:1.75rem 1.5rem; margin-bottom:1.5rem; color:#fff; position:relative; overflow:hidden;">
+    <div style="position:absolute; top:-30px; right:-30px; width:140px; height:140px; background:rgba(255,255,255,0.06); border-radius:50%;"></div>
+    <div style="position:absolute; bottom:-20px; right:60px; width:80px; height:80px; background:rgba(255,255,255,0.04); border-radius:50%;"></div>
+    <h2 style="font-size:1.25rem; font-weight:800; margin:0 0 0.5rem; position:relative;">Your brand's AI visibility journey</h2>
+    <p style="font-size:0.85rem; margin:0 0 0.75rem; line-height:1.65; opacity:0.92; max-width:600px; position:relative;">
+        When someone asks ChatGPT, Gemini, or any AI "who's the best {{ strtolower($brand->tagline ? explode(' ', $brand->tagline)[0] ?? 'business' : 'business') }} near me?" — does your brand show up?
+        Most businesses don't. Brandara helps you fix that, step by step.
+    </p>
+    <div style="display:flex; gap:1.25rem; flex-wrap:wrap; font-size:0.78rem; opacity:0.85; position:relative;">
+        <span>✓ Scan your website for AI-readiness</span>
+        <span>✓ Fix technical gaps with one click</span>
+        <span>✓ Track if AI mentions your brand</span>
+    </div>
+</div>
+
 {{-- ── TAB SWITCHER ─────────────────────────────────────────────────────────── --}}
-<div style="display:flex; gap:0.25rem; background:#F1F5F9; border-radius:10px; padding:0.25rem; margin-bottom:1.5rem; flex-wrap:wrap;">
-    @foreach([
-        'readiness'  => 'AI Readiness',
-        'entity'     => 'Entity Clarity',
-        'content'    => 'Content Signals',
-        'quickfix'   => 'Quick-Fix Assets',
-        'presence'   => 'Live AI Presence',
-    ] as $tab => $label)
+@php
+    $tabConfig = [
+        'readiness' => ['label' => 'AI Readiness',     'color' => '#7C3AED', 'bg' => '#F5F3FF', 'border' => '#DDD6FE', 'icon' => '🔍'],
+        'entity'    => ['label' => 'Entity Clarity',    'color' => '#0369A1', 'bg' => '#F0F9FF', 'border' => '#BAE6FD', 'icon' => '🏢'],
+        'content'   => ['label' => 'Content Signals',   'color' => '#16A34A', 'bg' => '#F0FDF4', 'border' => '#BBF7D0', 'icon' => '📝'],
+        'quickfix'  => ['label' => 'Quick-Fix Assets',  'color' => '#D97706', 'bg' => '#FFFBEB', 'border' => '#FDE68A', 'icon' => '⚡'],
+        'presence'  => ['label' => 'Live AI Presence',  'color' => '#DC2626', 'bg' => '#FEF2F2', 'border' => '#FECACA', 'icon' => '🤖'],
+    ];
+@endphp
+<div style="display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+    @foreach($tabConfig as $tab => $cfg)
         <button type="button" wire:click="setTab('{{ $tab }}')"
-            style="flex:1; min-width:120px; padding:0.5rem 0.75rem; border-radius:8px; font-size:0.8rem; font-weight:{{ $activeTab === $tab ? '600' : '400' }}; border:none; cursor:pointer; transition:all 0.15s; background:{{ $activeTab === $tab ? '#fff' : 'transparent' }}; color:{{ $activeTab === $tab ? '#0F172A' : '#64748B' }}; box-shadow:{{ $activeTab === $tab ? '0 1px 3px rgba(15,23,42,0.08)' : 'none' }};">
-            {{ $label }}
+            style="flex:1; min-width:130px; padding:0.6rem 0.75rem; border-radius:10px; font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.15s; white-space:nowrap; display:flex; align-items:center; justify-content:center; gap:0.35rem;
+            @if($activeTab === $tab)
+                background:{{ $cfg['bg'] }}; color:{{ $cfg['color'] }}; border:2px solid {{ $cfg['border'] }}; box-shadow:0 2px 8px {{ $cfg['color'] }}18;
+            @else
+                background:#F8FAFC; color:#64748B; border:2px solid transparent;
+            @endif">
+            <span style="font-size:0.85rem;">{{ $cfg['icon'] }}</span> {{ $cfg['label'] }}
         </button>
     @endforeach
 </div>
@@ -268,7 +292,7 @@
     <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden; box-shadow:0 1px 3px rgba(15,23,42,0.06);">
         <div style="padding:0.875rem 1.25rem; border-bottom:1px solid #F1F5F9;">
             <p style="font-size:0.875rem; font-weight:700; color:#0F172A; margin:0;">Where to publish to get indexed by AI</p>
-            <p style="font-size:0.78rem; color:#64748B; margin:0.25rem 0 0;">Publishing on these platforms increases the chance AI systems discover your brand. Start with Low effort.</p>
+            <p style="font-size:0.78rem; color:#64748B; margin:0.25rem 0 0;">Publishing on these platforms increases the chance AI systems discover your brand. Your local directories are listed first — start with Low effort ones.</p>
         </div>
         @foreach($directories as $group)
             <div style="padding:1rem 1.25rem; {{ !$loop->last ? 'border-bottom:1px solid #F8FAFC;' : '' }}">
@@ -343,12 +367,11 @@
 
                 @if($asset)
                     <div style="padding:1rem 1.25rem;">
-                        <div style="position:relative;">
+                        <div style="position:relative;" class="asset-wrap">
                             <pre style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0.875rem 1rem; font-size:0.75rem; color:#374151; overflow-x:auto; margin:0; white-space:pre-wrap; word-break:break-all; max-height:220px; overflow-y:auto; font-family:'Courier New',monospace;">{{ $asset->content }}</pre>
                             <button type="button"
-                                onclick="navigator.clipboard.writeText(this.closest('.asset-wrap').querySelector('pre').textContent).then(()=>{ this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy',2000); })"
-                                class="asset-wrap"
-                                style="position:absolute; top:8px; right:8px; font-size:0.72rem; color:#7C3AED; background:#F5F3FF; border:1px solid #DDD6FE; border-radius:5px; padding:2px 8px; cursor:pointer; font-weight:600;">Copy</button>
+                                onclick="navigator.clipboard.writeText(this.closest('.asset-wrap').querySelector('pre').textContent).then(()=>{ this.textContent='Copied ✓'; this.style.background='#DCFCE7'; this.style.color='#16A34A'; this.style.borderColor='#BBF7D0'; setTimeout(()=>{ this.textContent='Copy'; this.style.background='#F5F3FF'; this.style.color='#7C3AED'; this.style.borderColor='#DDD6FE'; },2500); })"
+                                style="position:absolute; top:8px; right:8px; font-size:0.72rem; color:#7C3AED; background:#F5F3FF; border:1px solid #DDD6FE; border-radius:5px; padding:2px 8px; cursor:pointer; font-weight:600; transition:all 0.2s;">Copy</button>
                         </div>
                         <div style="margin-top:0.75rem; display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
                             <p style="font-size:0.75rem; color:#94A3B8; margin:0; flex:1;">
