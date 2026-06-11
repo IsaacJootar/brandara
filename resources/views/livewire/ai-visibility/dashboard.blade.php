@@ -96,7 +96,7 @@
         </div>
         <div style="flex:1; min-width:200px;">
             <p style="font-size:0.835rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">Don't have a website yet?</p>
-            <p style="font-size:0.78rem; color:#64748B; margin:0; line-height:1.6;">A professional website is the foundation of AI visibility. Ask Brandara to build you a modern, mobile-friendly business website that AI systems can find and trust. Go to <strong>Create</strong> and ask: <em>"Build me a professional brand website"</em>.</p>
+            <p style="font-size:0.78rem; color:#64748B; margin:0; line-height:1.6;">A professional website is the foundation of AI visibility. Brandara can build you a modern, mobile-friendly business website that AI systems can find and trust.</p>
         </div>
     </div>
 
@@ -269,30 +269,64 @@
     <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden; box-shadow:0 1px 3px rgba(15,23,42,0.06); margin-bottom:1.25rem;">
         <div style="padding:0.875rem 1.25rem; border-bottom:1px solid #F1F5F9;">
             <p style="font-size:0.875rem; font-weight:700; color:#0F172A; margin:0;">Does AI have enough content to recommend you?</p>
+            <p style="font-size:0.78rem; color:#64748B; margin:0.25rem 0 0;">Each question checks a signal AI uses to decide if your brand is trustworthy.</p>
         </div>
         @php
             $contentChecks = [
-                ['label' => 'About page is live on your website', 'result' => ($check?->results['has_about_page'] ?? 'pending'), 'fix' => 'Generate About page copy in the Quick-Fix Assets tab, then add it to your website.', 'action' => 'quickfix'],
-                ['label' => 'FAQ page is live on your website', 'result' => ($check?->results['has_faq_schema'] ?? 'pending'), 'fix' => 'Generate FAQ Schema in the Quick-Fix Assets tab.', 'action' => 'quickfix'],
-                ['label' => 'Homepage mentions your city and industry', 'result' => ($check?->results['mentions_city'] ?? 'pending'), 'fix' => 'Add your city name and industry clearly to your homepage headline or first paragraph.'],
-                ['label' => 'Publishing at least 4 posts per month', 'result' => ($postCount >= 4 ? 'pass' : 'fail'), 'fix' => 'Use Brandara\'s Create module to generate and schedule consistent content.'],
-                ['label' => 'Brand markdown file on your website', 'result' => (isset($assets['brand_markdown']) ? 'pass' : 'pending'), 'fix' => 'Generate a brand.md file in the Quick-Fix Assets tab — paste it at the root of your website.', 'action' => 'quickfix'],
+                [
+                    'question' => 'Do you have an About page on your website?',
+                    'result' => ($check?->results['has_about_page'] ?? 'pending'),
+                    'step' => 'Go to the Quick-Fix Assets tab → Generate "About Page Copy" → Paste it on your website\'s About page.',
+                    'action' => 'quickfix',
+                ],
+                [
+                    'question' => 'Does your website have an FAQ section?',
+                    'result' => ($check?->results['has_faq_schema'] ?? 'pending'),
+                    'step' => 'Go to the Quick-Fix Assets tab → Generate "FAQ Schema" → Paste the code into your website\'s <head> tag.',
+                    'action' => 'quickfix',
+                ],
+                [
+                    'question' => 'Does your homepage mention your city and industry?',
+                    'result' => ($check?->results['mentions_city'] ?? 'pending'),
+                    'step' => 'Open your website homepage → Add your city name and industry to the headline or first paragraph. Example: "Digital marketing agency in Lagos".',
+                ],
+                [
+                    'question' => 'Are you publishing at least 4 posts per month?',
+                    'result' => ($postCount >= 4 ? 'pass' : 'fail'),
+                    'step' => 'Go to Create in Brandara → Generate content → Schedule at least 1 post per week to build consistent AI trust.',
+                ],
+                [
+                    'question' => 'Do you have a brand.md file on your website?',
+                    'result' => (isset($assets['brand_markdown']) ? 'pass' : 'pending'),
+                    'step' => 'Go to the Quick-Fix Assets tab → Generate "Brand Markdown" → Upload the file to your website root (yourdomain.com/brand.md).',
+                    'action' => 'quickfix',
+                ],
             ];
         @endphp
         @foreach($contentChecks as $item)
-            <div style="padding:0.875rem 1.25rem; {{ !$loop->last ? 'border-bottom:1px solid #F8FAFC;' : '' }} display:flex; align-items:flex-start; gap:0.875rem;">
-                <div style="width:22px; height:22px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:1px;
+            <div style="padding:1rem 1.25rem; {{ !$loop->last ? 'border-bottom:1px solid #F1F5F9;' : '' }} display:flex; align-items:flex-start; gap:0.875rem;">
+                {{-- Status icon first --}}
+                <div style="width:24px; height:24px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:1px;
                     background:{{ $item['result'] === 'pass' ? '#DCFCE7' : ($item['result'] === 'fail' ? '#FEE2E2' : '#F1F5F9') }};">
-                    @if($item['result'] === 'pass') <svg width="11" height="11" fill="none" stroke="#16A34A" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                    @elseif($item['result'] === 'fail') <svg width="11" height="11" fill="none" stroke="#DC2626" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                    @else <div style="width:6px;height:6px;border-radius:50%;background:#CBD5E1;"></div> @endif
+                    @if($item['result'] === 'pass')
+                        <svg width="12" height="12" fill="none" stroke="#16A34A" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    @elseif($item['result'] === 'fail')
+                        <svg width="12" height="12" fill="none" stroke="#DC2626" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    @else
+                        <svg width="12" height="12" fill="none" stroke="#94A3B8" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01"/></svg>
+                    @endif
                 </div>
-                <div style="flex:1;">
-                    <p style="font-size:0.835rem; font-weight:500; color:#0F172A; margin:0 0 0.125rem;">{{ $item['label'] }}</p>
-                    @if($item['result'] !== 'pass')
-                        <p style="font-size:0.75rem; color:#64748B; margin:0;">{{ $item['fix'] }}</p>
+                <div style="flex:1; min-width:0;">
+                    <p style="font-size:0.85rem; font-weight:600; color:#0F172A; margin:0 0 0.25rem;">{{ $item['question'] }}</p>
+                    @if($item['result'] === 'pass')
+                        <p style="font-size:0.78rem; color:#16A34A; font-weight:500; margin:0;">Yes — this signal is active.</p>
+                    @else
+                        <p style="font-size:0.78rem; color:#64748B; margin:0 0 0.375rem; line-height:1.6;"><strong style="color:#0F172A;">How to fix:</strong> {{ $item['step'] }}</p>
                         @if(!empty($item['action']))
-                            <button type="button" wire:click="setTab('{{ $item['action'] }}')" style="margin-top:0.25rem; font-size:0.7rem; color:#7C3AED; background:#F5F3FF; border:1px solid #DDD6FE; border-radius:5px; padding:2px 8px; cursor:pointer;">Fix in Brandara →</button>
+                            <button type="button" wire:click="setTab('{{ $item['action'] }}')"
+                                style="font-size:0.72rem; color:#7C3AED; background:#F5F3FF; border:1px solid #DDD6FE; border-radius:6px; padding:3px 10px; cursor:pointer; font-weight:600;">
+                                Fix this now →
+                            </button>
                         @endif
                     @endif
                 </div>
