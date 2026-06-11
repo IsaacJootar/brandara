@@ -75,7 +75,7 @@
     {{-- Scan form --}}
     <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem; margin-bottom:1.25rem; box-shadow:0 1px 3px rgba(15,23,42,0.06);">
         <p style="font-size:0.875rem; font-weight:600; color:#0F172A; margin:0 0 0.25rem;">{{ $check ? 'Re-scan your website' : 'Scan your website' }}</p>
-        <p style="font-size:0.8rem; color:#64748B; margin:0 0 1rem;">Brandara checks 20 signals that AI systems use to find and recommend your business.</p>
+        <p style="font-size:0.8rem; color:#64748B; margin:0 0 1rem;">Brandara checks 20 signals that AI systems use to find and recommend your business. Enter the full URL including https:// (e.g. https://yourbusiness.com).</p>
         <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
             <input type="url" wire:model="websiteUrl" placeholder="https://yourbusiness.com"
                 style="flex:1; min-width:220px; padding:0.6rem 0.875rem; border:1px solid #E2E8F0; border-radius:9px; font-size:0.875rem; color:#0F172A; background:#F8FAFC; outline:none;"
@@ -87,6 +87,17 @@
             </button>
         </div>
         @error('websiteUrl') <p style="font-size:0.78rem; color:#DC2626; margin:0.375rem 0 0;">{{ $message }}</p> @enderror
+    </div>
+
+    {{-- No website CTA --}}
+    <div style="background:#F5F3FF; border:1px solid #DDD6FE; border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.25rem; display:flex; align-items:flex-start; gap:0.875rem; flex-wrap:wrap;">
+        <div style="width:36px; height:36px; border-radius:9px; background:#7C3AED; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="16" height="16" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+        </div>
+        <div style="flex:1; min-width:200px;">
+            <p style="font-size:0.835rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">Don't have a website yet?</p>
+            <p style="font-size:0.78rem; color:#64748B; margin:0; line-height:1.6;">A professional website is the foundation of AI visibility. Ask Brandara to build you a modern, mobile-friendly business website that AI systems can find and trust. Go to <strong>Create</strong> and ask: <em>"Build me a professional brand website"</em>.</p>
+        </div>
     </div>
 
     @if($check)
