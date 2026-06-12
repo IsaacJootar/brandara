@@ -38,7 +38,7 @@ class Workspaces extends Component
 
     public function render(): View
     {
-        $query = Workspace::query();
+        $query = Workspace::where('slug', '!=', 'brandara-admin');
 
         if ($this->search) {
             $query->where(function ($q) {

@@ -11,7 +11,7 @@ class Dashboard extends Component
 {
     public function render(): View
     {
-        $workspaces = Workspace::all();
+        $workspaces = Workspace::where('slug', '!=', 'brandara-admin')->get();
         $totalWorkspaces = $workspaces->count();
         $byPlan = $workspaces->groupBy('plan')->map->count();
         $trialing = $workspaces->where('subscription_status', 'trialing')->count();
