@@ -21,14 +21,8 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        // Redirect to the user's first brand dashboard
-        $brand = auth()->user()->workspace->brands()->first();
-
-        if (! $brand) {
-            return redirect()->route('home');
-        }
-
-        return redirect()->route('dashboard', ['brand' => $brand->slug]);
+        // Always go through home() which handles first brand + admin routing
+        return redirect()->route('home');
     }
 
     public function destroy(Request $request): RedirectResponse

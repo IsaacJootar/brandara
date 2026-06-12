@@ -20,43 +20,44 @@ class WorkspaceController extends Controller
     {
         $data = $request->validate([
             'workspace_name' => ['required', 'string', 'max:100'],
-            'brand_name'     => ['required', 'string', 'max:100'],
-            'name'           => ['required', 'string', 'max:100'],
-            'email'          => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password'       => ['required', 'string', 'min:8', 'confirmed'],
-            'country'        => ['required', 'string', 'max:5'],
+            'brand_name' => ['required', 'string', 'max:100'],
+            'name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'country' => ['required', 'string', 'max:5'],
         ]);
 
         // Unique workspace slug
         $wsSlug = Str::slug($data['workspace_name']);
-        $base = $wsSlug; $i = 2;
+        $base = $wsSlug;
+        $i = 2;
         while (Workspace::where('slug', $wsSlug)->exists()) {
-            $wsSlug = $base . '-' . $i++;
+            $wsSlug = $base.'-'.$i++;
         }
 
         $workspace = Workspace::create([
-            'name'                => $data['workspace_name'],
-            'slug'                => $wsSlug,
-            'owner_email'         => $data['email'],
-            'country'             => strtoupper($data['country']),
-            'timezone'            => $this->timezoneFor(strtoupper($data['country'])),
-            'plan'                => 'starter',
+            'name' => $data['workspace_name'],
+            'slug' => $wsSlug,
+            'owner_email' => $data['email'],
+            'country' => strtoupper($data['country']),
+            'timezone' => $this->timezoneFor(strtoupper($data['country'])),
+            'plan' => 'starter',
             'subscription_status' => 'trialing',
-            'trial_ends_at'       => now()->addDays(7),
+            'trial_ends_at' => now()->addDays(7),
         ]);
 
         $user = $workspace->users()->create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
+            'name' => $data['name'],
+            'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role'     => 'owner',
+            'role' => 'owner',
         ]);
 
         // Create the first brand (same name as workspace by default)
         $brandSlug = Str::slug($data['brand_name']);
         $brand = $workspace->brands()->create([
-            'name'     => $data['brand_name'],
-            'slug'     => $brandSlug,
+            'name' => $data['brand_name'],
+            'slug' => $brandSlug,
             'language' => 'en',
         ]);
 
@@ -69,10 +70,16 @@ class WorkspaceController extends Controller
     // Redirect logged-in user to their first brand's dashboard
     public function home()
     {
-        $brand = auth()->user()->workspace->brands()->first();
+        $brand = auth()->user()->workspace->brands()->oldest()->first();
 
         if (! $brand) {
-            return redirect()->route('workspace.create');
+            // Admin users with no brands go to admin panel
+            $adminEmails = array_map('trim', explode(',', config('app.admin_emails', '')));
+            if (in_array(auth()->user()->email, $adminEmails)) {
+                return redirect()->route('admin.dashboard');
+            }
+
+            return redirect()->route('brand.create');
         }
 
         return redirect()->route('dashboard', ['brand' => $brand->slug]);
@@ -80,7 +87,7 @@ class WorkspaceController extends Controller
 
     private function timezoneFor(string $country): string
     {
-        return match($country) {
+        return match ($country) {
             'GH' => 'Africa/Accra',
             'KE' => 'Africa/Nairobi',
             'ZA' => 'Africa/Johannesburg',
