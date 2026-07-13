@@ -40,7 +40,7 @@
         <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:14px; padding:1.5rem; margin-bottom:1.75rem;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
                 <p style="font-size:0.9rem; font-weight:700; color:#0F172A; margin:0;">New rule</p>
-                <button type="button" wire:click="closeForm"
+                <button type="button" wire:click="closeForm" aria-label="Close rule form"
                     style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:1rem; line-height:1;">✕</button>
             </div>
 
@@ -136,6 +136,7 @@
                             </p>
                         </div>
                         <button type="button" wire:click="$set('requireReview', {{ $requireReview ? 'false' : 'true' }})"
+                            role="switch" aria-label="Review comments before posting" aria-checked="{{ $requireReview ? 'true' : 'false' }}"
                             style="width:44px; height:24px; border-radius:99px; border:none; cursor:pointer; transition:background 0.2s; background:{{ $requireReview ? '#7C3AED' : '#CBD5E1' }}; position:relative; flex-shrink:0;">
                             <span style="position:absolute; top:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:left 0.2s; left:{{ $requireReview ? '23px' : '3px' }};"></span>
                         </button>

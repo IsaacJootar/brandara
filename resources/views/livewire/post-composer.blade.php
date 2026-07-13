@@ -137,7 +137,7 @@
                                     </svg>
                                 </div>
                             @endif
-                            <button type="button" wire:click="removeMedia('{{ $media['id'] }}')"
+                            <button type="button" wire:click="removeMedia('{{ $media['id'] }}')" aria-label="Remove {{ $media['name'] }}"
                                 style="position:absolute;top:2px;right:2px;width:18px;height:18px;background:rgba(0,0,0,0.6);border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
                                 <svg style="width:10px;height:10px;color:#fff;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>

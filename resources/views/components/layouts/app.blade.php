@@ -18,10 +18,10 @@
     <div class="brandara-shell" id="appShell">
 
         {{-- Mobile scrim --}}
-        <div class="brandara-scrim" id="sidebarScrim" onclick="closeSidebar()"></div>
+        <div class="brandara-scrim" id="sidebarScrim" onclick="closeSidebar()" aria-hidden="true"></div>
 
         {{-- ── SIDEBAR ──────────────────────────────────────────────────── --}}
-        <aside class="brandara-sidebar" id="appSidebar">
+        <aside class="brandara-sidebar" id="appSidebar" aria-label="Main navigation">
 
             {{-- ── Sidebar header: Brandara brand (not client name) ── --}}
             <div style="padding:1.1rem 1.1rem 0.9rem; border-bottom:1px solid rgba(255,255,255,0.08); position:relative; z-index:10; display:flex; align-items:center; justify-content:space-between;">
@@ -36,9 +36,11 @@
 
                 {{-- ✕ Close button — mobile only. z-index:10 keeps it above glow pseudo-elements --}}
                 <button
+                    type="button"
                     id="sidebarCloseBtn"
                     onclick="closeSidebar()"
                     aria-label="Close menu"
+                    aria-controls="appSidebar"
                     style="display:none; width:28px; height:28px; border-radius:50%; border:1px solid rgba(255,255,255,0.18); background:rgba(255,255,255,0.08); color:#f8fafc; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; z-index:10; position:relative;">
                     <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>
@@ -47,7 +49,7 @@
             </div>
 
             {{-- ── Navigation — driven by config/navigation.php, NOT hard-coded ── --}}
-            <nav style="flex:1; padding:0.625rem 0.625rem; overflow-y:auto; position:relative; z-index:1;">
+            <nav aria-label="Brandara" style="flex:1; padding:0.625rem 0.625rem; overflow-y:auto; position:relative; z-index:1;">
                 @php
                     $slug      = $currentBrand->slug;
                     $workspace = auth()->user()->workspace;
@@ -186,7 +188,8 @@
             {{-- Topbar --}}
             <header class="brandara-topbar">
                 <div class="brandara-topbar-context">
-                    <button class="brandara-hamburger" id="hamburgerBtn" onclick="openSidebar()" aria-label="Open menu">
+                    <button type="button" class="brandara-hamburger" id="hamburgerBtn" onclick="openSidebar()"
+                        aria-label="Open menu" aria-controls="appSidebar" aria-expanded="false">
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                             <line x1="4" y1="7" x2="20" y2="7"/>
                             <line x1="4" y1="12" x2="20" y2="12"/>
@@ -215,20 +218,48 @@
 
     <script>
         function openSidebar() {
-            document.getElementById('appSidebar').classList.add('is-open');
-            document.getElementById('sidebarScrim').classList.add('is-open');
+            var sidebar = document.getElementById('appSidebar');
+            var scrim = document.getElementById('sidebarScrim');
+            var hamburger = document.getElementById('hamburgerBtn');
+            var closeButton = document.getElementById('sidebarCloseBtn');
+
+            sidebar.classList.add('is-open');
+            scrim.classList.add('is-open');
+            hamburger.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+            window.requestAnimationFrame(function () { closeButton.focus(); });
         }
 
-        function closeSidebar() {
-            document.getElementById('appSidebar').classList.remove('is-open');
-            document.getElementById('sidebarScrim').classList.remove('is-open');
+        function closeSidebar(restoreFocus = true) {
+            var sidebar = document.getElementById('appSidebar');
+            var scrim = document.getElementById('sidebarScrim');
+            var hamburger = document.getElementById('hamburgerBtn');
+            var wasOpen = sidebar.classList.contains('is-open');
+
+            sidebar.classList.remove('is-open');
+            scrim.classList.remove('is-open');
+            hamburger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+
+            if (wasOpen && restoreFocus) {
+                hamburger.focus();
+            }
         }
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && document.getElementById('appSidebar').classList.contains('is-open')) {
+                closeSidebar();
+            }
+        });
 
         // Show close button only on mobile
         function handleResize() {
             var btn = document.getElementById('sidebarCloseBtn');
             if (btn) {
                 btn.style.display = window.innerWidth <= 1024 ? 'inline-flex' : 'none';
+            }
+            if (window.innerWidth > 1024) {
+                closeSidebar(false);
             }
         }
         window.addEventListener('resize', handleResize);

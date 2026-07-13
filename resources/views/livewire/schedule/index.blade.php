@@ -136,9 +136,9 @@
             <div style="display:flex; align-items:center; justify-content:space-between; padding:0.875rem 1.25rem; border-bottom:1px solid #F1F5F9;">
                 <div style="font-size:0.95rem; font-weight:600; color:#0F172A;">{{ $calendar['monthLabel'] }}</div>
                 <div style="display:flex; gap:0.4rem;">
-                    <button wire:click="previousMonth" type="button"
+                    <button wire:click="previousMonth" type="button" aria-label="Previous month"
                         style="width:30px; height:30px; border-radius:7px; border:1px solid #E2E8F0; background:#fff; cursor:pointer; color:#475569;">‹</button>
-                    <button wire:click="nextMonth" type="button"
+                    <button wire:click="nextMonth" type="button" aria-label="Next month"
                         style="width:30px; height:30px; border-radius:7px; border:1px solid #E2E8F0; background:#fff; cursor:pointer; color:#475569;">›</button>
                 </div>
             </div>
@@ -179,19 +179,20 @@
 
     {{-- ── Schedule modal ────────────────────────────────────────────────── --}}
     @if ($schedulingPostId)
-        <div wire:click.self="closeSchedule"
+        <div wire:click.self="closeSchedule" x-data x-on:keydown.escape.window="$wire.closeSchedule()"
+            role="dialog" aria-modal="true" aria-labelledby="schedule-dialog-title"
             style="position:fixed; inset:0; background:rgba(15,23,42,0.55); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:1rem; z-index:100;">
             <div style="background:#fff; border-radius:14px; width:100%; max-width:420px; padding:1.5rem; box-shadow:0 24px 48px rgba(15,23,42,0.22);">
-                <div style="font-size:1.05rem; font-weight:700; color:#0F172A; margin-bottom:0.25rem;">Schedule post</div>
+                <div id="schedule-dialog-title" style="font-size:1.05rem; font-weight:700; color:#0F172A; margin-bottom:0.25rem;">Schedule post</div>
                 <div style="font-size:0.78rem; color:#64748B; margin-bottom:1.25rem;">Pick a date and time in <strong style="color:#475569;">{{ $brandTimezone }}</strong>.</div>
 
-                <label style="display:block; font-size:0.75rem; font-weight:600; color:#475569; margin-bottom:0.3rem;">Date</label>
-                <input wire:model="scheduleDate" type="date" min="{{ now($brandTimezone)->format('Y-m-d') }}"
+                <label for="schedule-date" style="display:block; font-size:0.75rem; font-weight:600; color:#475569; margin-bottom:0.3rem;">Date</label>
+                <input id="schedule-date" wire:model="scheduleDate" type="date" min="{{ now($brandTimezone)->format('Y-m-d') }}"
                     style="width:100%; padding:0.65rem 0.85rem; border:1px solid #E2E8F0; border-radius:9px; font-size:0.88rem; margin-bottom:0.9rem; box-sizing:border-box;">
                 @error ('scheduleDate') <div style="font-size:0.75rem; color:#DC2626; margin-top:-0.6rem; margin-bottom:0.9rem;">{{ $message }}</div> @enderror
 
-                <label style="display:block; font-size:0.75rem; font-weight:600; color:#475569; margin-bottom:0.3rem;">Time</label>
-                <input wire:model="scheduleTime" type="time"
+                <label for="schedule-time" style="display:block; font-size:0.75rem; font-weight:600; color:#475569; margin-bottom:0.3rem;">Time</label>
+                <input id="schedule-time" wire:model="scheduleTime" type="time"
                     style="width:100%; padding:0.65rem 0.85rem; border:1px solid #E2E8F0; border-radius:9px; font-size:0.88rem; margin-bottom:1.25rem; box-sizing:border-box;">
                 @error ('scheduleTime') <div style="font-size:0.75rem; color:#DC2626; margin-top:-1rem; margin-bottom:1.25rem;">{{ $message }}</div> @enderror
 

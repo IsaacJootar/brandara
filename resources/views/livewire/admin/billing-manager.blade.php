@@ -22,6 +22,7 @@
             <div>
                 <label style="font-size:0.75rem; font-weight:600; color:#94A3B8; text-transform:uppercase; display:block; margin-bottom:0.375rem;">Test mode</label>
                 <button type="button" wire:click="$set('testMode', {{ $testMode ? 'false' : 'true' }})"
+                    role="switch" aria-label="Payment test mode" aria-checked="{{ $testMode ? 'true' : 'false' }}"
                     style="width:48px; height:26px; border-radius:99px; border:none; cursor:pointer; position:relative; background:{{ $testMode ? '#D97706' : '#16A34A' }};">
                     <span style="position:absolute; top:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:left 0.2s; left:{{ $testMode ? '25px' : '3px' }};"></span>
                 </button>
@@ -60,6 +61,8 @@
                         </td>
                         <td style="padding:0.625rem 0.75rem;">
                             <button type="button" wire:click="togglePlanActive('{{ $plan->id }}')"
+                                role="switch" aria-label="{{ $plan->planLabel() }} {{ ucfirst($plan->interval) }} {{ strtoupper($plan->currency) }} active"
+                                aria-checked="{{ $plan->is_active ? 'true' : 'false' }}"
                                 style="width:36px; height:20px; border-radius:99px; border:none; cursor:pointer; position:relative; background:{{ $plan->is_active ? '#16A34A' : '#E2E8F0' }};">
                                 <span style="position:absolute; top:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:left 0.2s; left:{{ $plan->is_active ? '18px' : '2px' }};"></span>
                             </button>

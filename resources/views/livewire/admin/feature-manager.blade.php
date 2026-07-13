@@ -25,6 +25,8 @@
                         @php $hasAccess = in_array($plan, $gate['plans'] ?? []); @endphp
                         <div style="display:flex; align-items:center; gap:0.375rem; min-width:90px;">
                             <button type="button" wire:click="toggleFeaturePlan('{{ $featureKey }}', '{{ $plan }}')"
+                                role="switch" aria-label="{{ $gate['label'] ?? $featureKey }} for {{ $planInfo['label'] }}"
+                                aria-checked="{{ $hasAccess ? 'true' : 'false' }}"
                                 style="width:36px; height:20px; border-radius:99px; border:none; cursor:pointer; position:relative; transition:background 0.2s;
                                 background:{{ $hasAccess ? $planInfo['color'] : '#E2E8F0' }};">
                                 <span style="position:absolute; top:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:left 0.2s; left:{{ $hasAccess ? '18px' : '2px' }};"></span>

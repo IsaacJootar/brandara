@@ -209,6 +209,7 @@
                 {{-- Toggle --}}
                 <div style="flex-shrink:0; padding-top:2px;">
                     <button type="button" wire:click="toggleManualCheck('{{ $key }}', {{ $status === 'pass' ? 'false' : 'true' }})"
+                        role="switch" aria-label="{{ $def['label'] }}" aria-checked="{{ $status === 'pass' ? 'true' : 'false' }}"
                         style="width:36px; height:20px; border-radius:99px; border:none; cursor:pointer; transition:background 0.2s; position:relative; flex-shrink:0;
                                background:{{ $status === 'pass' ? '#7C3AED' : '#E2E8F0' }};">
                         <span style="position:absolute; top:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:left 0.2s;

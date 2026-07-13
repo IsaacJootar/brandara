@@ -9,13 +9,15 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-base-100 min-h-screen font-sans antialiased" x-data="{ sidebarOpen: false }">
+<body class="bg-base-100 min-h-screen font-sans antialiased" x-data="{ sidebarOpen: false }"
+    @keydown.escape.window="if (sidebarOpen) { sidebarOpen = false; $nextTick(() => $refs.sidebarOpen.focus()) }">
 
     {{-- Mobile overlay --}}
     <div
         x-show="sidebarOpen"
         x-transition.opacity
-        @click="sidebarOpen = false"
+        @click="sidebarOpen = false; $nextTick(() => $refs.sidebarOpen.focus())"
+        aria-hidden="true"
         class="fixed inset-0 bg-black/50 z-20 lg:hidden"
     ></div>
 
@@ -23,6 +25,8 @@
 
         {{-- ── Sidebar ── --}}
         <aside
+            id="legacySidebar"
+            aria-label="Main navigation"
             class="sidebar fixed top-0 left-0 h-full w-64 z-30 flex flex-col
                    transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto"
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
@@ -36,7 +40,10 @@
                     <div class="text-white font-bold text-base leading-tight">Brandara</div>
                     <div class="text-white/40 text-xs truncate">{{ tenant('name') }}</div>
                 </div>
-                <button @click="sidebarOpen = false" class="text-white/40 hover:text-white lg:hidden">
+                <button type="button" x-ref="sidebarClose"
+                    @click="sidebarOpen = false; $nextTick(() => $refs.sidebarOpen.focus())"
+                    aria-label="Close menu" aria-controls="legacySidebar"
+                    class="text-white/40 hover:text-white lg:hidden">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -103,7 +110,7 @@
                     </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" title="Log out" class="text-white/30 hover:text-white transition-colors">
+                        <button type="submit" title="Log out" aria-label="Log out" class="text-white/30 hover:text-white transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
@@ -119,7 +126,10 @@
 
             {{-- Mobile top bar --}}
             <header class="lg:hidden flex items-center gap-4 px-4 py-3 border-b border-base-300 sticky top-0 bg-base-100 z-10">
-                <button @click="sidebarOpen = true" class="text-neutral">
+                <button type="button" x-ref="sidebarOpen"
+                    @click="sidebarOpen = true; $nextTick(() => $refs.sidebarClose.focus())"
+                    aria-label="Open menu" aria-controls="legacySidebar" :aria-expanded="sidebarOpen.toString()"
+                    class="text-neutral">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>

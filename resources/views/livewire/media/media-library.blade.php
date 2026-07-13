@@ -99,6 +99,8 @@
                     {{-- Picker checkbox overlay --}}
                     @if($pickerMode)
                         <button type="button" wire:click="toggleSelect('{{ $file->id }}')"
+                            aria-label="{{ in_array($file->id, $selected) ? 'Deselect' : 'Select' }} {{ $file->filename }}"
+                            aria-pressed="{{ in_array($file->id, $selected) ? 'true' : 'false' }}"
                             style="position:absolute;inset:0;width:100%;height:100%;background:{{ in_array($file->id, $selected) ? 'rgba(124,58,237,0.45)' : 'rgba(0,0,0,0)' }};border:none;cursor:pointer;transition:background 0.15s;">
                             @if(in_array($file->id, $selected))
                                 <svg style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;color:#fff;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -113,6 +115,7 @@
                         <button type="button"
                             wire:click="deleteFile('{{ $file->id }}')"
                             wire:confirm="Remove this file from your library?"
+                            aria-label="Remove {{ $file->filename }} from library"
                             style="position:absolute;top:4px;right:4px;width:22px;height:22px;background:rgba(0,0,0,0.55);border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
                             <svg style="width:11px;height:11px;color:#fff;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>

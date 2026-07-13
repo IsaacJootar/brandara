@@ -111,6 +111,7 @@
                             </p>
                         </div>
                         <button type="button" wire:click="$set('engagementEnabled', {{ $engagementEnabled ? 'false' : 'true' }})"
+                            role="switch" aria-label="Engagement automation" aria-checked="{{ $engagementEnabled ? 'true' : 'false' }}"
                             style="width:48px; height:26px; border-radius:99px; border:none; cursor:pointer; transition:background 0.2s; background:{{ $engagementEnabled ? '#16A34A' : '#CBD5E1' }}; position:relative; flex-shrink:0; margin-top:2px;">
                             <span style="position:absolute; top:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:left 0.2s; left:{{ $engagementEnabled ? '25px' : '3px' }};"></span>
                         </button>
@@ -157,9 +158,9 @@
                 <div style="padding:1.25rem; display:flex; flex-direction:column; gap:1.125rem;">
 
                     <div>
-                        <label style="display:block; font-size:0.78rem; font-weight:600; color:#374151; margin-bottom:0.25rem;">Default post time</label>
+                        <label for="default-post-time" style="display:block; font-size:0.78rem; font-weight:600; color:#374151; margin-bottom:0.25rem;">Default post time</label>
                         <p style="font-size:0.75rem; color:#94A3B8; margin:0 0 0.5rem;">Used when scheduling posts without a specific time.</p>
-                        <input type="time" wire:model="defaultPostTime"
+                        <input id="default-post-time" type="time" wire:model="defaultPostTime"
                             style="padding:0.5rem 0.75rem; border:1px solid #E2E8F0; border-radius:8px; font-size:0.875rem; color:#0F172A; outline:none;">
                         @error('defaultPostTime')<p style="color:#EF4444;font-size:0.72rem;margin-top:0.25rem;">{{ $message }}</p>@enderror
                     </div>
@@ -170,6 +171,7 @@
                             <p style="font-size:0.78rem; color:#64748B; margin:0; line-height:1.5;">Automatically re-queue high-performing posts every 60–90 days.</p>
                         </div>
                         <button type="button" wire:click="$set('evergreenRecycling', {{ $evergreenRecycling ? 'false' : 'true' }})"
+                            role="switch" aria-label="Evergreen recycling" aria-checked="{{ $evergreenRecycling ? 'true' : 'false' }}"
                             style="width:48px; height:26px; border-radius:99px; border:none; cursor:pointer; transition:background 0.2s; background:{{ $evergreenRecycling ? '#7C3AED' : '#CBD5E1' }}; position:relative; flex-shrink:0; margin-top:2px;">
                             <span style="position:absolute; top:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:left 0.2s; left:{{ $evergreenRecycling ? '25px' : '3px' }};"></span>
                         </button>
@@ -212,6 +214,7 @@
                                 <p style="font-size:0.75rem; color:#94A3B8; margin:0;">{{ $row['desc'] }}</p>
                             </div>
                             <button type="button" wire:click="$set('{{ $row['prop'] }}', {{ $this->{$row['prop']} ? 'false' : 'true' }})"
+                                role="switch" aria-label="{{ $row['label'] }}" aria-checked="{{ $this->{$row['prop']} ? 'true' : 'false' }}"
                                 style="width:44px; height:24px; border-radius:99px; border:none; cursor:pointer; transition:background 0.2s; background:{{ $this->{$row['prop']} ? '#7C3AED' : '#CBD5E1' }}; position:relative; flex-shrink:0; margin-top:2px;">
                                 <span style="position:absolute; top:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:left 0.2s; left:{{ $this->{$row['prop']} ? '22px' : '3px' }};"></span>
                             </button>

@@ -51,8 +51,9 @@
                         $content = $variations[$key]['platforms'][$previewPlatform] ?? ['body' => '', 'hashtags' => []];
                         $preview = trim(($content['body'] ?? ''));
                     @endphp
-                    <div wire:click="selectVariation('{{ $key }}')"
-                        style="border:2px solid {{ $isSelected ? $meta['color'] : $meta['border'] }}; background:{{ $isSelected ? $meta['bg'] : '#fff' }}; border-radius:12px; padding:1rem; cursor:pointer; transition:all 0.15s;">
+                    <button type="button" wire:click="selectVariation('{{ $key }}')"
+                        aria-pressed="{{ $isSelected ? 'true' : 'false' }}"
+                        style="width:100%; text-align:left; font-family:inherit; border:2px solid {{ $isSelected ? $meta['color'] : $meta['border'] }}; background:{{ $isSelected ? $meta['bg'] : '#fff' }}; border-radius:12px; padding:1rem; cursor:pointer; transition:all 0.15s;">
                         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
                             <div style="display:flex; align-items:center; gap:0.5rem;">
                                 <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:{{ $meta['color'] }};">{{ $meta['label'] }}</span>
@@ -70,7 +71,7 @@
                                 {{ implode(' ', array_map(fn($h) => "#{$h}", array_slice($content['hashtags'], 0, 4))) }}
                             </div>
                         @endif
-                    </div>
+                    </button>
                 @endforeach
             </div>
 

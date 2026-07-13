@@ -15,10 +15,11 @@
     {{-- Modal --}}
     @if($open)
         <div style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:1rem;"
-             x-data x-on:keydown.escape.window="$wire.closePicker()">
+             x-data x-on:keydown.escape.window="$wire.closePicker()"
+             role="dialog" aria-modal="true" aria-labelledby="media-picker-title">
 
             {{-- Backdrop --}}
-            <div wire:click="closePicker"
+            <div wire:click="closePicker" aria-hidden="true"
                  style="position:fixed;inset:0;background:rgba(0,0,0,0.5);"></div>
 
             {{-- Panel --}}
@@ -27,10 +28,10 @@
                 {{-- Header --}}
                 <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid #F1F5F9;flex-shrink:0;">
                     <div>
-                        <p style="font-size:0.95rem;font-weight:700;color:#0F172A;margin:0 0 0.125rem;">Media library</p>
+                        <p id="media-picker-title" style="font-size:0.95rem;font-weight:700;color:#0F172A;margin:0 0 0.125rem;">Media library</p>
                         <p style="font-size:0.75rem;color:#94A3B8;margin:0;">Pick files to attach to your post</p>
                     </div>
-                    <button type="button" wire:click="closePicker"
+                    <button type="button" wire:click="closePicker" aria-label="Close media library"
                         style="width:28px;height:28px;background:#F1F5F9;border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
                         <svg style="width:14px;height:14px;color:#64748B;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -40,7 +41,7 @@
 
                 {{-- Search --}}
                 <div style="padding:0.75rem 1.25rem;border-bottom:1px solid #F1F5F9;flex-shrink:0;">
-                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search files…"
+                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search files…" aria-label="Search media files"
                         style="width:100%;padding:0.4rem 0.75rem;border:1px solid #E2E8F0;border-radius:8px;font-size:0.82rem;color:#0F172A;outline:none;">
                 </div>
 
@@ -57,6 +58,8 @@
                             @foreach($files as $file)
                                 @php $url = $service->url($file); @endphp
                                 <button type="button" wire:key="media-picker-file-{{ $file->id }}" wire:click="toggleSelect('{{ $file->id }}')"
+                                    aria-label="{{ in_array($file->id, $selected) ? 'Deselect' : 'Select' }} {{ $file->filename }}"
+                                    aria-pressed="{{ in_array($file->id, $selected) ? 'true' : 'false' }}"
                                     style="position:relative;aspect-ratio:1;border-radius:9px;overflow:hidden;border:2px solid {{ in_array($file->id, $selected) ? '#7C3AED' : '#E2E8F0' }};cursor:pointer;background:#F8FAFC;padding:0;transition:border-color 0.15s;">
 
                                     @if(str_starts_with($file->mime_type, 'image/'))

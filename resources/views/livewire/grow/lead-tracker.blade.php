@@ -213,7 +213,7 @@
                                         View
                                     </a>
                                 @endif
-                                <button type="button" wire:click="deleteLead('{{ $lead->id }}')"
+                                <button type="button" wire:click="deleteLead('{{ $lead->id }}')" aria-label="Remove {{ $lead->name }}"
                                     wire:confirm="Remove this lead?"
                                     style="background:none;border:none;color:#CBD5E1;cursor:pointer;font-size:0.85rem;padding:0.2rem 0.375rem;border-radius:6px;">✕</button>
                             </div>

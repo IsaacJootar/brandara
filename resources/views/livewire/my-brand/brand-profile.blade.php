@@ -51,7 +51,7 @@
                             placeholder="What this means for your brand"
                             class="auth-input" style="flex:2.5; font-size:0.85rem; padding:0.625rem 0.875rem;">
                         @if(count($values) > 1)
-                            <button type="button" wire:click="removeValue({{ $i }})"
+                            <button type="button" wire:click="removeValue({{ $i }})" aria-label="Remove value {{ $i + 1 }}"
                                 style="flex-shrink:0; background:none; border:none; cursor:pointer; color:#CBD5E1; padding:0.25rem; border-radius:6px; transition:color 0.15s;"
                                 onmouseover="this.style.color='#EF4444'" onmouseout="this.style.color='#CBD5E1'">
                                 <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">

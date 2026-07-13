@@ -39,6 +39,7 @@
             ] as $p)
                 <div style="display:flex; align-items:center; gap:1rem; padding:0.875rem 1rem; background:#F8FAFC; border-radius:10px; border:1px solid #E2E8F0;">
                     <button type="button" wire:click="$toggle('{{ $p['model'] }}')"
+                        role="switch" aria-label="{{ $p['label'] }} presence scans" aria-checked="{{ $this->{$p['model']} ? 'true' : 'false' }}"
                         style="width:42px; height:24px; border-radius:99px; border:none; cursor:pointer; position:relative; flex-shrink:0;
                         background:{{ $this->{$p['model']} ? $p['color'] : '#E2E8F0' }};">
                         <span style="position:absolute; top:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:left 0.2s; left:{{ $this->{$p['model']} ? '21px' : '3px' }};"></span>

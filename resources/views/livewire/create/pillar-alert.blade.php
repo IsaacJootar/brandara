@@ -19,7 +19,7 @@
                 <p style="font-size:0.75rem; color:#92400E; margin:0.375rem 0 0;">Write a post for one of these pillars to keep your content balanced.</p>
             </div>
         </div>
-        <button type="button" wire:click="dismiss"
+        <button type="button" wire:click="dismiss" aria-label="Dismiss reminder"
             style="flex-shrink:0; background:none; border:none; cursor:pointer; color:#D97706; padding:0; font-size:1rem; line-height:1;"
             title="Dismiss">✕</button>
     </div>

@@ -259,7 +259,7 @@
             <div>
                 <p id="billingNoticeText" style="margin:0; font-weight:500;"></p>
             </div>
-            <button onclick="hideBillingNotice()" style="flex-shrink:0; background:none; border:none; color:rgba(255,255,255,0.5); cursor:pointer; font-size:1rem; line-height:1; padding:0; margin-left:0.5rem;">×</button>
+            <button type="button" onclick="hideBillingNotice()" aria-label="Dismiss billing notice" style="flex-shrink:0; background:none; border:none; color:rgba(255,255,255,0.5); cursor:pointer; font-size:1rem; line-height:1; padding:0; margin-left:0.5rem;">×</button>
         </div>
     </div>
 

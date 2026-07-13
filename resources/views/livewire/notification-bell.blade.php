@@ -1,13 +1,17 @@
-<div style="position:relative;" x-data>
+<div style="position:relative;" x-data x-on:keydown.escape.window="$wire.close()">
 
     {{-- Bell button --}}
     <button wire:click="toggle" type="button"
+        aria-label="{{ $unreadCount > 0 ? 'Notifications, '.$unreadCount.' unread' : 'Notifications' }}"
+        aria-haspopup="true"
+        aria-controls="notification-panel"
+        aria-expanded="{{ $open ? 'true' : 'false' }}"
         style="width:34px; height:34px; border-radius:8px; border:1px solid #E2E8F0; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#64748B; position:relative;">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
         </svg>
         @if ($unreadCount > 0)
-            <span style="position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; background:#DC2626; color:#fff; font-size:0.6rem; font-weight:700; border-radius:99px; display:flex; align-items:center; justify-content:center; padding:0 3px; line-height:1;">
+            <span aria-hidden="true" style="position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; background:#DC2626; color:#fff; font-size:0.6rem; font-weight:700; border-radius:99px; display:flex; align-items:center; justify-content:center; padding:0 3px; line-height:1;">
                 {{ $unreadCount > 99 ? '99+' : $unreadCount }}
             </span>
         @endif
@@ -15,7 +19,7 @@
 
     {{-- Dropdown panel --}}
     @if ($open)
-        <div wire:click.outside="toggle"
+        <div id="notification-panel" role="region" aria-label="Notifications" wire:click.outside="close"
             style="position:absolute; top:calc(100% + 8px); right:0; width:340px; background:#fff; border:1px solid #E2E8F0; border-radius:12px; box-shadow:0 12px 32px rgba(15,23,42,0.12); z-index:200; overflow:hidden; max-height:480px; display:flex; flex-direction:column;">
 
             <div style="padding:0.875rem 1rem; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
@@ -41,8 +45,8 @@
                             default          => ['bg' => '#F8FAFC', 'color' => '#64748B', 'svg' => '<path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>'],
                         };
                     @endphp
-                    <div wire:click="markRead('{{ $notification->id }}')"
-                        style="display:flex; gap:0.75rem; padding:0.875rem 1rem; border-bottom:1px solid #F8FAFC; cursor:pointer; background:{{ $isUnread ? '#FAFBFF' : '#fff' }}; transition:background 0.1s;"
+                    <button type="button" wire:click="markRead('{{ $notification->id }}')"
+                        style="display:flex; width:100%; text-align:left; gap:0.75rem; padding:0.875rem 1rem; border:none; border-bottom:1px solid #F8FAFC; cursor:pointer; background:{{ $isUnread ? '#FAFBFF' : '#fff' }}; transition:background 0.1s; font-family:inherit;"
                         onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='{{ $isUnread ? '#FAFBFF' : '#fff' }}'">
 
                         <div style="width:32px; height:32px; border-radius:8px; background:{{ $icon['bg'] }}; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;">
@@ -58,7 +62,7 @@
                         @if ($isUnread)
                             <div style="width:7px; height:7px; border-radius:50%; background:#7C3AED; flex-shrink:0; margin-top:6px;"></div>
                         @endif
-                    </div>
+                    </button>
                 @empty
                     <div style="padding:2.5rem 1rem; text-align:center; color:#94A3B8; font-size:0.83rem;">
                         You're all caught up 🎉

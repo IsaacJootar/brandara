@@ -5,6 +5,11 @@
 /* Hide x-cloak elements before Alpine boots — prevents flash of unstyled content */
 [x-cloak] { display: none !important; }
 
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid #7C3AED;
+  outline-offset: 2px;
+}
+
 /* ═══════════════════════════════════════════════════
    BRANDARA APP SHELL — Responsive layout (gona-style)
 ═══════════════════════════════════════════════════ */

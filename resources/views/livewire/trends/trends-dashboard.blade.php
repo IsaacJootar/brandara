@@ -182,7 +182,7 @@
                                 @if($kw->platform !== 'all')
                                     <span style="font-size:0.65rem; color:#94A3B8;">· {{ ucfirst($kw->platform) }}</span>
                                 @endif
-                                <button type="button" wire:click="removeKeyword('{{ $kw->id }}')"
+                                <button type="button" wire:click="removeKeyword('{{ $kw->id }}')" aria-label="Stop tracking {{ $kw->keyword }}"
                                     style="width:14px; height:14px; border-radius:50%; border:none; background:rgba(124,58,237,0.15); color:#7C3AED; font-size:0.65rem; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1;">×</button>
                             </div>
                         @endforeach

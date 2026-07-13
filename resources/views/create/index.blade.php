@@ -108,7 +108,7 @@
                         <span style="font-size:0.72rem; font-weight:600; color:#64748B; background:#F1F5F9; padding:0.25rem 0.625rem; border-radius:99px;">Not published yet</span>
                         <form method="POST" action="{{ route('post.destroy', ['brand' => $brand->slug, 'post' => $draft->id]) }}">
                             @csrf @method('DELETE')
-                            <button type="submit" onclick="return confirm('Delete this draft?')"
+                            <button type="submit" onclick="return confirm('Delete this draft?')" aria-label="Delete draft"
                                 style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:0.8rem; padding:0.25rem 0.5rem;" title="Delete">✕</button>
                         </form>
                     </div>

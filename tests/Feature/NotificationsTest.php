@@ -140,4 +140,19 @@ class NotificationsTest extends TestCase
             ->call('toggle')
             ->assertSet('open', false);
     }
+
+    public function test_notification_bell_closes_without_toggling_open(): void
+    {
+        [$workspace, $user] = $this->makeWorkspace();
+        $this->actingAs($user);
+
+        Livewire::test(NotificationBell::class)
+            ->set('open', true)
+            ->call('close')
+            ->assertSet('open', false)
+            ->call('close')
+            ->assertSet('open', false)
+            ->assertSeeHtml('aria-label="Notifications"')
+            ->assertSeeHtml('aria-expanded="false"');
+    }
 }

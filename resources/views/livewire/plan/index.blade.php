@@ -159,9 +159,10 @@
                     <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
                         @foreach (['#7C3AED','#0369A1','#D97706','#BE123C','#0F766E','#4338CA','#B45309','#0E7490'] as $swatch)
                             <button wire:click="$set('pillarColor','{{ $swatch }}')" type="button"
+                                aria-label="Choose pillar colour {{ $loop->iteration }}" aria-pressed="{{ $pillarColor === $swatch ? 'true' : 'false' }}"
                                 style="width:28px; height:28px; border-radius:50%; background:{{ $swatch }}; border:{{ $pillarColor === $swatch ? '3px solid #0F172A' : '2px solid transparent' }}; cursor:pointer;"></button>
                         @endforeach
-                        <input wire:model="pillarColor" type="color" style="width:28px; height:28px; border:none; padding:0; cursor:pointer; border-radius:50%;" title="Custom colour">
+                        <input wire:model="pillarColor" type="color" aria-label="Custom pillar colour" style="width:28px; height:28px; border:none; padding:0; cursor:pointer; border-radius:50%;" title="Custom colour">
                     </div>
                 </div>
 

@@ -34,6 +34,11 @@ class NotificationBell extends Component
         }
     }
 
+    public function close(): void
+    {
+        $this->open = false;
+    }
+
     public function markAllRead(): void
     {
         DB::table('notifications')
