@@ -14,6 +14,8 @@ class MediaPicker extends Component
     #[Locked]
     public string $brandId = '';
 
+    public string $brandSlug = '';
+
     public string $search = '';
 
     public array $selected = [];
@@ -23,6 +25,7 @@ class MediaPicker extends Component
     public function mount(Brand $brand): void
     {
         $this->brandId = $brand->id;
+        $this->brandSlug = $brand->slug;
     }
 
     public function openPicker(): void

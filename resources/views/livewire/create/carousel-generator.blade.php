@@ -1,20 +1,21 @@
 <div>
 
     {{-- ── MODE TOGGLE ─────────────────────────────────────────────────────── --}}
-    <div x-data="{ activeMode: '{{ $mode }}' }"
-         style="display:flex; gap:0.375rem; background:#F8FAFC; padding:0.375rem; border-radius:10px; border:1px solid #E2E8F0; margin-bottom:1.75rem; width:fit-content;">
+    <div style="display:flex; gap:0.375rem; background:#F8FAFC; padding:0.375rem; border-radius:10px; border:1px solid #E2E8F0; margin-bottom:1.75rem; width:fit-content;">
         <button type="button"
-            x-on:click="activeMode = 'carousel'; $wire.set('mode', 'carousel')"
-            :style="activeMode === 'carousel'
+            wire:key="carousel-mode-carousel"
+            wire:click="setMode('carousel')"
+            style="{{ $mode === 'carousel'
                 ? 'padding:0.4rem 1rem; border-radius:7px; font-size:0.8rem; font-weight:600; border:none; cursor:pointer; background:#fff; color:#7C3AED; box-shadow:0 1px 3px rgba(0,0,0,0.08);'
-                : 'padding:0.4rem 1rem; border-radius:7px; font-size:0.8rem; font-weight:400; border:none; cursor:pointer; background:transparent; color:#475569;'">
+                : 'padding:0.4rem 1rem; border-radius:7px; font-size:0.8rem; font-weight:400; border:none; cursor:pointer; background:transparent; color:#475569;' }}">
             Carousel slides
         </button>
         <button type="button"
-            x-on:click="activeMode = 'quote'; $wire.set('mode', 'quote')"
-            :style="activeMode === 'quote'
+            wire:key="carousel-mode-quote"
+            wire:click="setMode('quote')"
+            style="{{ $mode === 'quote'
                 ? 'padding:0.4rem 1rem; border-radius:7px; font-size:0.8rem; font-weight:600; border:none; cursor:pointer; background:#fff; color:#7C3AED; box-shadow:0 1px 3px rgba(0,0,0,0.08);'
-                : 'padding:0.4rem 1rem; border-radius:7px; font-size:0.8rem; font-weight:400; border:none; cursor:pointer; background:transparent; color:#475569;'">
+                : 'padding:0.4rem 1rem; border-radius:7px; font-size:0.8rem; font-weight:400; border:none; cursor:pointer; background:transparent; color:#475569;' }}">
             Quote &amp; cards
         </button>
     </div>
@@ -62,7 +63,7 @@
                     <div>
                         <label style="display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.25rem;">Where are you posting?</label>
                         <p style="font-size:0.75rem; color:#94A3B8; margin:0 0 0.5rem;">Affects slide count and tone.</p>
-                        <div x-data="{ active: '{{ $platform }}' }" style="display:flex; flex-direction:column; gap:0.3rem;">
+                        <div style="display:flex; flex-direction:column; gap:0.3rem;">
                             @php
                                 $platformHints = [
                                     'linkedin'  => '8–12 slides',
@@ -72,10 +73,11 @@
                             @endphp
                             @foreach($platforms as $key => $label)
                                 <button type="button"
-                                    x-on:click="active = '{{ $key }}'; $wire.set('platform', '{{ $key }}')"
-                                    :style="active === '{{ $key }}'
+                                    wire:key="carousel-platform-{{ $key }}"
+                                    wire:click="setPlatform('{{ $key }}')"
+                                    style="{{ $platform === $key
                                         ? 'padding:0.45rem 0.875rem; border-radius:8px; font-size:0.8rem; font-weight:600; border:1px solid #7C3AED; background:#F5F3FF; color:#7C3AED; cursor:pointer; text-align:left; display:flex; align-items:center; justify-content:space-between;'
-                                        : 'padding:0.45rem 0.875rem; border-radius:8px; font-size:0.8rem; border:1px solid #E2E8F0; background:#fff; color:#64748B; cursor:pointer; text-align:left; display:flex; align-items:center; justify-content:space-between;'">
+                                        : 'padding:0.45rem 0.875rem; border-radius:8px; font-size:0.8rem; border:1px solid #E2E8F0; background:#fff; color:#64748B; cursor:pointer; text-align:left; display:flex; align-items:center; justify-content:space-between;' }}">
                                     <span>{{ $label }}</span>
                                     <span style="font-size:0.68rem; opacity:0.6;">{{ $platformHints[$key] ?? '' }}</span>
                                 </button>
@@ -86,7 +88,7 @@
                     <div>
                         <label style="display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.25rem;">How should it flow?</label>
                         <p style="font-size:0.75rem; color:#94A3B8; margin:0 0 0.5rem;">Pick the story structure that fits.</p>
-                        <div x-data="{ active: '{{ $structure }}' }" style="display:flex; flex-direction:column; gap:0.3rem;">
+                        <div style="display:flex; flex-direction:column; gap:0.3rem;">
                             @php
                                 $structureHints = [
                                     'problem-solution' => 'Pain point → fix',
@@ -98,10 +100,11 @@
                             @endphp
                             @foreach($structures as $key => $label)
                                 <button type="button"
-                                    x-on:click="active = '{{ $key }}'; $wire.set('structure', '{{ $key }}')"
-                                    :style="active === '{{ $key }}'
+                                    wire:key="carousel-structure-{{ $key }}"
+                                    wire:click="setStructure('{{ $key }}')"
+                                    style="{{ $structure === $key
                                         ? 'padding:0.45rem 0.875rem; border-radius:8px; font-size:0.8rem; font-weight:600; border:1px solid #7C3AED; background:#F5F3FF; color:#7C3AED; cursor:pointer; text-align:left; display:flex; align-items:center; justify-content:space-between;'
-                                        : 'padding:0.45rem 0.875rem; border-radius:8px; font-size:0.8rem; border:1px solid #E2E8F0; background:#fff; color:#64748B; cursor:pointer; text-align:left; display:flex; align-items:center; justify-content:space-between;'">
+                                        : 'padding:0.45rem 0.875rem; border-radius:8px; font-size:0.8rem; border:1px solid #E2E8F0; background:#fff; color:#64748B; cursor:pointer; text-align:left; display:flex; align-items:center; justify-content:space-between;' }}">
                                     <span>{{ $label }}</span>
                                     <span style="font-size:0.68rem; opacity:0.6;">{{ $structureHints[$key] ?? '' }}</span>
                                 </button>
@@ -215,7 +218,7 @@
                             default => ['bg' => '#F8FAFC', 'border' => '#E2E8F0', 'label' => '#64748B', 'badge' => 'Slide '.($slide['slide'] ?? '')],
                         };
                     @endphp
-                    <div style="background:{{ $typeColor['bg'] }}; border:1px solid {{ $typeColor['border'] }}; border-radius:12px; padding:1rem 1.125rem;">
+                    <div wire:key="carousel-slide-{{ $slide['slide'] ?? $loop->index }}" style="background:{{ $typeColor['bg'] }}; border:1px solid {{ $typeColor['border'] }}; border-radius:12px; padding:1rem 1.125rem;">
                         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
                             <span style="font-size:0.7rem; font-weight:700; color:{{ $typeColor['label'] }};">
                                 {{ $typeColor['badge'] }}

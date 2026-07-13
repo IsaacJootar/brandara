@@ -235,8 +235,6 @@
         handleResize();
     </script>
 
-    @livewireScripts
-
     {{-- Global toast — triggered by Livewire dispatch('show-toast', message: '...') --}}
     <div
         x-cloak
@@ -250,6 +248,8 @@
         </svg>
         <span x-text="message"></span>
     </div>
+
+    @livewireScripts
 
     {{-- Web push subscription --}}
     @if (config('webpush.vapid.public_key'))

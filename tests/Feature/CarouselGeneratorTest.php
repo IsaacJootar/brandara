@@ -75,6 +75,26 @@ class CarouselGeneratorTest extends TestCase
             ->assertSet('mode', 'carousel');
     }
 
+    public function test_selection_buttons_update_only_allowed_values(): void
+    {
+        [$user, $brand] = $this->makeWorkspace();
+
+        Livewire::actingAs($user)
+            ->test(CarouselGenerator::class, ['brand' => $brand])
+            ->call('setMode', 'quote')
+            ->call('setPlatform', 'instagram')
+            ->call('setStructure', 'case-study')
+            ->assertSet('mode', 'quote')
+            ->assertSet('platform', 'instagram')
+            ->assertSet('structure', 'case-study')
+            ->call('setMode', 'wrong')
+            ->call('setPlatform', 'wrong')
+            ->call('setStructure', 'wrong')
+            ->assertSet('mode', 'quote')
+            ->assertSet('platform', 'instagram')
+            ->assertSet('structure', 'case-study');
+    }
+
     public function test_carousel_mode_validates_topic_required(): void
     {
         [$user, $brand] = $this->makeWorkspace();
@@ -104,10 +124,10 @@ class CarouselGeneratorTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
 
         $fakeResult = [
-            'platform'     => 'linkedin',
-            'structure'    => 'problem-solution',
+            'platform' => 'linkedin',
+            'structure' => 'problem-solution',
             'total_slides' => 6,
-            'slides'       => [
+            'slides' => [
                 ['slide' => 1, 'type' => 'hook', 'headline' => 'Hook headline', 'body' => '', 'visual_note' => 'Bold background'],
                 ['slide' => 6, 'type' => 'cta',  'headline' => 'CTA headline',  'body' => 'Follow for more', 'visual_note' => 'Green CTA'],
             ],

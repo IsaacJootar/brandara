@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Livewire\Media\MediaLibrary;
+use App\Livewire\Media\MediaPicker;
 use App\Models\Brand;
 use App\Models\MediaFile;
 use App\Models\User;
@@ -53,6 +54,21 @@ class MediaLibraryTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Media');
+    }
+
+    public function test_media_page_initializes_toast_before_livewire_scripts(): void
+    {
+        [$user, $brand] = $this->makeWorkspace();
+        $this->actingAs($user);
+
+        $content = $this->get(route('media', ['brand' => $brand->slug]))->getContent();
+
+        $toastPosition = strpos($content, 'x-on:show-toast.window');
+        $livewireScriptPosition = strpos($content, 'data-update-uri');
+
+        $this->assertNotFalse($toastPosition);
+        $this->assertNotFalse($livewireScriptPosition);
+        $this->assertLessThan($livewireScriptPosition, $toastPosition);
     }
 
     public function test_media_page_requires_auth(): void
@@ -117,15 +133,15 @@ class MediaLibraryTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
 
         $media = MediaFile::create([
-            'brand_id'    => $brand->id,
+            'brand_id' => $brand->id,
             'uploaded_by' => $user->id,
-            'filename'    => 'big.jpg',
+            'filename' => 'big.jpg',
             'storage_path' => 'brands/x/media/big.jpg',
-            'mime_type'   => 'image/jpeg',
+            'mime_type' => 'image/jpeg',
             'file_size_kb' => 10000,
-            'width'       => 1200,
-            'height'      => 900,
-            'tags'        => [],
+            'width' => 1200,
+            'height' => 900,
+            'tags' => [],
         ]);
 
         $result = app(MediaLibraryService::class)->platformCheck($media, 'instagram');
@@ -139,15 +155,15 @@ class MediaLibraryTest extends TestCase
         [$user, $brand] = $this->makeWorkspace();
 
         $media = MediaFile::create([
-            'brand_id'    => $brand->id,
+            'brand_id' => $brand->id,
             'uploaded_by' => $user->id,
-            'filename'    => 'ok.jpg',
+            'filename' => 'ok.jpg',
             'storage_path' => 'brands/x/media/ok.jpg',
-            'mime_type'   => 'image/jpeg',
+            'mime_type' => 'image/jpeg',
             'file_size_kb' => 500,
-            'width'       => 1200,
-            'height'      => 900,
-            'tags'        => [],
+            'width' => 1200,
+            'height' => 900,
+            'tags' => [],
         ]);
 
         $result = app(MediaLibraryService::class)->platformCheck($media, 'instagram');
@@ -221,5 +237,16 @@ class MediaLibraryTest extends TestCase
             ->call('deleteFile', $media->id);
 
         $this->assertDatabaseMissing('media_files', ['id' => $media->id]);
+    }
+
+    public function test_picker_empty_state_uses_current_brand_upload_link(): void
+    {
+        [$user, $brand] = $this->makeWorkspace();
+
+        Livewire::actingAs($user)
+            ->test(MediaPicker::class, ['brand' => $brand])
+            ->call('openPicker')
+            ->assertSet('brandSlug', $brand->slug)
+            ->assertSee(route('media', ['brand' => $brand->slug]), false);
     }
 }

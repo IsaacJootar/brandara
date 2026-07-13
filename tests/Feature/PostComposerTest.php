@@ -169,4 +169,22 @@ class PostComposerTest extends TestCase
             ->call('togglePlatform', 'linkedin')
             ->assertSet('platforms', ['twitter']);
     }
+
+    public function test_reactive_selectors_keep_the_clicked_values(): void
+    {
+        [$workspace, $user, $brand] = $this->makeWorkspaceUserBrand();
+        $workspace->update(['plan' => 'pro']);
+
+        Livewire::actingAs($user)
+            ->test(PostComposer::class, ['brand' => $brand])
+            ->call('setInputType', 'product')
+            ->call('setTone', 'bold')
+            ->call('togglePlatform', 'instagram')
+            ->assertSet('inputType', 'product')
+            ->assertSet('tone', 'bold')
+            ->assertSet('platforms', ['linkedin', 'instagram'])
+            ->assertSeeHtml('wire:key="composer-input-product"')
+            ->assertSeeHtml('wire:key="composer-tone-bold"')
+            ->assertSeeHtml('wire:key="composer-platform-instagram"');
+    }
 }

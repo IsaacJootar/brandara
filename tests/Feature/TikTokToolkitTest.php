@@ -74,6 +74,17 @@ class TikTokToolkitTest extends TestCase
             ->assertSet('status', 'idle');
     }
 
+    public function test_tone_selector_keeps_the_clicked_value(): void
+    {
+        [$user, $brand] = $this->makeWorkspace();
+
+        Livewire::actingAs($user)
+            ->test(TikTokToolkit::class, ['brand' => $brand])
+            ->call('setTone', 'bold')
+            ->assertSet('tone', 'bold')
+            ->assertSeeHtml('wire:key="tiktok-tone-bold"');
+    }
+
     public function test_generate_validates_topic_required(): void
     {
         [$user, $brand] = $this->makeWorkspace();

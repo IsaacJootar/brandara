@@ -49,14 +49,14 @@
                     @if($files->isEmpty())
                         <div style="text-align:center;padding:2.5rem 1rem;color:#94A3B8;">
                             <p style="font-size:0.875rem;margin:0;">No files in your library yet.</p>
-                            <a href="{{ route('media', ['brand' => \App\Models\Brand::find($brandId)?->slug ?? '']) }}"
+                            <a href="{{ route('media', ['brand' => $brandSlug]) }}"
                                style="font-size:0.8rem;color:#7C3AED;text-decoration:none;font-weight:500;">Upload files →</a>
                         </div>
                     @else
                         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:0.625rem;">
                             @foreach($files as $file)
                                 @php $url = $service->url($file); @endphp
-                                <button type="button" wire:click="toggleSelect('{{ $file->id }}')"
+                                <button type="button" wire:key="media-picker-file-{{ $file->id }}" wire:click="toggleSelect('{{ $file->id }}')"
                                     style="position:relative;aspect-ratio:1;border-radius:9px;overflow:hidden;border:2px solid {{ in_array($file->id, $selected) ? '#7C3AED' : '#E2E8F0' }};cursor:pointer;background:#F8FAFC;padding:0;transition:border-color 0.15s;">
 
                                     @if(str_starts_with($file->mime_type, 'image/'))

@@ -60,6 +60,33 @@ class CarouselGenerator extends Component
         $this->brandId = $brand->id;
     }
 
+    public function setMode(string $mode): void
+    {
+        if (! in_array($mode, ['carousel', 'quote'], true)) {
+            return;
+        }
+
+        $this->mode = $mode;
+    }
+
+    public function setPlatform(string $platform): void
+    {
+        if (! array_key_exists($platform, $this->platforms)) {
+            return;
+        }
+
+        $this->platform = $platform;
+    }
+
+    public function setStructure(string $structure): void
+    {
+        if (! array_key_exists($structure, $this->structures)) {
+            return;
+        }
+
+        $this->structure = $structure;
+    }
+
     public function generate(): void
     {
         $this->errorMessage = '';

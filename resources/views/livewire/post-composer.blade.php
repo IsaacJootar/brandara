@@ -25,14 +25,13 @@
                 ],
             ];
         @endphp
-        <div x-data="{ activeTab: '{{ $inputType }}' }"
-             style="display:flex; gap:0.375rem; margin-bottom:1.25rem; background:#F8FAFC; padding:0.375rem; border-radius:10px; border:1px solid #E2E8F0;">
+        <div style="display:flex; gap:0.375rem; margin-bottom:1.25rem; background:#F8FAFC; padding:0.375rem; border-radius:10px; border:1px solid #E2E8F0;">
             @foreach ($tabs as $type => $tab)
-                <button type="button"
-                    x-on:click="activeTab = '{{ $type }}'; $wire.setInputType('{{ $type }}')"
-                    :style="activeTab === '{{ $type }}'
+                <button type="button" wire:key="composer-input-{{ $type }}"
+                    wire:click="setInputType('{{ $type }}')"
+                    style="{{ $inputType === $type
                         ? 'flex:1; display:flex; align-items:center; justify-content:center; gap:0.35rem; padding:0.5rem 0.5rem; border-radius:7px; border:none; font-size:0.75rem; font-weight:600; cursor:pointer; transition:all 0.15s; background:#fff; color:#7C3AED; box-shadow:0 1px 3px rgba(15,23,42,0.08);'
-                        : 'flex:1; display:flex; align-items:center; justify-content:center; gap:0.35rem; padding:0.5rem 0.5rem; border-radius:7px; border:none; font-size:0.75rem; font-weight:400; cursor:pointer; transition:all 0.15s; background:transparent; color:#475569;'">
+                        : 'flex:1; display:flex; align-items:center; justify-content:center; gap:0.35rem; padding:0.5rem 0.5rem; border-radius:7px; border:none; font-size:0.75rem; font-weight:400; cursor:pointer; transition:all 0.15s; background:transparent; color:#475569;' }}">
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="flex-shrink:0;">{!! $tab['icon'] !!}</svg>
                     <span style="white-space:nowrap;">{{ $tab['label'] }}</span>
                 </button>
@@ -69,16 +68,15 @@
         @endif
 
         {{-- Tone selector — Alpine handles instant visual, Livewire persists --}}
-        <div style="margin-bottom:1.25rem;"
-             x-data="{ activeTone: '{{ $tone }}' }">
+        <div style="margin-bottom:1.25rem;">
             <label style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#94A3B8; display:block; margin-bottom:0.5rem;">Tone</label>
             <div style="display:flex; flex-wrap:wrap; gap:0.375rem;">
                 @foreach ($tones as $key => $label)
-                    <button type="button"
-                        x-on:click="activeTone = '{{ $key }}'; $wire.setTone('{{ $key }}')"
-                        :style="activeTone === '{{ $key }}'
+                    <button type="button" wire:key="composer-tone-{{ $key }}"
+                        wire:click="setTone('{{ $key }}')"
+                        style="{{ $tone === $key
                             ? 'padding:0.375rem 0.75rem; border-radius:99px; font-size:0.78rem; font-weight:600; border:1px solid #7C3AED; background:#F5F3FF; color:#7C3AED; cursor:pointer; transition:all 0.15s;'
-                            : 'padding:0.375rem 0.75rem; border-radius:99px; font-size:0.78rem; font-weight:400; border:1px solid #E2E8F0; background:#fff; color:#64748B; cursor:pointer; transition:all 0.15s;'">
+                            : 'padding:0.375rem 0.75rem; border-radius:99px; font-size:0.78rem; font-weight:400; border:1px solid #E2E8F0; background:#fff; color:#64748B; cursor:pointer; transition:all 0.15s;' }}">
                         {{ $label }}
                     </button>
                 @endforeach
@@ -103,13 +101,13 @@
             <div style="margin-bottom:1rem;">
                 <label style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#94A3B8; display:block; margin-bottom:0.5rem;">Content pillar</label>
                 <div style="display:flex; flex-wrap:wrap; gap:0.375rem;">
-                    <button type="button" wire:click="$set('pillarId', null)"
+                    <button type="button" wire:key="composer-pillar-none" wire:click="$set('pillarId', null)"
                         style="font-size:0.78rem; font-weight:500; padding:0.3rem 0.75rem; border-radius:99px; cursor:pointer; transition:all 0.15s;
                                {{ is_null($pillarId) ? 'background:#0F172A; color:#fff; border:1px solid #0F172A;' : 'background:#F8FAFC; color:#64748B; border:1px solid #E2E8F0;' }}">
                         None
                     </button>
                     @foreach($pillars as $pillar)
-                        <button type="button" wire:click="$set('pillarId', '{{ $pillar->id }}')"
+                        <button type="button" wire:key="composer-pillar-{{ $pillar->id }}" wire:click="$set('pillarId', '{{ $pillar->id }}')"
                             style="font-size:0.78rem; font-weight:500; padding:0.3rem 0.75rem; border-radius:99px; cursor:pointer; transition:all 0.15s;
                                    {{ $pillarId === $pillar->id
                                        ? 'background:' . $pillar->color . '; color:#fff; border:1px solid ' . $pillar->color . ';'
@@ -128,7 +126,7 @@
             @if(count($attachedMedia))
                 <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem;">
                     @foreach($attachedMedia as $media)
-                        <div style="position:relative; width:72px; height:72px; border-radius:8px; overflow:hidden; border:1px solid #E2E8F0; flex-shrink:0;">
+                        <div wire:key="composer-media-{{ $media['id'] }}" style="position:relative; width:72px; height:72px; border-radius:8px; overflow:hidden; border:1px solid #E2E8F0; flex-shrink:0;">
                             @if(str_starts_with($media['mime'], 'image/'))
                                 <img src="{{ $media['url'] }}" alt="{{ $media['name'] }}"
                                     style="width:100%; height:100%; object-fit:cover; display:block;">
@@ -217,14 +215,14 @@
                     @endphp
                     @if(!$allowed)
                         {{-- Locked platform — Growth plan required --}}
-                        <div style="display:flex; align-items:center; gap:0.625rem; padding:0.5rem 0.625rem; border-radius:8px; border:1px solid #F1F5F9; background:#FAFBFF; cursor:not-allowed; opacity:0.6;"
+                        <div wire:key="composer-platform-{{ $key }}" style="display:flex; align-items:center; gap:0.625rem; padding:0.5rem 0.625rem; border-radius:8px; border:1px solid #F1F5F9; background:#FAFBFF; cursor:not-allowed; opacity:0.6;"
                              title="Upgrade to Growth to publish on {{ $name }}">
                             <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#CBD5E1;"></span>
                             <span style="flex:1; font-size:0.84rem; color:#94A3B8;">{{ $name }}</span>
                             <span style="font-size:0.68rem; color:#CBD5E1; background:#F1F5F9; padding:0.15rem 0.5rem; border-radius:4px; font-weight:600;">Growth</span>
                         </div>
                     @else
-                    <button wire:click="togglePlatform('{{ $key }}')" type="button"
+                    <button wire:key="composer-platform-{{ $key }}" wire:click="togglePlatform('{{ $key }}')" type="button"
                         style="display:flex; align-items:center; gap:0.625rem; padding:0.5rem 0.625rem; border-radius:8px; border:1px solid {{ $selected ? '#7C3AED' : '#E2E8F0' }}; background:{{ $selected ? '#F5F3FF' : '#fff' }}; cursor:pointer; transition:all 0.15s; text-align:left;">
 
                         {{-- Platform colour dot --}}
@@ -265,7 +263,7 @@
                         $pct     = min(100, round(($charCount / $limit) * 100));
                         $barColor = $pct > 100 ? '#DC2626' : ($pct > 90 ? '#D97706' : '#10B981');
                     @endphp
-                    <div style="margin-bottom:0.625rem;">
+                    <div wire:key="composer-character-check-{{ $platform }}" style="margin-bottom:0.625rem;">
                         <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:0.25rem;">
                             <span style="color:#475569; font-weight:500;">{{ $platformNames[$platform] }}</span>
                             <span style="color:{{ $pct > 100 ? '#DC2626' : '#64748B' }};">{{ $charCount }}/{{ number_format($limit) }}</span>

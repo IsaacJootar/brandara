@@ -27,15 +27,15 @@
             </div>
 
             {{-- Tone --}}
-            <div x-data="{ activeTone: '{{ $tone }}' }">
+            <div>
                 <label style="display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.5rem;">Tone</label>
                 <div style="display:flex; flex-wrap:wrap; gap:0.375rem;">
                     @foreach($tones as $key => $label)
-                        <button type="button"
-                            x-on:click="activeTone = '{{ $key }}'; $wire.setTone('{{ $key }}')"
-                            :style="activeTone === '{{ $key }}'
+                        <button type="button" wire:key="tiktok-tone-{{ $key }}"
+                            wire:click="setTone('{{ $key }}')"
+                            style="{{ $tone === $key
                                 ? 'padding:0.35rem 0.875rem; border-radius:99px; font-size:0.78rem; border:1px solid; cursor:pointer; transition:all 0.15s; background:#0F172A; color:#fff; border-color:#0F172A; font-weight:600;'
-                                : 'padding:0.35rem 0.875rem; border-radius:99px; font-size:0.78rem; border:1px solid; cursor:pointer; transition:all 0.15s; background:#F8FAFC; color:#64748B; border-color:#E2E8F0;'">
+                                : 'padding:0.35rem 0.875rem; border-radius:99px; font-size:0.78rem; border:1px solid; cursor:pointer; transition:all 0.15s; background:#F8FAFC; color:#64748B; border-color:#E2E8F0;' }}">
                             {{ $label }}
                         </button>
                     @endforeach
@@ -131,7 +131,7 @@
                     </div>
                     <div style="padding:0.875rem 1rem; display:flex; flex-wrap:wrap; gap:0.375rem;">
                         @foreach($result['hashtags'] as $tag)
-                            <span style="font-size:0.8rem; font-weight:500; color:#EE1D52; background:#FE2C551A; padding:0.25rem 0.625rem; border-radius:99px; border:1px solid #FE2C5533;">{{ $tag }}</span>
+                            <span wire:key="tiktok-hashtag-{{ $loop->index }}" style="font-size:0.8rem; font-weight:500; color:#EE1D52; background:#FE2C551A; padding:0.25rem 0.625rem; border-radius:99px; border:1px solid #FE2C5533;">{{ $tag }}</span>
                         @endforeach
                     </div>
                 </div>
@@ -207,7 +207,7 @@
                             </thead>
                             <tbody>
                                 @foreach($result['text_overlays'] as $overlay)
-                                    <tr style="border-top:1px solid #F1F5F9;">
+                                    <tr wire:key="tiktok-overlay-{{ $loop->index }}" style="border-top:1px solid #F1F5F9;">
                                         <td style="padding:0.5rem 0.5rem 0.5rem 0; font-size:0.75rem; color:#94A3B8; white-space:nowrap; font-family:monospace;">{{ $overlay['timing'] ?? '' }}</td>
                                         <td style="padding:0.5rem 0; font-size:0.875rem; font-weight:600; color:#0F172A;">{{ $overlay['text'] ?? '' }}</td>
                                     </tr>
