@@ -84,6 +84,8 @@ return [
     'canva' => [
         'client_id' => env('CANVA_CLIENT_ID'),
         'client_secret' => env('CANVA_CLIENT_SECRET'),
+        'webhook_secret' => env('CANVA_WEBHOOK_SECRET'),
+        'export_hosts' => ['export-download.canva.com'],
     ],
 
     'publishing' => [

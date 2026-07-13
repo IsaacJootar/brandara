@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Support\PublicUrlGuard;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CanvaController extends Controller
 {
@@ -41,45 +43,104 @@ class CanvaController extends Controller
      * Receive a finished image from Canva via webhook.
      * Stores it in the brand's media library.
      *
-     * NOTE: This endpoint requires Canva Connect app approval.
-     * Until then it returns 200 to avoid Canva disabling the webhook.
+     * This endpoint remains unavailable until a webhook secret is configured.
      */
-    public function webhook(Request $request, string $brand): JsonResponse
+    public function webhook(Request $request, string $brand, PublicUrlGuard $urlGuard): JsonResponse
     {
-        Log::info('Canva webhook received', ['brand' => $brand, 'payload' => $request->all()]);
+        $webhookSecret = (string) config('services.canva.webhook_secret', '');
 
-        $apiKey = config('services.canva.webhook_secret');
+        if ($webhookSecret === '') {
+            Log::critical('Canva webhook rejected because no secret is configured');
 
-        if ($apiKey && $request->header('X-Canva-Signature') !== $apiKey) {
-            return response()->json(['error' => 'Unauthorised'], 401);
+            return response()->json(['message' => 'Canva connection is not configured.'], 503);
         }
 
-        // When Canva Connect is approved, this will contain the image URL
+        $signature = (string) $request->header('X-Canva-Signature', '');
+
+        if ($signature === '' || ! hash_equals($webhookSecret, $signature)) {
+            return response()->json(['message' => 'Canva request could not be verified.'], 401);
+        }
+
+        $brandModel = Brand::query()->find($brand);
+
+        if (! $brandModel) {
+            return response()->json(['message' => 'Brand was not found.'], 404);
+        }
+
         $imageUrl = $request->input('export_url');
+        $allowedHosts = config('services.canva.export_hosts', []);
 
-        if ($imageUrl && $brandModel = Brand::where('slug', $brand)->first()) {
-            try {
-                $response = Http::get($imageUrl);
-
-                if ($response->successful()) {
-                    $filename = 'canva-'.now()->format('Ymd-His').'.jpg';
-                    $path = "brands/{$brandModel->id}/media/{$filename}";
-                    Storage::put($path, $response->body());
-
-                    $brandModel->mediaFiles()->create([
-                        'uploaded_by' => $brandModel->workspace->owner_email,
-                        'filename' => $filename,
-                        'storage_path' => $path,
-                        'mime_type' => 'image/jpeg',
-                        'file_size_kb' => (int) ceil(strlen($response->body()) / 1024),
-                        'tags' => ['canva'],
-                    ]);
-                }
-            } catch (\Throwable $e) {
-                Log::error('Canva webhook image save failed', ['error' => $e->getMessage()]);
-            }
+        if (! is_string($imageUrl) || strlen($imageUrl) > 2048 || ! $urlGuard->allows($imageUrl, $allowedHosts)) {
+            return response()->json(['message' => 'Canva export address is not allowed.'], 422);
         }
 
-        return response()->json(['ok' => true]);
+        $owner = $brandModel->workspace->users()->where('role', 'owner')->first();
+
+        if (! $owner) {
+            Log::error('Canva webhook could not find workspace owner', ['brand_id' => $brandModel->id]);
+
+            return response()->json(['message' => 'Brand owner could not be found.'], 422);
+        }
+
+        $path = null;
+
+        try {
+            $response = Http::connectTimeout(5)
+                ->timeout(15)
+                ->retry(2, 200, throw: false)
+                ->withOptions(['allow_redirects' => false])
+                ->get($imageUrl);
+
+            if (! $response->successful()) {
+                Log::warning('Canva export download failed', [
+                    'brand_id' => $brandModel->id,
+                    'status' => $response->status(),
+                ]);
+
+                return response()->json(['message' => 'Canva export could not be downloaded.'], 502);
+            }
+
+            $body = $response->body();
+            $mimeType = (new \finfo(FILEINFO_MIME_TYPE))->buffer($body);
+            $extensions = [
+                'image/jpeg' => 'jpg',
+                'image/png' => 'png',
+                'image/gif' => 'gif',
+                'image/webp' => 'webp',
+            ];
+
+            if (! is_string($mimeType) || ! isset($extensions[$mimeType]) || strlen($body) > 20 * 1024 * 1024) {
+                return response()->json(['message' => 'Canva export is not a supported image.'], 422);
+            }
+
+            $filename = 'canva-'.Str::uuid().'.'.$extensions[$mimeType];
+            $path = "brands/{$brandModel->id}/media/{$filename}";
+
+            if (! Storage::disk('public')->put($path, $body)) {
+                throw new \RuntimeException('Canva export could not be written to storage.');
+            }
+
+            $brandModel->mediaFiles()->create([
+                'uploaded_by' => $owner->id,
+                'filename' => $filename,
+                'storage_path' => $path,
+                'mime_type' => $mimeType,
+                'file_size_kb' => (int) ceil(strlen($body) / 1024),
+                'tags' => ['canva'],
+            ]);
+        } catch (\Throwable $exception) {
+            if ($path) {
+                Storage::disk('public')->delete($path);
+            }
+
+            Log::error('Canva webhook image save failed', [
+                'brand_id' => $brandModel->id,
+                'exception' => $exception::class,
+            ]);
+
+            return response()->json(['message' => 'Canva export could not be saved.'], 502);
+        }
+
+        return response()->json(['ok' => true], 201);
     }
 }
