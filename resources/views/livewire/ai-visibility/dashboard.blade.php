@@ -4,7 +4,7 @@
 <div style="background:linear-gradient(135deg,#7C3AED 0%,#4F46E5 50%,#0369A1 100%); border-radius:16px; padding:1.75rem 1.5rem; margin-bottom:1.5rem; color:#fff; position:relative; overflow:hidden;">
     <div style="position:absolute; top:-30px; right:-30px; width:140px; height:140px; background:rgba(255,255,255,0.06); border-radius:50%;"></div>
     <div style="position:absolute; bottom:-20px; right:60px; width:80px; height:80px; background:rgba(255,255,255,0.04); border-radius:50%;"></div>
-    <h2 style="font-size:1.25rem; font-weight:800; margin:0 0 0.5rem; position:relative;">Your brand's AI visibility journey</h2>
+    <h2 style="font-size:1.25rem; font-weight:800; margin:0 0 0.5rem; position:relative;">Your brand's AI Presence journey</h2>
     <p style="font-size:0.85rem; margin:0 0 0.75rem; line-height:1.65; opacity:0.92; max-width:600px; position:relative;">
         When someone asks ChatGPT, Gemini, or any AI "who's the best {{ strtolower($brand->tagline ? explode(' ', $brand->tagline)[0] ?? 'business' : 'business') }} near me?" — does your brand show up?
         Most businesses don't. Brandara helps you fix that, step by step.
@@ -492,7 +492,7 @@
 
     {{-- Monitoring advice --}}
     <div style="background:linear-gradient(135deg,#F5F3FF,#EDE9FE); border:1px solid #DDD6FE; border-radius:14px; padding:1.25rem 1.5rem; margin-bottom:1.25rem;">
-        <p style="font-size:0.875rem; font-weight:700; color:#5B21B6; margin:0 0 0.5rem;">AI visibility improves over time — not overnight</p>
+        <p style="font-size:0.875rem; font-weight:700; color:#5B21B6; margin:0 0 0.5rem;">Your AI Presence improves over time — not overnight</p>
         <p style="font-size:0.8rem; color:#6D28D9; margin:0 0 0.75rem; line-height:1.65;">
             Every time you publish content, update your website, or get listed in a directory, AI systems learn more about your brand. Your visibility score will grow month by month as you follow the steps in each tab. Let Brandara keep monitoring — run your monthly scan to track your progress.
         </p>

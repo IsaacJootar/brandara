@@ -48,7 +48,8 @@ class AiVisibilityTest extends TestCase
         $response = $this->actingAs($user)->get("/{$brand->slug}/ai-presence");
 
         $response->assertStatus(200);
-        $response->assertSee('AI Visibility');
+        $response->assertSee('AI Presence');
+        $response->assertDontSee('AI Visibility');
     }
 
     public function test_ai_presence_page_redirects_unauthenticated(): void
