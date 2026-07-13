@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Workspace extends Model
 {
-    use HasUuids;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
         'name', 'slug', 'owner_email', 'country', 'timezone',
@@ -49,7 +50,9 @@ class Workspace extends Model
             return 0;
         }
 
-        return max(0, (int) now()->diffInDays($this->trial_ends_at, false));
+        $daysLeft = now()->startOfDay()->diffInDays($this->trial_ends_at->copy()->startOfDay(), false);
+
+        return max(0, (int) $daysLeft);
     }
 
     public function isActive(): bool

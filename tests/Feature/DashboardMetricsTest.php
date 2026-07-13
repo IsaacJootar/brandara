@@ -57,7 +57,7 @@ class DashboardMetricsTest extends TestCase
 
         Livewire::withoutLazyLoading()
             ->test(Metrics::class, ['brand' => $brand])
-            ->assertSee('Posts published')
+            ->assertSee('Published this month')
             ->assertSee('Platforms connected')
             ->assertSee('Warm leads');
     }
