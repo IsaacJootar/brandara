@@ -58,28 +58,42 @@ class PlatformController extends Controller
     public function callback(Request $request, string $platform)
     {
         $this->validatePlatform($platform);
-
-        // Handle provider errors (user denied access)
-        if ($request->has('error')) {
-            $brandSlug = session('oauth_brand_slug');
-
-            return redirect()
-                ->route('connections', ['brand' => $brandSlug])
-                ->with('error', 'Connection cancelled. You can try again anytime.');
-        }
-
-        $code = $request->input('code');
+        $brandSlug = session()->pull('oauth_brand_slug');
         $state = $request->input('state');
-        $brandSlug = session('oauth_brand_slug');
 
         try {
+            if (! is_string($state) || $state === '') {
+                abort(422, 'Invalid OAuth state.');
+            }
+
+            // Handle provider errors (user denied access)
+            if ($request->has('error')) {
+                $brand = $this->service->handleCancelledCallback($platform, $state);
+
+                return redirect()
+                    ->route('connections', ['brand' => $brand->slug])
+                    ->with('error', 'Connection cancelled. You can try again anytime.');
+            }
+
+            $code = $request->input('code');
+
+            if (! is_string($code) || $code === '') {
+                abort(422, 'Missing connection code.');
+            }
+
             $connection = $this->service->handleCallback($platform, $code, $state);
 
             return redirect()
-                ->route('connections', ['brand' => $brandSlug])
+                ->route('connections', ['brand' => $connection->brand->slug])
                 ->with('success', "{$connection->platform_username} connected successfully.");
         } catch (\Exception $e) {
             report($e);
+
+            if (! is_string($brandSlug) || $brandSlug === '') {
+                return redirect()
+                    ->route('home')
+                    ->with('error', 'Connection failed. Please try again.');
+            }
 
             return redirect()
                 ->route('connections', ['brand' => $brandSlug])

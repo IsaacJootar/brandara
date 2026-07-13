@@ -10,13 +10,15 @@ use Illuminate\Support\Str;
 
 class PlatformConnectionService
 {
+    private const OAUTH_STATE_TTL_SECONDS = 600;
+
     /**
      * Build the OAuth redirect URL for a given platform.
-     * Encodes brand_id + CSRF in the state parameter.
+     * Stores authorization context server-side behind an opaque state token.
      */
     public function buildAuthUrl(string $platform, Brand $brand): string
     {
-        $state = $this->buildState($brand->id);
+        $state = $this->buildState($platform, $brand->id);
 
         return match ($platform) {
             'linkedin' => $this->linkedInAuthUrl($state),
@@ -34,18 +36,12 @@ class PlatformConnectionService
      */
     public function handleCallback(string $platform, string $code, string $state): PlatformConnection
     {
-        $brandId = $this->validateState($state);
-
-        $brand = Brand::findOrFail($brandId);
-
-        // Verify the authenticated user owns this brand
-        if ($brand->workspace_id !== auth()->user()->workspace_id) {
-            abort(403, 'Access denied.');
-        }
+        $pendingAuthorization = $this->consumeState($platform, $state);
+        $brand = $pendingAuthorization['brand'];
 
         $tokenData = match ($platform) {
             'linkedin' => $this->exchangeLinkedIn($code),
-            'twitter' => $this->exchangeTwitter($code),
+            'twitter' => $this->exchangeTwitter($code, $pendingAuthorization['code_verifier'] ?? null),
             'facebook' => $this->exchangeMeta('facebook', $code),
             'instagram' => $this->exchangeMeta('instagram', $code),
             'threads' => $this->exchangeMeta('threads', $code),
@@ -53,6 +49,14 @@ class PlatformConnectionService
         };
 
         return $this->upsertConnection($brand, $platform, $tokenData);
+    }
+
+    /**
+     * Consume a denied OAuth request so its state cannot be replayed.
+     */
+    public function handleCancelledCallback(string $platform, string $state): Brand
+    {
+        return $this->consumeState($platform, $state)['brand'];
     }
 
     /**
@@ -80,29 +84,75 @@ class PlatformConnectionService
 
     // ── Private: State encoding / validation ─────────────────────────────────
 
-    private function buildState(string $brandId): string
+    private function buildState(string $platform, string $brandId): string
     {
-        return base64_encode(json_encode([
+        $state = Str::random(64);
+        $stateHash = hash('sha256', $state);
+
+        session()->put("oauth_states.{$stateHash}", [
+            'state_hash' => $stateHash,
             'brand_id' => $brandId,
-            'csrf' => Str::random(32),
-            'ts' => now()->timestamp,
-        ]));
+            'platform' => $platform,
+            'issued_at' => now()->timestamp,
+        ]);
+
+        return $state;
     }
 
-    private function validateState(string $state): string
+    /**
+     * @return array{brand: Brand, code_verifier: ?string}
+     */
+    private function consumeState(string $platform, string $state): array
     {
-        $data = json_decode(base64_decode($state), true);
-
-        if (! $data || ! isset($data['brand_id'], $data['ts'])) {
+        if ($state === '' || strlen($state) > 128) {
             abort(422, 'Invalid OAuth state.');
         }
 
-        // State must be used within 10 minutes
-        if (now()->timestamp - $data['ts'] > 600) {
+        $stateHash = hash('sha256', $state);
+        $pendingAuthorization = session()->pull("oauth_states.{$stateHash}");
+
+        if (! is_array($pendingAuthorization)
+            || ! isset(
+                $pendingAuthorization['state_hash'],
+                $pendingAuthorization['brand_id'],
+                $pendingAuthorization['platform'],
+                $pendingAuthorization['issued_at'],
+            )
+            || ! is_string($pendingAuthorization['state_hash'])
+            || ! is_string($pendingAuthorization['brand_id'])
+            || ! is_string($pendingAuthorization['platform'])
+            || ! is_int($pendingAuthorization['issued_at'])
+            || ! hash_equals($pendingAuthorization['state_hash'], $stateHash)
+            || ! hash_equals($pendingAuthorization['platform'], $platform)) {
+            abort(422, 'Invalid OAuth state.');
+        }
+
+        $stateAge = now()->timestamp - (int) $pendingAuthorization['issued_at'];
+
+        if ($stateAge < 0 || $stateAge > self::OAUTH_STATE_TTL_SECONDS) {
             abort(422, 'OAuth state expired. Please try connecting again.');
         }
 
-        return $data['brand_id'];
+        $user = auth()->user();
+
+        if (! $user) {
+            abort(403, 'Access denied.');
+        }
+
+        $brand = Brand::where('workspace_id', $user->workspace_id)
+            ->whereKey($pendingAuthorization['brand_id'])
+            ->firstOrFail();
+
+        $codeVerifier = $pendingAuthorization['code_verifier'] ?? null;
+
+        if ($codeVerifier !== null && ! is_string($codeVerifier)) {
+            abort(422, 'Invalid OAuth state.');
+        }
+
+        return [
+            'brand' => $brand,
+            'code_verifier' => $codeVerifier,
+        ];
     }
 
     // ── Private: LinkedIn ─────────────────────────────────────────────────────
@@ -152,8 +202,8 @@ class PlatformConnectionService
         $codeVerifier = Str::random(64);
         $codeChallenge = rtrim(strtr(base64_encode(hash('sha256', $codeVerifier, true)), '+/', '-_'), '=');
 
-        // Store verifier in session for callback
-        session(['twitter_code_verifier' => $codeVerifier]);
+        $stateHash = hash('sha256', $state);
+        session()->put("oauth_states.{$stateHash}.code_verifier", $codeVerifier);
 
         $params = http_build_query([
             'response_type' => 'code',
@@ -168,8 +218,12 @@ class PlatformConnectionService
         return 'https://twitter.com/i/oauth2/authorize?'.$params;
     }
 
-    private function exchangeTwitter(string $code): array
+    private function exchangeTwitter(string $code, ?string $codeVerifier): array
     {
+        if (! $codeVerifier) {
+            abort(422, 'Connection session expired. Please try connecting again.');
+        }
+
         $response = Http::withBasicAuth(
             config('services.twitter.client_id'),
             config('services.twitter.client_secret')
@@ -177,7 +231,7 @@ class PlatformConnectionService
             'grant_type' => 'authorization_code',
             'code' => $code,
             'redirect_uri' => config('services.twitter.redirect_uri'),
-            'code_verifier' => session('twitter_code_verifier'),
+            'code_verifier' => $codeVerifier,
         ])->throw()->json();
 
         // Get user info
