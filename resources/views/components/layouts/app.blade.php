@@ -185,7 +185,7 @@
 
             {{-- Topbar --}}
             <header class="brandara-topbar">
-                <div style="display:flex; align-items:center; gap:0.75rem;">
+                <div class="brandara-topbar-context">
                     <button class="brandara-hamburger" id="hamburgerBtn" onclick="openSidebar()" aria-label="Open menu">
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                             <line x1="4" y1="7" x2="20" y2="7"/>
@@ -193,11 +193,11 @@
                             <line x1="4" y1="17" x2="20" y2="17"/>
                         </svg>
                     </button>
-                    <span style="font-size:0.875rem; font-weight:600; color:#0F172A;">{{ $currentBrand->name }}</span>
+                    <span class="brandara-topbar-name">{{ $currentBrand->name }}</span>
                 </div>
-                <div style="display:flex; align-items:center; gap:0.625rem;">
+                <div class="brandara-topbar-actions">
                     {{-- Plan badge --}}
-                    <span style="font-size:0.68rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; padding:0.25rem 0.6rem; border-radius:6px; background:#F5F3FF; color:#7C3AED;">
+                    <span class="brandara-plan-badge" style="font-size:0.68rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; padding:0.25rem 0.6rem; border-radius:6px; background:#F5F3FF; color:#7C3AED;">
                         {{ app(\App\Services\Plan\PlanFeatureService::class)->planLabel($workspace->plan) }}
                     </span>
                     {{-- Notification bell --}}

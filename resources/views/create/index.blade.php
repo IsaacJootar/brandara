@@ -1,6 +1,6 @@
 <x-layouts.app>
 
-    <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.75rem; flex-wrap:wrap; gap:1rem;">
+    <div class="create-page-header" style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.75rem; flex-wrap:wrap; gap:1rem;">
         <div>
             <h1 style="font-size:1.375rem; font-weight:700; color:#0F172A; margin:0 0 0.25rem;">Create</h1>
             <p style="font-size:0.875rem; color:#64748B; margin:0;">
@@ -8,13 +8,13 @@
             </p>
         </div>
         @if($brand->brand_voice)
-            <a href="{{ route('my-brand', ['brand' => $brand->slug]) }}"
+            <a class="create-voice-link" href="{{ route('my-brand', ['brand' => $brand->slug]) }}"
                style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.875rem; background:#ECFDF5; border:1px solid #A7F3D0; border-radius:8px; font-size:0.8rem; color:#059669; font-weight:500; text-decoration:none;">
                 <span style="width:8px;height:8px;border-radius:50%;background:#10B981;display:inline-block;"></span>
                 Brand Voice active
             </a>
         @else
-            <a href="{{ route('my-brand', ['brand' => $brand->slug]) }}"
+            <a class="create-voice-link" href="{{ route('my-brand', ['brand' => $brand->slug]) }}"
                style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.875rem; background:#FFFBEB; border:1px solid #FDE68A; border-radius:8px; font-size:0.8rem; color:#D97706; font-weight:500; text-decoration:none;">
                 ✨ Set up Brand Voice for better AI content
             </a>
@@ -27,7 +27,7 @@
 
     @livewire('create.pillar-alert', ['brand' => $brand])
 
-    <div style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:1.5rem; margin-bottom:1.75rem;">
+    <div class="create-composer-shell" style="background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:1.5rem; margin-bottom:1.75rem;">
         @livewire('post-composer', ['brand' => $brand])
     </div>
 
@@ -90,12 +90,12 @@
 
     @if ($drafts->isNotEmpty())
         <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden;">
-            <div style="padding:1rem 1.5rem; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between;">
+        <div class="create-drafts-header" style="padding:1rem 1.5rem; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between;">
                 <div style="font-size:0.9rem; font-weight:600; color:#0F172A;">Recent drafts</div>
                 <a href="{{ route('schedule', ['brand' => $brand->slug]) }}" style="font-size:0.8rem; color:#7C3AED; text-decoration:none; font-weight:500;">View all →</a>
             </div>
             @foreach ($drafts as $draft)
-                <div style="display:flex; align-items:center; gap:1rem; padding:0.875rem 1.5rem; {{ !$loop->last ? 'border-bottom:1px solid #F8FAFC;' : '' }}">
+                <div class="create-draft-row" style="display:flex; align-items:center; gap:1rem; padding:0.875rem 1.5rem; {{ !$loop->last ? 'border-bottom:1px solid #F8FAFC;' : '' }}">
                     <div style="flex:1; min-width:0;">
                         <div style="font-size:0.85rem; font-weight:500; color:#0F172A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                             {{ Str::limit($draft->raw_input ?? 'Untitled draft', 80) }}

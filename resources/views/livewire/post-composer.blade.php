@@ -1,8 +1,8 @@
-<div style="display:grid; grid-template-columns:1fr 340px; gap:1.5rem; align-items:start;"
+<div class="post-composer"
      x-data="{ aiPanel: false }">
 
     {{-- ── LEFT — Main composer ──────────────────────────────────────────── --}}
-    <div>
+    <div class="composer-main-column">
 
         {{-- Input type tabs — Alpine for instant visual, Livewire persists --}}
         @php
@@ -25,15 +25,15 @@
                 ],
             ];
         @endphp
-        <div style="display:flex; gap:0.375rem; margin-bottom:1.25rem; background:#F8FAFC; padding:0.375rem; border-radius:10px; border:1px solid #E2E8F0;">
+        <div class="composer-input-tabs" style="gap:0.375rem; margin-bottom:1.25rem; background:#F8FAFC; padding:0.375rem; border-radius:10px; border:1px solid #E2E8F0;">
             @foreach ($tabs as $type => $tab)
-                <button type="button" wire:key="composer-input-{{ $type }}"
+                <button type="button" class="composer-input-tab" wire:key="composer-input-{{ $type }}"
                     wire:click="setInputType('{{ $type }}')"
                     style="{{ $inputType === $type
                         ? 'flex:1; display:flex; align-items:center; justify-content:center; gap:0.35rem; padding:0.5rem 0.5rem; border-radius:7px; border:none; font-size:0.75rem; font-weight:600; cursor:pointer; transition:all 0.15s; background:#fff; color:#7C3AED; box-shadow:0 1px 3px rgba(15,23,42,0.08);'
                         : 'flex:1; display:flex; align-items:center; justify-content:center; gap:0.35rem; padding:0.5rem 0.5rem; border-radius:7px; border:none; font-size:0.75rem; font-weight:400; cursor:pointer; transition:all 0.15s; background:transparent; color:#475569;' }}">
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="flex-shrink:0;">{!! $tab['icon'] !!}</svg>
-                    <span style="white-space:nowrap;">{{ $tab['label'] }}</span>
+                    <span>{{ $tab['label'] }}</span>
                 </button>
             @endforeach
         </div>
@@ -150,7 +150,7 @@
         </div>
 
         {{-- Action row --}}
-        <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+        <div class="composer-actions">
 
             {{-- Save as draft --}}
             <button wire:click="saveDraft" type="button"
@@ -195,7 +195,7 @@
     </div>
 
     {{-- ── RIGHT — Platform selector & preview ──────────────────────────── --}}
-    <div style="position:sticky; top:1.5rem;">
+    <div class="composer-sidebar">
 
         {{-- Platform selector --}}
         <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem; margin-bottom:1rem;">
@@ -282,13 +282,60 @@
 
 <style>
 @keyframes spin { to { transform: rotate(360deg); } }
+.post-composer {
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) 340px;
+    gap:1.5rem;
+    align-items:start;
+    min-width:0;
+}
+.composer-main-column,
+.composer-sidebar {
+    min-width:0;
+}
+.composer-sidebar {
+    position:sticky;
+    top:1.5rem;
+}
+.composer-input-tabs {
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+}
+.composer-input-tab {
+    min-width:0;
+}
+.composer-input-tab span {
+    overflow-wrap:anywhere;
+}
+.composer-actions {
+    display:flex;
+    gap:0.75rem;
+    align-items:center;
+    flex-wrap:wrap;
+}
 @media (max-width: 768px) {
-    div[style*="grid-template-columns:1fr 340px"] {
-        display: flex !important;
-        flex-direction: column !important;
+    .post-composer {
+        grid-template-columns:minmax(0, 1fr);
     }
-    div[style*="position:sticky"] {
-        position: static !important;
+    .composer-sidebar {
+        position:static;
+    }
+}
+@media (max-width: 480px) {
+    .composer-input-tabs {
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+    }
+    .composer-actions {
+        display:grid;
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+    }
+    .composer-actions > button,
+    .composer-actions > a {
+        justify-content:center;
+        min-width:0;
+        padding-left:0.75rem !important;
+        padding-right:0.75rem !important;
+        text-align:center;
     }
 }
 </style>

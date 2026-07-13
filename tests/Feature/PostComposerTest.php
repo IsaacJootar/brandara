@@ -68,6 +68,24 @@ class PostComposerTest extends TestCase
             ->assertSeeLivewire(PostComposer::class);
     }
 
+    public function test_create_page_includes_mobile_layout_constraints(): void
+    {
+        [, $user, $brand] = $this->makeWorkspaceUserBrand();
+
+        $this->actingAs($user)
+            ->get("/{$brand->slug}/create")
+            ->assertOk()
+            ->assertSee('create-composer-shell', false)
+            ->assertSee('composer-input-tabs', false)
+            ->assertSee('composer-actions', false)
+            ->assertSee('brandara-topbar-name', false);
+
+        $css = file_get_contents(resource_path('css/app.css'));
+
+        $this->assertStringContainsString('@media (max-width: 640px)', $css);
+        $this->assertStringContainsString('.create-composer-shell', $css);
+    }
+
     public function test_save_draft_persists_post_scoped_to_brand(): void
     {
         [, $user, $brand] = $this->makeWorkspaceUserBrand();
