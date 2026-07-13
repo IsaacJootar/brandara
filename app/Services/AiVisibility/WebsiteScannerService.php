@@ -4,7 +4,12 @@ namespace App\Services\AiVisibility;
 
 use App\Models\AiVisibilityCheck;
 use App\Models\Brand;
+use App\Support\PublicUrlGuard;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\UriResolver;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
 
 /**
  * Scans a brand's website and runs all readiness checks.
@@ -19,6 +24,8 @@ use Illuminate\Support\Facades\Http;
  */
 class WebsiteScannerService
 {
+    private const ALLOWED_SCHEMES = ['http', 'https'];
+
     private string $html = '';
 
     private string $robotsTxt = '';
@@ -27,10 +34,16 @@ class WebsiteScannerService
 
     private array $headers = [];
 
+    public function __construct(private PublicUrlGuard $urlGuard) {}
+
     /** Run all automated checks for a brand and persist results. */
     public function scan(Brand $brand, string $websiteUrl): AiVisibilityCheck
     {
         $url = $this->normaliseUrl($websiteUrl);
+
+        if (! $this->urlGuard->allows($url, allowedSchemes: self::ALLOWED_SCHEMES)) {
+            throw new InvalidArgumentException('Website address must point to a public website.');
+        }
 
         // Fetch page data
         $this->html = $this->fetchPage($url);
@@ -166,62 +179,104 @@ class WebsiteScannerService
 
     private function fetchPage(string $url): string
     {
-        try {
-            $response = Http::withUserAgent('BrandaraBot/1.0')
-                ->timeout(10)
-                ->get($url);
+        $response = $this->request('GET', $url, 10);
 
-            return $response->ok() ? $response->body() : '';
-        } catch (\Throwable) {
+        if (! $response?->ok()) {
             return '';
         }
+
+        $body = $response->body();
+
+        return strlen($body) <= 2 * 1024 * 1024 ? $body : '';
     }
 
     private function fetchHeaders(string $url): array
     {
-        try {
-            return Http::withUserAgent('BrandaraBot/1.0')->timeout(10)->head($url)->headers();
-        } catch (\Throwable) {
-            return [];
-        }
+        return $this->request('HEAD', $url, 10)?->headers() ?? [];
     }
 
     private function fetchRobotsTxt(string $url): string
     {
-        try {
-            $base = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST);
-            $response = Http::withUserAgent('BrandaraBot/1.0')->timeout(8)->get($base.'/robots.txt');
+        $response = $this->request('GET', $this->baseUrl($url).'/robots.txt', 8);
 
-            return $response->ok() ? $response->body() : '';
-        } catch (\Throwable) {
-            return '';
-        }
+        return $response?->ok() ? $response->body() : '';
     }
 
     private function discoverSitemap(string $url): ?string
     {
         // Check robots.txt for Sitemap directive
         if ($this->robotsTxt && preg_match('/^Sitemap:\s*(.+)$/im', $this->robotsTxt, $m)) {
-            return trim($m[1]);
+            $sitemapUrl = $this->resolveUrl($url, trim($m[1]));
+
+            return $this->urlGuard->allows($sitemapUrl, allowedSchemes: self::ALLOWED_SCHEMES)
+                ? $sitemapUrl
+                : null;
         }
 
         // Try default /sitemap.xml
-        try {
-            $base = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST);
-            $res = Http::withUserAgent('BrandaraBot/1.0')->timeout(8)->get($base.'/sitemap.xml');
-            if ($res->ok()) {
-                return $base.'/sitemap.xml';
-            }
-        } catch (\Throwable) {
+        $sitemapUrl = $this->baseUrl($url).'/sitemap.xml';
+        $response = $this->request('GET', $sitemapUrl, 8);
+
+        if ($response?->ok()) {
+            return $sitemapUrl;
         }
 
         return null;
     }
 
+    private function request(string $method, string $url, int $timeout): ?Response
+    {
+        $currentUrl = $url;
+
+        for ($redirects = 0; $redirects <= 3; $redirects++) {
+            if (! $this->urlGuard->allows($currentUrl, allowedSchemes: self::ALLOWED_SCHEMES)) {
+                return null;
+            }
+
+            try {
+                $response = Http::withUserAgent('BrandaraBot/1.0')
+                    ->connectTimeout(5)
+                    ->timeout($timeout)
+                    ->retry(1, 200, throw: false)
+                    ->withOptions(['allow_redirects' => false])
+                    ->send($method, $currentUrl);
+            } catch (\Throwable) {
+                return null;
+            }
+
+            if (! $response->redirect()) {
+                return $response;
+            }
+
+            $location = $response->header('Location');
+
+            if (! is_string($location) || $location === '') {
+                return null;
+            }
+
+            $currentUrl = $this->resolveUrl($currentUrl, $location);
+        }
+
+        return null;
+    }
+
+    private function resolveUrl(string $baseUrl, string $targetUrl): string
+    {
+        return (string) UriResolver::resolve(new Uri($baseUrl), new Uri($targetUrl));
+    }
+
+    private function baseUrl(string $url): string
+    {
+        $parts = parse_url($url);
+        $port = isset($parts['port']) ? ':'.$parts['port'] : '';
+
+        return $parts['scheme'].'://'.$parts['host'].$port;
+    }
+
     private function normaliseUrl(string $url): string
     {
         $url = trim($url);
-        if (! str_starts_with($url, 'http')) {
+        if (! str_contains($url, '://')) {
             $url = 'https://'.$url;
         }
 

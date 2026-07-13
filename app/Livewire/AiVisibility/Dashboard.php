@@ -53,13 +53,11 @@ class Dashboard extends Component
 
         $brand = Brand::findOrFail($this->brandId);
 
-        // Save website URL to brand
-        $brand->update(['website_url' => $this->websiteUrl]);
-
         $this->scanning = true;
 
         try {
             app(WebsiteScannerService::class)->scan($brand, $this->websiteUrl);
+            $brand->update(['website_url' => $this->websiteUrl]);
             $this->successMessage = 'Scan complete. Your AI Readiness score has been updated.';
             $this->dispatch('show-toast', message: $this->successMessage, type: 'success');
         } catch (\Throwable $e) {

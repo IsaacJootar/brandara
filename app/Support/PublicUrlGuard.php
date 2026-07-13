@@ -9,16 +9,19 @@ class PublicUrlGuard
      * only to publicly routable addresses.
      *
      * @param  string[]  $allowedHosts
+     * @param  string[]  $allowedSchemes
      */
-    public function allows(string $url, array $allowedHosts = []): bool
+    public function allows(string $url, array $allowedHosts = [], array $allowedSchemes = ['https']): bool
     {
         $parts = parse_url($url);
 
-        if (! is_array($parts) || ($parts['scheme'] ?? null) !== 'https' || empty($parts['host'])) {
+        if (! is_array($parts) || ! in_array($parts['scheme'] ?? null, $allowedSchemes, true) || empty($parts['host'])) {
             return false;
         }
 
-        if (isset($parts['user']) || isset($parts['pass']) || (($parts['port'] ?? 443) !== 443)) {
+        $expectedPort = ($parts['scheme'] ?? null) === 'https' ? 443 : 80;
+
+        if (isset($parts['user']) || isset($parts['pass']) || (($parts['port'] ?? $expectedPort) !== $expectedPort)) {
             return false;
         }
 
