@@ -67,6 +67,36 @@ class PlatformOAuthStateTest extends TestCase
             ->assertSessionHas('success', 'Brand Owner connected successfully.');
     }
 
+    public function test_provider_outage_does_not_store_token_and_shows_plain_failure(): void
+    {
+        [, $user, $brand] = $this->makeWorkspace('Outage');
+        $authorizationResponse = $this->actingAs($user)->get(route('platform.connect', [
+            'brand' => $brand->slug,
+            'platform' => 'linkedin',
+        ]));
+        $state = $this->stateFrom($authorizationResponse->headers->get('Location'));
+        Http::fake([
+            'www.linkedin.com/oauth/v2/accessToken' => Http::response([
+                'access_token' => 'access-token',
+            ]),
+            'api.linkedin.com/v2/userinfo' => Http::sequence()
+                ->pushStatus(500)
+                ->pushStatus(500)
+                ->pushStatus(500),
+        ]);
+
+        $this->get(route('platform.callback', [
+            'platform' => 'linkedin',
+            'code' => 'valid-code',
+            'state' => $state,
+        ]))
+            ->assertRedirect(route('connections', ['brand' => $brand->slug]))
+            ->assertSessionHas('error', 'Connection failed. Please check your credentials and try again.');
+
+        $this->assertDatabaseCount('platform_connections', 0);
+        Http::assertSentCount(4);
+    }
+
     public function test_altered_state_is_rejected_before_provider_request(): void
     {
         [, $user, $brand] = $this->makeWorkspace('Altered');

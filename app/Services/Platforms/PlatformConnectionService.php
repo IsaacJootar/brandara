@@ -4,13 +4,15 @@ namespace App\Services\Platforms;
 
 use App\Models\Brand;
 use App\Models\PlatformConnection;
+use App\Support\ExternalApiRequest;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class PlatformConnectionService
 {
     private const OAUTH_STATE_TTL_SECONDS = 600;
+
+    public function __construct(private readonly ExternalApiRequest $http) {}
 
     /**
      * Build the OAuth redirect URL for a given platform.
@@ -172,17 +174,23 @@ class PlatformConnectionService
 
     private function exchangeLinkedIn(string $code): array
     {
-        $response = Http::asForm()->post('https://www.linkedin.com/oauth/v2/accessToken', [
-            'grant_type' => 'authorization_code',
-            'code' => $code,
-            'redirect_uri' => config('services.linkedin.redirect_uri'),
-            'client_id' => config('services.linkedin.client_id'),
-            'client_secret' => config('services.linkedin.client_secret'),
-        ])->throw()->json();
+        $response = $this->http->make()
+            ->asForm()
+            ->post('https://www.linkedin.com/oauth/v2/accessToken', [
+                'grant_type' => 'authorization_code',
+                'code' => $code,
+                'redirect_uri' => config('services.linkedin.redirect_uri'),
+                'client_id' => config('services.linkedin.client_id'),
+                'client_secret' => config('services.linkedin.client_secret'),
+            ])
+            ->throw()
+            ->json();
 
         // Get user profile
-        $profile = Http::withToken($response['access_token'])
+        $profile = $this->http->make()
+            ->withToken($response['access_token'])
             ->get('https://api.linkedin.com/v2/userinfo')
+            ->throw()
             ->json();
 
         return [
@@ -224,19 +232,26 @@ class PlatformConnectionService
             abort(422, 'Connection session expired. Please try connecting again.');
         }
 
-        $response = Http::withBasicAuth(
-            config('services.twitter.client_id'),
-            config('services.twitter.client_secret')
-        )->asForm()->post('https://api.twitter.com/2/oauth2/token', [
-            'grant_type' => 'authorization_code',
-            'code' => $code,
-            'redirect_uri' => config('services.twitter.redirect_uri'),
-            'code_verifier' => $codeVerifier,
-        ])->throw()->json();
+        $response = $this->http->make()
+            ->withBasicAuth(
+                config('services.twitter.client_id'),
+                config('services.twitter.client_secret')
+            )
+            ->asForm()
+            ->post('https://api.twitter.com/2/oauth2/token', [
+                'grant_type' => 'authorization_code',
+                'code' => $code,
+                'redirect_uri' => config('services.twitter.redirect_uri'),
+                'code_verifier' => $codeVerifier,
+            ])
+            ->throw()
+            ->json();
 
         // Get user info
-        $user = Http::withToken($response['access_token'])
+        $user = $this->http->make()
+            ->withToken($response['access_token'])
             ->get('https://api.twitter.com/2/users/me')
+            ->throw()
             ->json('data');
 
         return [
@@ -275,34 +290,46 @@ class PlatformConnectionService
     {
         $redirectUri = str_replace('{platform}', $platform, config('services.meta.redirect_uri'));
 
-        $response = Http::get('https://graph.facebook.com/v20.0/oauth/access_token', [
-            'client_id' => config('services.meta.app_id'),
-            'client_secret' => config('services.meta.app_secret'),
-            'redirect_uri' => $redirectUri,
-            'code' => $code,
-        ])->throw()->json();
+        $response = $this->http->make()
+            ->get('https://graph.facebook.com/v20.0/oauth/access_token', [
+                'client_id' => config('services.meta.app_id'),
+                'client_secret' => config('services.meta.app_secret'),
+                'redirect_uri' => $redirectUri,
+                'code' => $code,
+            ])
+            ->throw()
+            ->json();
 
         $accessToken = $response['access_token'];
 
         // Get user identity
-        $me = Http::get('https://graph.facebook.com/v20.0/me', [
-            'fields' => 'id,name',
-            'access_token' => $accessToken,
-        ])->json();
+        $me = $this->http->make()
+            ->get('https://graph.facebook.com/v20.0/me', [
+                'fields' => 'id,name',
+                'access_token' => $accessToken,
+            ])
+            ->throw()
+            ->json();
 
         // For Instagram, get the IG business account linked to this user
         $igUserId = null;
         $igUsername = null;
         if ($platform === 'instagram') {
-            $pages = Http::get('https://graph.facebook.com/v20.0/me/accounts', [
-                'access_token' => $accessToken,
-            ])->json('data', []);
+            $pages = $this->http->make()
+                ->get('https://graph.facebook.com/v20.0/me/accounts', [
+                    'access_token' => $accessToken,
+                ])
+                ->throw()
+                ->json('data', []);
 
             foreach ($pages as $page) {
-                $igAccount = Http::get("https://graph.facebook.com/v20.0/{$page['id']}/instagram_business_account", [
-                    'fields' => 'id,username',
-                    'access_token' => $page['access_token'],
-                ])->json('instagram_business_account');
+                $igAccount = $this->http->make()
+                    ->get("https://graph.facebook.com/v20.0/{$page['id']}/instagram_business_account", [
+                        'fields' => 'id,username',
+                        'access_token' => $page['access_token'],
+                    ])
+                    ->throw()
+                    ->json('instagram_business_account');
 
                 if ($igAccount) {
                     $igUserId = $igAccount['id'];

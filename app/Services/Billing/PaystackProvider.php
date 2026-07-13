@@ -5,7 +5,7 @@ namespace App\Services\Billing;
 use App\Models\BillingPlan;
 use App\Models\Workspace;
 use App\Services\Billing\Contracts\PaymentProviderInterface;
-use Illuminate\Support\Facades\Http;
+use App\Support\ExternalApiRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -17,7 +17,7 @@ class PaystackProvider implements PaymentProviderInterface
 
     private string $baseUrl = 'https://api.paystack.co';
 
-    public function __construct()
+    public function __construct(private readonly ExternalApiRequest $http)
     {
         $this->secretKey = config('services.paystack.secret_key', '');
         $this->publicKey = config('services.paystack.public_key', '');
@@ -51,7 +51,8 @@ class PaystackProvider implements PaymentProviderInterface
     public function verifyPayment(string $reference): array
     {
         try {
-            $response = Http::withToken($this->secretKey)
+            $response = $this->http->make()
+                ->withToken($this->secretKey)
                 ->get("{$this->baseUrl}/transaction/verify/{$reference}");
 
             if (! $response->ok()) {

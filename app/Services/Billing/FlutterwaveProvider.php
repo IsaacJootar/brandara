@@ -5,7 +5,7 @@ namespace App\Services\Billing;
 use App\Models\BillingPlan;
 use App\Models\Workspace;
 use App\Services\Billing\Contracts\PaymentProviderInterface;
-use Illuminate\Support\Facades\Http;
+use App\Support\ExternalApiRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -17,7 +17,7 @@ class FlutterwaveProvider implements PaymentProviderInterface
 
     private string $baseUrl = 'https://api.flutterwave.com/v3';
 
-    public function __construct()
+    public function __construct(private readonly ExternalApiRequest $http)
     {
         $this->secretKey = config('services.flutterwave.secret_key', '');
         $this->publicKey = config('services.flutterwave.public_key', '');
@@ -58,7 +58,8 @@ class FlutterwaveProvider implements PaymentProviderInterface
     public function verifyPayment(string $reference): array
     {
         try {
-            $response = Http::withToken($this->secretKey)
+            $response = $this->http->make()
+                ->withToken($this->secretKey)
                 ->get("{$this->baseUrl}/transactions/{$reference}/verify");
 
             if (! $response->ok()) {
