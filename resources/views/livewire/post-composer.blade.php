@@ -84,7 +84,7 @@
         </div>
 
         {{-- AI Variation Picker (non-manual modes) --}}
-        @if ($inputType !== 'manual' && strlen(trim($body)) > 0 || $inputType !== 'manual')
+        @if ($inputType !== 'manual')
             <div style="margin-bottom:1.25rem;">
                 @livewire('create.variation-picker', [
                     'brand'       => \App\Models\Brand::find($brandId),
@@ -210,8 +210,7 @@
                         $allowed  = $this->isPlatformAllowed($key);
                         $selected = $allowed && in_array($key, $platforms);
                         $limit    = $charLimits[$key];
-                        $count    = strlen($body);
-                        $over     = $count > $limit;
+                        $over     = $charCount > $limit;
                     @endphp
                     @if(!$allowed)
                         {{-- Locked platform — Growth plan required --}}
@@ -258,18 +257,21 @@
             <div style="background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:1.25rem;">
                 <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#94A3B8; margin-bottom:0.75rem;">Character check</div>
                 @foreach ($platforms as $platform)
+                    @continue(! isset($charLimits[$platform], $platformNames[$platform]))
                     @php
                         $limit   = $charLimits[$platform];
-                        $pct     = min(100, round(($charCount / $limit) * 100));
-                        $barColor = $pct > 100 ? '#DC2626' : ($pct > 90 ? '#D97706' : '#10B981');
+                        $pct     = round(($charCount / $limit) * 100);
+                        $barWidth = min(100, $pct);
+                        $over = $charCount > $limit;
+                        $barColor = $over ? '#DC2626' : ($pct > 90 ? '#D97706' : '#10B981');
                     @endphp
                     <div wire:key="composer-character-check-{{ $platform }}" style="margin-bottom:0.625rem;">
                         <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:0.25rem;">
                             <span style="color:#475569; font-weight:500;">{{ $platformNames[$platform] }}</span>
-                            <span style="color:{{ $pct > 100 ? '#DC2626' : '#64748B' }};">{{ $charCount }}/{{ number_format($limit) }}</span>
+                            <span style="color:{{ $over ? '#DC2626' : '#64748B' }};">{{ $charCount }}/{{ number_format($limit) }}</span>
                         </div>
                         <div style="height:4px; background:#F1F5F9; border-radius:99px; overflow:hidden;">
-                            <div style="height:100%; width:{{ $pct }}%; background:{{ $barColor }}; border-radius:99px; transition:width 0.3s;"></div>
+                            <div style="height:100%; width:{{ $barWidth }}%; background:{{ $barColor }}; border-radius:99px; transition:width 0.3s;"></div>
                         </div>
                     </div>
                 @endforeach

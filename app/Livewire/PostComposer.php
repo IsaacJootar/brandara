@@ -39,6 +39,7 @@ class PostComposer extends Component
     /** @var array<int, array{id: string, url: string, name: string, mime: string}> */
     public array $attachedMedia = [];
 
+    #[Locked]
     public array $charLimits = [
         'linkedin' => 3000,
         'twitter' => 280,
@@ -49,6 +50,7 @@ class PostComposer extends Component
         'tiktok' => 2200,
     ];
 
+    #[Locked]
     public array $platformNames = [
         'linkedin' => 'LinkedIn',
         'twitter' => 'X',
@@ -172,10 +174,22 @@ class PostComposer extends Component
     public function saveDraft(): void
     {
         $brand = $this->brand();
+        $tightestLimit = $this->tightestLimit();
+        $overLimitPlatforms = implode(', ', $this->overLimitPlatforms());
 
         $this->validate([
-            'body' => ['required', 'string', 'min:1', 'max:63206'],
+            'body' => [
+                'required',
+                'string',
+                function (string $attribute, mixed $value, \Closure $fail) use ($tightestLimit, $overLimitPlatforms): void {
+                    if (mb_strlen($value) > $tightestLimit) {
+                        $platforms = $overLimitPlatforms !== '' ? $overLimitPlatforms : 'your selected platforms';
+                        $fail("Your post is too long for {$platforms}. Shorten it before saving.");
+                    }
+                },
+            ],
             'platforms' => ['required', 'array', 'min:1'],
+            'platforms.*' => ['string', Rule::in(array_keys($this->allowedPlatformNames()))],
             'tone' => ['required', 'string'],
             'pillarId' => [
                 'nullable',
@@ -262,15 +276,19 @@ class PostComposer extends Component
     #[Computed]
     public function charCount(): int
     {
-        return strlen($this->body);
+        return mb_strlen($this->body);
     }
 
     #[Computed]
     public function overLimitPlatforms(): array
     {
         $over = [];
+        $characterCount = mb_strlen($this->body);
+
         foreach ($this->platforms as $platform) {
-            if (strlen($this->body) > ($this->charLimits[$platform] ?? 63206)) {
+            if (is_string($platform)
+                && isset($this->charLimits[$platform], $this->platformNames[$platform])
+                && $characterCount > $this->charLimits[$platform]) {
                 $over[] = $this->platformNames[$platform];
             }
         }
@@ -281,11 +299,19 @@ class PostComposer extends Component
     #[Computed]
     public function tightestLimit(): int
     {
-        if (empty($this->platforms)) {
+        $selectedLimits = [];
+
+        foreach ($this->platforms as $platform) {
+            if (is_string($platform) && isset($this->charLimits[$platform])) {
+                $selectedLimits[] = $this->charLimits[$platform];
+            }
+        }
+
+        if ($selectedLimits === []) {
             return 63206;
         }
 
-        return min(array_map(fn ($p) => $this->charLimits[$p] ?? 63206, $this->platforms));
+        return min($selectedLimits);
     }
 
     // ── Render ────────────────────────────────────────────────────────────────

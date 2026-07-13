@@ -121,6 +121,61 @@ class PostComposerTest extends TestCase
         $this->assertSame(0, Post::count());
     }
 
+    public function test_character_count_treats_unicode_characters_as_one_each(): void
+    {
+        [, $user, $brand] = $this->makeWorkspaceUserBrand();
+
+        $component = Livewire::actingAs($user)
+            ->test(PostComposer::class, ['brand' => $brand])
+            ->set('body', 'Café 😊');
+
+        $this->assertSame(6, $component->instance()->charCount());
+    }
+
+    public function test_save_draft_accepts_unicode_text_at_platform_limit(): void
+    {
+        [, $user, $brand] = $this->makeWorkspaceUserBrand();
+
+        Livewire::actingAs($user)
+            ->test(PostComposer::class, ['brand' => $brand])
+            ->set('platforms', ['twitter'])
+            ->set('body', str_repeat('é', 280))
+            ->call('saveDraft')
+            ->assertHasNoErrors()
+            ->assertSet('saveStatus', 'saved');
+
+        $this->assertSame(1, Post::count());
+    }
+
+    public function test_save_draft_rejects_text_over_selected_platform_limit(): void
+    {
+        [, $user, $brand] = $this->makeWorkspaceUserBrand();
+
+        Livewire::actingAs($user)
+            ->test(PostComposer::class, ['brand' => $brand])
+            ->set('platforms', ['linkedin', 'twitter'])
+            ->set('body', str_repeat('é', 281))
+            ->call('saveDraft')
+            ->assertHasErrors(['body'])
+            ->assertSee('Too long for: X. Shorten your post or deselect those platforms.');
+
+        $this->assertSame(0, Post::count());
+    }
+
+    public function test_save_draft_rejects_unknown_platform(): void
+    {
+        [, $user, $brand] = $this->makeWorkspaceUserBrand();
+
+        Livewire::actingAs($user)
+            ->test(PostComposer::class, ['brand' => $brand])
+            ->set('platforms', ['unknown-platform'])
+            ->set('body', 'Valid post body')
+            ->call('saveDraft')
+            ->assertHasErrors(['platforms.0']);
+
+        $this->assertSame(0, Post::count());
+    }
+
     public function test_save_draft_updates_only_the_loaded_brand_draft(): void
     {
         [, $user, $brand] = $this->makeWorkspaceUserBrand();
