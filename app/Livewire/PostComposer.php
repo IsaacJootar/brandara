@@ -6,7 +6,7 @@ use App\Models\Brand;
 use App\Models\ContentPillar;
 use App\Models\Post;
 use App\Services\Plan\PlanFeatureService;
-use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -29,6 +29,7 @@ class PostComposer extends Component
 
     public array $platforms = ['linkedin'];
 
+    #[Locked]
     public ?string $savedDraftId = null;
 
     public ?string $pillarId = null;
@@ -170,13 +171,22 @@ class PostComposer extends Component
 
     public function saveDraft(): void
     {
+        $brand = $this->brand();
+
         $this->validate([
             'body' => ['required', 'string', 'min:1', 'max:63206'],
             'platforms' => ['required', 'array', 'min:1'],
             'tone' => ['required', 'string'],
+            'pillarId' => [
+                'nullable',
+                'string',
+                Rule::exists('content_pillars', 'id')->where(
+                    fn ($query) => $query
+                        ->where('brand_id', $brand->id)
+                        ->where('is_active', true)
+                ),
+            ],
         ]);
-
-        $brand = $this->brand();
 
         $this->saveStatus = 'saving';
 
@@ -185,21 +195,27 @@ class PostComposer extends Component
             $platformContents[$platform] = ['body' => $this->body];
         }
 
-        $id = $this->savedDraftId ?? Str::uuid()->toString();
-        $post = Post::updateOrCreate(
-            ['id' => $id],
-            [
+        $attributes = [
+            'input_type' => 'manual',
+            'raw_input' => $this->body,
+            'ai_generated' => false,
+            'platform_contents' => $platformContents,
+            'tone' => $this->tone,
+            'content_pillar_id' => $this->pillarId ?: null,
+            'status' => 'draft',
+        ];
+
+        if ($this->savedDraftId) {
+            $post = Post::where('brand_id', $brand->id)->find($this->savedDraftId);
+            abort_if(! $post, 403);
+            $post->update($attributes);
+        } else {
+            $post = Post::create([
                 'brand_id' => $brand->id,
                 'created_by' => auth()->id(),
-                'input_type' => 'manual',
-                'raw_input' => $this->body,
-                'ai_generated' => false,
-                'platform_contents' => $platformContents,
-                'tone' => $this->tone,
-                'content_pillar_id' => $this->pillarId ?: null,
-                'status' => 'draft',
-            ]
-        );
+                ...$attributes,
+            ]);
+        }
 
         $this->savedDraftId = $post->id;
         $this->saveStatus = 'saved';

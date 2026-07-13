@@ -4,11 +4,14 @@ namespace Tests\Feature;
 
 use App\Livewire\PostComposer;
 use App\Models\Brand;
+use App\Models\ContentPillar;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Attributes\Locked;
 use Livewire\Livewire;
+use ReflectionProperty;
 use Tests\TestCase;
 
 class PostComposerTest extends TestCase
@@ -45,6 +48,14 @@ class PostComposerTest extends TestCase
         ]);
 
         return [$workspace, $user, $brand];
+    }
+
+    public function test_saved_draft_identifier_is_locked(): void
+    {
+        $attributes = (new ReflectionProperty(PostComposer::class, 'savedDraftId'))
+            ->getAttributes(Locked::class);
+
+        $this->assertCount(1, $attributes);
     }
 
     public function test_create_page_loads(): void
@@ -88,6 +99,59 @@ class PostComposerTest extends TestCase
             ->set('body', '')
             ->call('saveDraft')
             ->assertHasErrors(['body' => 'required']);
+
+        $this->assertSame(0, Post::count());
+    }
+
+    public function test_save_draft_updates_only_the_loaded_brand_draft(): void
+    {
+        [, $user, $brand] = $this->makeWorkspaceUserBrand();
+        $this->actingAs($user);
+
+        $post = Post::create([
+            'brand_id' => $brand->id,
+            'created_by' => $user->id,
+            'input_type' => 'manual',
+            'raw_input' => 'Original draft',
+            'platform_contents' => ['linkedin' => ['body' => 'Original draft']],
+            'status' => 'draft',
+        ]);
+
+        Livewire::test(PostComposer::class, ['brand' => $brand])
+            ->call('loadVariation', $post->id, 'Original draft')
+            ->set('body', 'Updated draft')
+            ->call('saveDraft')
+            ->assertHasNoErrors()
+            ->assertSet('savedDraftId', $post->id);
+
+        $this->assertSame('Updated draft', $post->fresh()->raw_input);
+        $this->assertSame($brand->id, $post->fresh()->brand_id);
+    }
+
+    public function test_save_draft_rejects_a_pillar_from_another_brand(): void
+    {
+        [$workspace, $user, $brand] = $this->makeWorkspaceUserBrand();
+        $this->actingAs($user);
+
+        $otherBrand = Brand::create([
+            'workspace_id' => $workspace->id,
+            'name' => 'Other Brand',
+            'slug' => 'other-brand',
+            'language' => 'en',
+        ]);
+        $otherPillar = ContentPillar::create([
+            'brand_id' => $otherBrand->id,
+            'name' => 'Other Pillar',
+            'goal' => 'authority',
+            'color' => '#7C3AED',
+            'sort_order' => 1,
+        ]);
+
+        Livewire::test(PostComposer::class, ['brand' => $brand])
+            ->set('body', 'A valid draft body')
+            ->set('pillarId', $otherPillar->id)
+            ->call('saveDraft')
+            ->assertHasErrors(['pillarId' => 'exists']);
 
         $this->assertSame(0, Post::count());
     }

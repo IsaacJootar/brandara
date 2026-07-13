@@ -9,7 +9,9 @@ use App\Models\ContentPillar;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Attributes\Locked;
 use Livewire\Livewire;
+use ReflectionProperty;
 use Tests\TestCase;
 
 class PlanModuleTest extends TestCase
@@ -39,6 +41,16 @@ class PlanModuleTest extends TestCase
         ]);
 
         return [$user, $brand];
+    }
+
+    public function test_editing_record_identifiers_are_locked(): void
+    {
+        foreach (['editingPillarId', 'editingCampaignId'] as $property) {
+            $attributes = (new ReflectionProperty(Index::class, $property))
+                ->getAttributes(Locked::class);
+
+            $this->assertCount(1, $attributes);
+        }
     }
 
     public function test_plan_page_loads(): void
@@ -99,6 +111,30 @@ class PlanModuleTest extends TestCase
         $this->assertSame(5, ContentPillar::where('brand_id', $brand->id)->count());
     }
 
+    public function test_can_update_a_pillar_within_the_current_brand(): void
+    {
+        [$user, $brand] = $this->makeWorkspace();
+        $this->actingAs($user);
+
+        $pillar = ContentPillar::create([
+            'brand_id' => $brand->id,
+            'name' => 'Old Name',
+            'goal' => 'authority',
+            'color' => '#7C3AED',
+            'sort_order' => 1,
+        ]);
+
+        Livewire::withoutLazyLoading()
+            ->test(Index::class, ['brand' => $brand])
+            ->call('openPillarForm', $pillar->id)
+            ->set('pillarName', 'Client Results')
+            ->call('savePillar')
+            ->assertHasNoErrors();
+
+        $this->assertSame('Client Results', $pillar->fresh()->name);
+        $this->assertSame($brand->id, $pillar->fresh()->brand_id);
+    }
+
     public function test_can_create_campaign(): void
     {
         [$user, $brand] = $this->makeWorkspace();
@@ -140,6 +176,36 @@ class PlanModuleTest extends TestCase
             ->set('campaignPlatforms', ['linkedin'])
             ->call('saveCampaign')
             ->assertHasErrors(['campaignEndDate']);
+    }
+
+    public function test_can_update_a_campaign_within_the_current_brand(): void
+    {
+        [$user, $brand] = $this->makeWorkspace();
+        $this->actingAs($user);
+
+        $campaign = Campaign::create([
+            'brand_id' => $brand->id,
+            'name' => 'Old Campaign',
+            'type' => 'custom',
+            'goal' => 'Old goal',
+            'key_message' => 'Old message',
+            'start_date' => now()->addDays(2),
+            'end_date' => now()->addDays(5),
+            'platforms' => ['linkedin'],
+            'status' => 'draft',
+        ]);
+
+        Livewire::withoutLazyLoading()
+            ->test(Index::class, ['brand' => $brand])
+            ->call('openCampaignForm', $campaign->id)
+            ->set('campaignName', 'Updated Campaign')
+            ->set('campaignGoal', 'Updated goal')
+            ->set('campaignKeyMessage', 'Updated campaign message')
+            ->call('saveCampaign')
+            ->assertHasNoErrors();
+
+        $this->assertSame('Updated Campaign', $campaign->fresh()->name);
+        $this->assertSame($brand->id, $campaign->fresh()->brand_id);
     }
 
     public function test_can_archive_campaign(): void

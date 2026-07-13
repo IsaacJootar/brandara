@@ -8,7 +8,6 @@ use App\Models\ContentPillar;
 use App\Models\Post;
 use App\Services\Ai\AiProviderException;
 use App\Services\CampaignPack\CampaignPackService;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Locked;
@@ -29,6 +28,7 @@ class Index extends Component
     // ── Pillar form ───────────────────────────────────────────────────────────
     public bool $showPillarForm = false;
 
+    #[Locked]
     public ?string $editingPillarId = null;
 
     public string $pillarName = '';
@@ -60,6 +60,7 @@ class Index extends Component
     // ── Campaign form ─────────────────────────────────────────────────────────
     public bool $showCampaignForm = false;
 
+    #[Locked]
     public ?string $editingCampaignId = null;
 
     public string $campaignName = '';
@@ -205,13 +206,15 @@ class Index extends Component
 
     public function savePillar(): void
     {
+        $brand = $this->brand();
+
         $this->validate([
             'pillarName' => ['required', 'string', 'max:60'],
             'pillarGoal' => ['required', 'in:authority,trust,awareness,conversion'],
             'pillarColor' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
         ]);
 
-        $existing = ContentPillar::where('brand_id', $this->brandId)->where('is_active', true)->count();
+        $existing = ContentPillar::where('brand_id', $brand->id)->where('is_active', true)->count();
 
         if (! $this->editingPillarId && $existing >= 5) {
             $this->addError('pillarName', 'You can have a maximum of 5 content pillars.');
@@ -219,18 +222,24 @@ class Index extends Component
             return;
         }
 
-        ContentPillar::updateOrCreate(
-            ['id' => $this->editingPillarId ?? Str::uuid()->toString()],
-            [
-                'brand_id' => $this->brandId,
+        if ($this->editingPillarId) {
+            $pillar = ContentPillar::where('brand_id', $brand->id)->find($this->editingPillarId);
+            abort_if(! $pillar, 403);
+
+            $pillar->update([
                 'name' => $this->pillarName,
                 'goal' => $this->pillarGoal,
                 'color' => $this->pillarColor,
-                'sort_order' => $this->editingPillarId
-                    ? ContentPillar::find($this->editingPillarId)?->sort_order ?? 0
-                    : ($existing + 1),
-            ]
-        );
+            ]);
+        } else {
+            ContentPillar::create([
+                'brand_id' => $brand->id,
+                'name' => $this->pillarName,
+                'goal' => $this->pillarGoal,
+                'color' => $this->pillarColor,
+                'sort_order' => $existing + 1,
+            ]);
+        }
 
         $this->resetPillarForm();
         session()->flash('plan_message', 'Pillar saved.');
@@ -277,6 +286,8 @@ class Index extends Component
 
     public function saveCampaign(): void
     {
+        $brand = $this->brand();
+
         $this->validate([
             'campaignName' => ['required', 'string', 'max:100'],
             'campaignGoal' => ['required', 'string', 'max:300'],
@@ -286,20 +297,27 @@ class Index extends Component
             'campaignPlatforms' => ['required', 'array', 'min:1'],
         ]);
 
-        Campaign::updateOrCreate(
-            ['id' => $this->editingCampaignId ?? Str::uuid()->toString()],
-            [
-                'brand_id' => $this->brandId,
-                'name' => $this->campaignName,
-                'type' => 'custom',
-                'goal' => $this->campaignGoal,
-                'key_message' => $this->campaignKeyMessage,
-                'start_date' => $this->campaignStartDate,
-                'end_date' => $this->campaignEndDate,
-                'platforms' => $this->campaignPlatforms,
-                'status' => 'draft',
-            ]
-        );
+        $attributes = [
+            'name' => $this->campaignName,
+            'type' => 'custom',
+            'goal' => $this->campaignGoal,
+            'key_message' => $this->campaignKeyMessage,
+            'start_date' => $this->campaignStartDate,
+            'end_date' => $this->campaignEndDate,
+            'platforms' => $this->campaignPlatforms,
+            'status' => 'draft',
+        ];
+
+        if ($this->editingCampaignId) {
+            $campaign = Campaign::where('brand_id', $brand->id)->find($this->editingCampaignId);
+            abort_if(! $campaign, 403);
+            $campaign->update($attributes);
+        } else {
+            Campaign::create([
+                'brand_id' => $brand->id,
+                ...$attributes,
+            ]);
+        }
 
         $this->resetCampaignForm();
         $this->campaignPage = 1;
