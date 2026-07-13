@@ -12,10 +12,12 @@ use App\Services\AiVisibility\CountryDirectoryService;
 use App\Services\AiVisibility\WebsiteScannerService;
 use Carbon\Carbon;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Dashboard extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     public string $activeTab = 'readiness';

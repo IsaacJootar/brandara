@@ -7,10 +7,12 @@ use App\Models\ContentPillar;
 use App\Models\Post;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class PillarAlert extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     public bool $dismissed = false;

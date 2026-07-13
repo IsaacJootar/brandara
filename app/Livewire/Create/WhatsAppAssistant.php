@@ -6,10 +6,12 @@ use App\Models\Brand;
 use App\Services\Ai\AiProviderException;
 use App\Services\WhatsApp\WhatsAppService;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class WhatsAppAssistant extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     public string $type = 'broadcast';

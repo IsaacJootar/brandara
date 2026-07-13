@@ -6,10 +6,12 @@ use App\Models\Brand;
 use App\Models\MediaFile;
 use App\Services\Media\MediaLibraryService;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class MediaPicker extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     public string $search = '';

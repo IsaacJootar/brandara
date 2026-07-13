@@ -6,10 +6,12 @@ use App\Models\Brand;
 use App\Models\Post;
 use App\Services\Ai\AiProviderException;
 use App\Services\Ai\ContentGenerationService;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class VariationPicker extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     // Input from composer

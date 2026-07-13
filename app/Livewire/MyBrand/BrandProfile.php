@@ -4,10 +4,12 @@ namespace App\Livewire\MyBrand;
 
 use App\Models\Brand;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class BrandProfile extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     public string $vision = '';

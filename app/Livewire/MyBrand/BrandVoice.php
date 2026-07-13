@@ -6,10 +6,12 @@ use App\Models\Brand;
 use App\Services\Ai\AiProviderException;
 use App\Services\BrandVoice\BrandVoiceService;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class BrandVoice extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     public string $samples = '';

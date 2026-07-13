@@ -11,11 +11,13 @@ use App\Services\CampaignPack\CampaignPackService;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 #[Lazy]
 class Index extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     public string $tab = 'overview'; // overview | pillars | campaigns

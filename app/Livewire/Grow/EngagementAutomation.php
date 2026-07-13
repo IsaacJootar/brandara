@@ -7,10 +7,12 @@ use App\Models\EngagementAction;
 use App\Models\EngagementRule;
 use App\Services\Engagement\EngagementService;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class EngagementAutomation extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     // ── Rule form ─────────────────────────────────────────────────────────────

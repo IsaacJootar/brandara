@@ -4,10 +4,12 @@ namespace App\Livewire\Settings;
 
 use App\Models\Brand;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class BrandSettings extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     // ── General ───────────────────────────────────────────────────────────────

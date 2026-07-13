@@ -7,6 +7,7 @@ use App\Models\MediaFile;
 use App\Services\Media\MediaLibraryService;
 use App\Services\Media\MediaUploadException;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
@@ -17,6 +18,7 @@ class MediaLibrary extends Component
     use WithFileUploads;
     use WithPagination;
 
+    #[Locked]
     public string $brandId = '';
 
     /** @var TemporaryUploadedFile[] */

@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Services\Plan\PlanFeatureService;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -15,6 +16,7 @@ class PostComposer extends Component
 {
     // ── Injected properties ───────────────────────────────────────────────────
 
+    #[Locked]
     public string $brandId = '';   // passed from blade, never exposed as form field
 
     // ── State ─────────────────────────────────────────────────────────────────

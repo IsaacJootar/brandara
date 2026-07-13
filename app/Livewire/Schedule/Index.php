@@ -7,11 +7,13 @@ use App\Models\Post;
 use Carbon\Carbon;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 #[Lazy]
 class Index extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     public string $view = 'queue';      // queue | calendar

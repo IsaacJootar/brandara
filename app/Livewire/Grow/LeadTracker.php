@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Lead;
 use Illuminate\Support\Facades\Response;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -14,6 +15,7 @@ class LeadTracker extends Component
 {
     use WithPagination;
 
+    #[Locked]
     public string $brandId = '';
 
     // ── Filters ───────────────────────────────────────────────────────────────

@@ -6,10 +6,12 @@ use App\Models\Brand;
 use App\Models\PostAnalytic;
 use App\Services\Analytics\AnalyticsService;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ResultsDashboard extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     public int $period = 30; // days

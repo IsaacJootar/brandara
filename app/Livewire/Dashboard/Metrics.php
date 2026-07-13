@@ -5,11 +5,13 @@ namespace App\Livewire\Dashboard;
 use App\Models\Brand;
 use App\Models\PostAnalytic;
 use Livewire\Attributes\Lazy;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 #[Lazy]
 class Metrics extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     public function mount(Brand $brand): void

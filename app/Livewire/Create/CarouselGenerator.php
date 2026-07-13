@@ -6,10 +6,12 @@ use App\Models\Brand;
 use App\Services\Ai\AiProviderException;
 use App\Services\Media\CarouselService;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class CarouselGenerator extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     public string $topic = '';

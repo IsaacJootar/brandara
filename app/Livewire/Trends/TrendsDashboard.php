@@ -5,10 +5,12 @@ namespace App\Livewire\Trends;
 use App\Models\Brand;
 use App\Services\Trends\TrendsService;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class TrendsDashboard extends Component
 {
+    #[Locked]
     public string $brandId = '';
 
     public string $activeTab = 'industry'; // industry | format | competitor
